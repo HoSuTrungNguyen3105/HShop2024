@@ -17,8 +17,14 @@ namespace HShop2024.Controllers
 		{
 			return View();
 		}
+		[Route("/404")]
+        public IActionResult PageNotFound()
+        {
+            return View();
+        }
 
-		public IActionResult Privacy()
+
+        public IActionResult Privacy()
 		{
 			return View();
 		}

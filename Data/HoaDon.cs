@@ -31,6 +31,8 @@ public partial class HoaDon
 
     public string? GhiChu { get; set; }
 
+    public string? DienThoai { get; set; }
+
     public virtual KhachHang MaKhNavigation { get; set; } = null!;
 
     public virtual NhanVien? MaNvNavigation { get; set; }
