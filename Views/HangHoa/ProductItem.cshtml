@@ -1,5 +1,32 @@
 ﻿ @model IEnumerable<HShop2024.ViewModels.HangHoaVM>
+@* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+ *@@* <script>
+    $(document).ready(function () {
+        $('.add-to-cart').click(function (event) {
+            event.preventDefault(); // Ngăn chặn hành vi mặc định của link
 
+            var productId = $(this).data('id'); // Lấy ID sản phẩm từ data attribute
+
+            $.ajax({
+                url: '/Cart/AddToCart2', // URL đến action AddToCart của controller Cart
+                type: 'POST',
+                data: { id: productId, quantity: 1 }, // Dữ liệu gửi lên server
+                success: function (response) {
+                    if (response.success) {
+                        // Cập nhật số lượng sản phẩm trong giỏ hàng
+                        $('#position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1').text(response.cartCount);
+                        alert('Sản phẩm đã được thêm vào giỏ hàng');
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function () {
+                    alert('Có lỗi xảy ra, vui lòng thử lại sau');
+                }
+            });
+        });
+    });
+</script> *@
 <h3> Có <b>@Model.Count()</b> sản phẩm.</h3>
 @foreach (var item in Model)
 {
@@ -16,9 +43,15 @@
 				<p>@item.MoTaNgan</p>
 				<div class="d-flex justify-content-between flex-lg-wrap">
 					<p class="text-dark fs-5 fw-bold mb-0">$@item.DonGia</p>
-					<a asp-action="AddToCart" asp-controller="Cart" asp-route-id="@item.MaHh" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Đưa vào giỏ</a>
+					<a href="#" data-id="@item.MaHh" class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart">
+						<i class="fa fa-shopping-bag me-2 text-primary"></i> Đưa vào giỏ
+					</a>
+					@* <a asp-action="AddToCart" asp-controller="Cart" asp-route-id="@item.MaHh" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Đưa vào giỏ</a> *@
 				</div>
 			</div>
 		</div>
 	</div>
 }
+
+
+

@@ -49,18 +49,22 @@
 							</td>
 							<td>
 								<div class="input-group quantity mt-4" style="width: 100px;">
-							
-									<input type="text" class="form-control form-control-sm text-center border-0" value="@item.SoLuong">
 									<div class="input-group-btn">
-										<a asp-action="Detail" asp-controller="HangHoa" asp-route-id="@item.MaHh" style="width: 80px; height: 80px;">
-											Sửa số lượng
-										</a>
+										<button class="btn btn-sm btn-minus rounded-circle bg-light border" data-mahh="@item.MaHh">
+											<i class="fa fa-minus"></i>
+										</button>
+									</div>
+									<input type="text" class="form-control form-control-sm text-center border-0" id="quantity-@item.MaHh" value="@item.SoLuong">
+									<div class="add-to-cart">
+										<button class="btn btn-sm btn-plus rounded-circle bg-light border" data-mahh="@item.MaHh">
+											<i class="fa fa-plus"></i>
+										</button>
 									</div>
 								</div>
 							</td>
 							<td>
-								<p class="mb-0 mt-4">$ @item.ThanhTien</p>
-							</td>
+								<p class="mb-0 mt-4" id="price-@item.MaHh">$ @item.ThanhTien</p>
+							</td>						
 							<td>
 								<a asp-action="RemoveCart" asp-controller="Cart" asp-route-id="@item.MaHh" class="btn btn-md rounded-circle bg-light border mt-4">
 									<i class="fa fa-times text-danger"></i>
@@ -105,4 +109,5 @@
 	</div>
 </div>
 <!-- Cart Page End -->
+
 

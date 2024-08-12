@@ -125,7 +125,7 @@
 
 .navbar {
     height: 100px;
-    border-bottom: 1px solid rgba(0, 0, 139, 0.8);
+    border-bottom: 1px solid rgba(255, 255, 255, .8);
 }
 
 .navbar .navbar-nav .nav-link:hover,
@@ -495,3 +495,76 @@
 }
 /*** Footer End ***/
 
+
+
+
+/* styles.css */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+header {
+    background-color: #333;
+    color: white;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+main {
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 4rem); /* Subtract header and footer height */
+}
+
+.profile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    max-width: 400px;
+    text-align: center;
+}
+
+.greeting {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.logout-btn {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    color: white;
+    background-color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+    .logout-btn:hover {
+        background-color: #0056b3;
+    }
+
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 1rem 0;
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+}

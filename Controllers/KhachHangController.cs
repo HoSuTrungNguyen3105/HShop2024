@@ -5,7 +5,11 @@ using HShop2024.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using NuGet.Configuration;
+using System.Globalization;
 using System.Security.Claims;
 using static ECommerceMVC.Controllers.KhachHangController;
 
@@ -25,45 +29,48 @@ namespace ECommerceMVC.Controllers
 		#region Register
 		[HttpGet]
 		public IActionResult DangKy()
-        {
-            return View();
+		{
+			return View();
 		}
-        [HttpPost]
-        public IActionResult DangKy(RegisterVM model, IFormFile Hinh)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    var khachHang = _mapper.Map<KhachHang>(model);
-                    khachHang.RandomKey = MyUtil.GenerateRamdomKey();
-                    khachHang.MatKhau = model.MatKhau.ToMd5Hash(khachHang.RandomKey);
-                    khachHang.HieuLuc = true;
+		[HttpPost]
+		public IActionResult DangKy (RegisterVM model, IFormFile Hinh)
+		{
+			if (ModelState.IsValid)
+			{
+				try
+				{
+					var khachHang = _mapper.Map<KhachHang>(model);
+					khachHang.RandomKey = MyUtil.GenerateRamdomKey();
+					khachHang.MatKhau = model.MatKhau.ToMd5Hash(khachHang.RandomKey);
+					khachHang.HieuLuc = true; // Sẽ xử lý khi dùng Mail để active
+					khachHang.VaiTro = 0;
 
-                    if (Hinh != null)
-                    {
-                        khachHang.Hinh = MyUtil.UploadHinh(Hinh, "KhachHang");
-                    }
+					if (Hinh != null)
+					{
+						khachHang.Hinh = MyUtil.UploadHinh(Hinh, "KhachHang");
+					}
 
-                    db.Add(khachHang);
-                    db.SaveChanges();
-                    return RedirectToAction("Index", "HangHoa");
-                }
-                catch (Exception ex)
-                {
-                    var mess = $"{ex.Message} shh";
-                }
+					db.Add(khachHang);
+					db.SaveChangesAsync();
 
-            }
-            return View();
-        }
-        #endregion
+					// Redirect to a success page or display a success message
+					return RedirectToAction("Index", "HangHoa");
+				}
+				catch (Exception ex)
+				{
+					// Handle exception
+					ModelState.AddModelError("", "Đã có lỗi xảy ra. Vui lòng thử lại sau.");
+					return View(model);
+				}
+			}
 
+			// Return view with validation errors
+			return View(model);
+		}
+		#endregion
 
-
-
-        #region Login
-        [HttpGet]
+		#region Login
+		[HttpGet]
 		public IActionResult DangNhap(string? ReturnUrl)
 		{
 			ViewBag.ReturnUrl = ReturnUrl;
@@ -76,7 +83,7 @@ namespace ECommerceMVC.Controllers
 			ViewBag.ReturnUrl = ReturnUrl;
 			if (ModelState.IsValid)
 			{
-				var khachHang = db.KhachHangs.SingleOrDefault(kh => kh.MaKh == model.UserName);
+				var khachHang = db.KhachHangs.SingleOrDefault(kh => kh.MaKh == model.MaKh);
 				if (khachHang == null)
 				{
 					ModelState.AddModelError("loi", "Không có khách hàng này");
@@ -89,7 +96,7 @@ namespace ECommerceMVC.Controllers
 					}
 					else
 					{
-						if (khachHang.MatKhau == model.Password.ToMd5Hash(khachHang.RandomKey))
+						if (khachHang.MatKhau == model.MatKhau.ToMd5Hash(khachHang.RandomKey))
 						{
 							ModelState.AddModelError("ok", "Đăng nhập thành công");
 						}
@@ -115,7 +122,7 @@ namespace ECommerceMVC.Controllers
 							}
 							else
 							{
-								return Redirect("/");
+								return Redirect("Profile");
 							}
 						}
 					}
