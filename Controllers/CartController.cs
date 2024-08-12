@@ -55,37 +55,37 @@ namespace HShop2024.Controllers
 
 			return RedirectToAction("Index");
 		}
-		
-		//[HttpPost]
-		//public JsonResult AddToCart2(int id, int quantity = 1)
-		//{
-		//	var gioHang = Cart;
-		//	var item = gioHang.SingleOrDefault(p => p.MaHh == id);
-		//	if (item == null)
-		//	{
-		//		var hangHoa = db.HangHoas.SingleOrDefault(p => p.MaHh == id);
-		//		if (hangHoa == null)
-		//		{
-		//			return Json(new { success = false, message = $"Không tìm thấy hàng hóa có mã {id}" });
-		//		}
-		//		item = new CartItem
-		//		{
-		//			MaHh = hangHoa.MaHh,
-		//			TenHH = hangHoa.TenHh,
-		//			DonGia = hangHoa.DonGia ?? 0,
-		//			Hinh = hangHoa.Hinh ?? string.Empty,
-		//			SoLuong = quantity
-		//		};
-		//		gioHang.Add(item);
-		//	}
-		//	else
-		//	{
-		//		item.SoLuong += quantity;
-		//	}
 
-		//	HttpContext.Session.Set(MySetting.CART_KEY, gioHang);
-		//	return Json(new { success = true, cartCount = gioHang.Sum(p => p.SoLuong) });
-		//}
+		[HttpPost]
+		public JsonResult AddToCart2(int id, int quantity = 1)
+		{
+			var gioHang = Cart;
+			var item = gioHang.SingleOrDefault(p => p.MaHh == id);
+			if (item == null)
+			{
+				var hangHoa = db.HangHoas.SingleOrDefault(p => p.MaHh == id);
+				if (hangHoa == null)
+				{
+					return Json(new { success = false, message = $"Không tìm thấy hàng hóa có mã {id}" });
+				}
+				item = new CartItem
+				{
+					MaHh = hangHoa.MaHh,
+					TenHH = hangHoa.TenHh,
+					DonGia = hangHoa.DonGia ?? 0,
+					Hinh = hangHoa.Hinh ?? string.Empty,
+					SoLuong = quantity
+				};
+				gioHang.Add(item);
+			}
+			else
+			{
+				item.SoLuong += quantity;
+			}
+
+			HttpContext.Session.Set(MySetting.CART_KEY, gioHang);
+			return Json(new { success = true, cartCount = gioHang.Sum(p => p.SoLuong) });
+		}
 
 		public IActionResult RemoveCart(int id)
 			{

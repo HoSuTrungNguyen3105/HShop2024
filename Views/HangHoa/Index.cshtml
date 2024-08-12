@@ -6,6 +6,10 @@
 	Layout = "_DanhSachHangHoa";
 }
 
+@if (ViewBag.SuccessMessage != null)
+{
+	<p class="small text-success">@ViewBag.SuccessMessage</p>
+}
 <!-- Single Page Header start -->
 @section BreadCum {
 	<div class="container-fluid page-header py-5">

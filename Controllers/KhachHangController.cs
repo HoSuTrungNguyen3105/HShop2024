@@ -32,41 +32,54 @@ namespace ECommerceMVC.Controllers
 		{
 			return View();
 		}
+		//[HttpPost]
+		//public IActionResult DangKy (RegisterVM model, IFormFile Hinh)
+		//{
+		//	if (ModelState.IsValid)
+		//	{
+		//		try
+		//		{
+		//			var khachHang = _mapper.Map<KhachHang>(model);
+		//			khachHang.RandomKey = MyUtil.GenerateRamdomKey();
+		//			khachHang.MatKhau = model.MatKhau.ToMd5Hash(khachHang.RandomKey);
+		//			khachHang.HieuLuc = true; // Sẽ xử lý khi dùng Mail để active
+		//			khachHang.VaiTro = 0;
+
+		//			if (Hinh != null)
+		//			{
+		//				khachHang.Hinh = MyUtil.UploadHinh(Hinh, "KhachHang");
+		//			}
+
+		//			db.Add(khachHang);
+		//			db.SaveChangesAsync();
+
+		//			// Redirect to a success page or display a success message
+		//			return RedirectToAction("Index", "HangHoa");
+		//		}
+		//		catch (Exception ex)
+		//		{
+		//			// Handle exception
+		//			ModelState.AddModelError("", "Đã có lỗi xảy ra. Vui lòng thử lại sau.");
+		//			return View(model);
+		//		}
+		//	}
+
+		//	// Return view with validation errors
+		//	return View(model);
+		//}
 		[HttpPost]
-		public IActionResult DangKy (RegisterVM model, IFormFile Hinh)
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> DangKy([Bind("MaKh,MatKhau,HoTen,GioiTinh,NgaySinh,DiaChi,DienThoai,Email,Hinh")] KhachHang khachHang,RegisterVM model)
 		{
 			if (ModelState.IsValid)
 			{
-				try
-				{
-					var khachHang = _mapper.Map<KhachHang>(model);
-					khachHang.RandomKey = MyUtil.GenerateRamdomKey();
-					khachHang.MatKhau = model.MatKhau.ToMd5Hash(khachHang.RandomKey);
-					khachHang.HieuLuc = true; // Sẽ xử lý khi dùng Mail để active
-					khachHang.VaiTro = 0;
-
-					if (Hinh != null)
-					{
-						khachHang.Hinh = MyUtil.UploadHinh(Hinh, "KhachHang");
-					}
-
-					db.Add(khachHang);
-					db.SaveChangesAsync();
-
-					// Redirect to a success page or display a success message
-					return RedirectToAction("Index", "HangHoa");
-				}
-				catch (Exception ex)
-				{
-					// Handle exception
-					ModelState.AddModelError("", "Đã có lỗi xảy ra. Vui lòng thử lại sau.");
-					return View(model);
-				}
+				db.Add(khachHang);
+				await db.SaveChangesAsync();
+				ModelState.AddModelError("loi", "Đã có khách hàng được thêm vào");
 			}
-
-			// Return view with validation errors
 			return View(model);
 		}
+
 		#endregion
 
 		#region Login
@@ -83,7 +96,7 @@ namespace ECommerceMVC.Controllers
 			ViewBag.ReturnUrl = ReturnUrl;
 			if (ModelState.IsValid)
 			{
-				var khachHang = db.KhachHangs.SingleOrDefault(kh => kh.MaKh == model.MaKh);
+				var khachHang = db.KhachHangs.SingleOrDefault(kh => kh.MaKh == model.MatKhau);
 				if (khachHang == null)
 				{
 					ModelState.AddModelError("loi", "Không có khách hàng này");
@@ -96,16 +109,16 @@ namespace ECommerceMVC.Controllers
 					}
 					else
 					{
-						if (khachHang.MatKhau == model.MatKhau.ToMd5Hash(khachHang.RandomKey))
+						if (khachHang.MatKhau != model.MatKhau.ToMd5Hash(khachHang.RandomKey))
 						{
-							ModelState.AddModelError("ok", "Đăng nhập thành công");
+							ModelState.AddModelError("loi", "Sai thông tin đăng nhập");
 						}
-						else 
+						else
 						{
 							var claims = new List<Claim> {
 								new Claim(ClaimTypes.Email, khachHang.Email),
 								new Claim(ClaimTypes.Name, khachHang.HoTen),
-								new Claim(MySetting.CLAIM_CUSTOMERID, khachHang.MaKh),
+								new Claim("CustomerID", khachHang.MaKh),
 
 								//claim - role động
 								new Claim(ClaimTypes.Role, "Customer")
@@ -122,7 +135,7 @@ namespace ECommerceMVC.Controllers
 							}
 							else
 							{
-								return Redirect("Profile");
+								return Redirect("/");
 							}
 						}
 					}

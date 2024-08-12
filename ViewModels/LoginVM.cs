@@ -5,12 +5,12 @@ namespace HShop2024.ViewModels
 {
 	public class LoginVM
 	{
-		[Display(Name = "Tên đăng nhập(Hint:hello)")]
+		[Display(Name = "Tên đăng nhập(Admin account:hello)")]
 		[Required(ErrorMessage = "Chưa nhập tên đăng nhập")]
 
 		public string MaKh { get; set; }
 
-		[Display(Name = "Mật khẩu(Hint:1)")]
+		[Display(Name = "Mật khẩu(Password:1)")]
 		[Required(ErrorMessage = "Chưa nhập mật khẩu")]
 		[DataType(DataType.Password)]
 

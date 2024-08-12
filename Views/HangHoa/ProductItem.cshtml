@@ -1,6 +1,6 @@
 ﻿ @model IEnumerable<HShop2024.ViewModels.HangHoaVM>
-@* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
- *@@* <script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
     $(document).ready(function () {
         $('.add-to-cart').click(function (event) {
             event.preventDefault(); // Ngăn chặn hành vi mặc định của link
@@ -14,7 +14,7 @@
                 success: function (response) {
                     if (response.success) {
                         // Cập nhật số lượng sản phẩm trong giỏ hàng
-                        $('#position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1').text(response.cartCount);
+                        $('#quantityadd').text(response.cartCount);
                         alert('Sản phẩm đã được thêm vào giỏ hàng');
                     } else {
                         alert(response.message);
@@ -26,7 +26,8 @@
             });
         });
     });
-</script> *@
+</script>
+
 <h3> Có <b>@Model.Count()</b> sản phẩm.</h3>
 @foreach (var item in Model)
 {
