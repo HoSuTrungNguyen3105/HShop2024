@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <div class="d-flex" id="wrapper">
+
+        <!-- Sidebar -->
+        <div class="bg-light border-right" id="sidebar-wrapper">
+            <div class="sidebar-heading">Admin Dashboard</div>
+            <div class="list-group list-group-flush">
+                <a asp-area="" asp-controller="Home" asp-action="Index" class="list-group-item list-group-item-action bg-light">Trang chủ</a>
+                <a asp-area="" asp-controller="KhachHang" asp-action="Index" class="list-group-item list-group-item-action bg-light">Quản lí khách hàng</a>
+                <a asp-area="" asp-controller="GioHang" asp-action="Index" class="list-group-item list-group-item-action bg-light">Quản lí giỏ hàng</a>
+                <a asp-area="" asp-controller="NhanVien" asp-action="Index" class="list-group-item list-group-item-action bg-light">Quản lí nhân viên</a>
+            </div>
+        </div>
+        <!-- /#sidebar-wrapper -->
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+                <button class="btn btn-primary" id="menu-toggle">Toggle Menu</button>
+            </nav>
+
+            <div class="container-fluid">
+                @RenderBody()
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        $("#menu-toggle").click(function (e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+    </script>
+</body>
+</html>
+
+

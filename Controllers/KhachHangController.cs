@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NuGet.Configuration;
@@ -19,7 +20,8 @@ namespace ECommerceMVC.Controllers
 	{
 		private readonly Hshop2023Context db;
 		private readonly IMapper _mapper;
-
+		private readonly UserManager<KhachHang> _userManager;
+		private readonly IEmailSender _emailSender;
 		public KhachHangController(Hshop2023Context context, IMapper mapper)
 		{
 			db = context;
@@ -156,6 +158,90 @@ namespace ECommerceMVC.Controllers
 		{
 			await HttpContext.SignOutAsync();
 			return Redirect("/");
-		}		
+		}
+		// Hiển thị form quên mật khẩu
+		[HttpGet]
+		public IActionResult ForgotPassword()
+		{
+			return View();
+		}
+
+		// Xử lý form quên mật khẩu
+		[HttpPost]
+		public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+		{
+			if (ModelState.IsValid)
+			{
+				var user = await _userManager.FindByEmailAsync(model.Email);
+				if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+				{
+					return RedirectToAction("ForgotPasswordConfirmation");
+				}
+
+				var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+				var callbackUrl = Url.Action("ResetPassword", "Account", new { token, email = user.Email }, Request.Scheme);
+
+				await _emailSender.SendEmailAsync(
+					model.Email,
+					"Đặt lại mật khẩu",
+					$"Vui lòng đặt lại mật khẩu của bạn bằng cách <a href='{callbackUrl}'>click vào đây</a>.");
+
+				return RedirectToAction("ForgotPasswordConfirmation");
+			}
+
+			return View(model);
+		}
+
+		// Xác nhận đã gửi email quên mật khẩu
+		[HttpGet]
+		public IActionResult ForgotPasswordConfirmation()
+		{
+			return View();
+		}
+
+		// Hiển thị form đặt lại mật khẩu
+		[HttpGet]
+		public IActionResult ResetPassword(string token = null)
+		{
+			if (token == null)
+			{
+				return BadRequest("Mã token để đặt lại mật khẩu phải được cung cấp.");
+			}
+			return View(new ResetPasswordViewModel { Token = token });
+		}
+
+		// Xử lý form đặt lại mật khẩu
+		[HttpPost]
+		public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+		{
+			if (ModelState.IsValid)
+			{
+				var user = await _userManager.FindByEmailAsync(model.Email);
+				if (user == null)
+				{
+					return RedirectToAction("ResetPasswordConfirmation");
+				}
+
+				var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+				if (result.Succeeded)
+				{
+					return RedirectToAction("ResetPasswordConfirmation");
+				}
+
+				foreach (var error in result.Errors)
+				{
+					ModelState.AddModelError(string.Empty, error.Description);
+				}
+			}
+
+			return View(model);
+		}
+
+		// Xác nhận đã đặt lại mật khẩu thành công
+		[HttpGet]
+		public IActionResult ResetPasswordConfirmation()
+		{
+			return View();
+		}
 	}
 }

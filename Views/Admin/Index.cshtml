@@ -1,0 +1,38 @@
+﻿@model IEnumerable<HShop2024.Data.KhachHang>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Danh sách khách hàng</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Mã KH</th>
+            <th>Họ Tên</th>
+            <th>Email</th>
+            <th>Vai Trò</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var kh in Model)
+        {
+            <tr>
+                <td>@kh.MaKh</td>
+                <td>@kh.HoTen</td>
+                <td>@kh.Email</td>
+                <td>@(kh.HieuLuc ? "Admin" : "Customer")</td>
+                <td>
+                    <a href="@Url.Action("Edit", "Admin", new { id = kh.MaKh })" class="btn btn-warning">Sửa</a>
+                    <a href="@Url.Action("Delete", "Admin", new { id = kh.MaKh })" class="btn btn-danger">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a href="@Url.Action("Create", "Admin")" class="btn btn-primary">Thêm khách hàng mới></a>
+
+
