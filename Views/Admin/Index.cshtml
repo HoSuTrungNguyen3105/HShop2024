@@ -1,38 +1,41 @@
 ﻿@model IEnumerable<HShop2024.Data.KhachHang>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Danh sách khách hàng";
+    Layout = "_Layout2";
 }
 
-<h2>Danh sách khách hàng</h2>
+<div class="container mt-4">
+    <h1 class="mb-4">@ViewData["Title"]</h1>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Mã KH</th>
-            <th>Họ Tên</th>
-            <th>Email</th>
-            <th>Vai Trò</th>
-            <th>Thao tác</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var kh in Model)
-        {
-            <tr>
-                <td>@kh.MaKh</td>
-                <td>@kh.HoTen</td>
-                <td>@kh.Email</td>
-                <td>@(kh.HieuLuc ? "Admin" : "Customer")</td>
-                <td>
-                    <a href="@Url.Action("Edit", "Admin", new { id = kh.MaKh })" class="btn btn-warning">Sửa</a>
-                    <a href="@Url.Action("Delete", "Admin", new { id = kh.MaKh })" class="btn btn-danger">Xóa</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<a href="@Url.Action("Create", "Admin")" class="btn btn-primary">Thêm khách hàng mới></a>
-
-
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Số TT</th>
+                    <th scope="col">Mã KH</th>
+                    <th scope="col">Họ Tên</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Vai Trò</th>
+                    <th scope="col">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var kh in Model.Select((value, index) => new { value, index }))
+                {
+                    <tr>
+                        <td>@(kh.index + 1)</td> <!-- Số thứ tự bắt đầu từ 1 -->
+                        <td>@kh.value.MaKh</td>
+                        <td>@kh.value.HoTen</td>
+                        <td>@kh.value.Email</td>
+                        <td>@(kh.value.HieuLuc ? "Còn hiệu lực" : "Bị khóa")</td>
+                        <td>
+                            <a href="@Url.Action("Edit", "Admin", new { id = kh.value.MaKh })" class="btn btn-warning btn-sm">Sửa</a>
+                            <a href="@Url.Action("Delete", "Admin", new { id = kh.value.MaKh })" class="btn btn-danger btn-sm">Xóa</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,84 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - Admin Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .sidebar a.highlighted {
+            font-family: 'Poppins', sans-serif; 
+            font-size: 24px;
+            color: #28a745;
+            font-weight: bold; 
+            text-transform: uppercase; 
+            text-decoration: none;
+            pointer-events: none; /* Không cho phép bấm vào */
+        }
+
+            .sidebar a.highlighted:hover {
+                color: #218838;
+            }
+
+        .highlighted {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 20px;
+            color: gray;
+        }
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            background-color: black;
+            padding-top: 20px;
+        }
+
+            .sidebar a {
+                padding: 10px 15px;
+                text-decoration: none;
+                font-size: 20px;
+                color: black;
+                display: block;
+            }
+
+                .sidebar a:hover {
+                    background-color: #495057;
+                }
+
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <a class="highlighted">HSHOP 2023</a>
+        <div class="list-group list-group-flush">
+            <a asp-controller="Home" asp-action="Index" class="list-group-item list-group-item-action bg-light">Trang chủ</a>
+            <a asp-controller="Admin" asp-action="Index" class="list-group-item list-group-item-action bg-light">Quản lí khách hàng</a>
+            <a asp-controller="Admin" asp-action="Index_HangHoa" class="list-group-item list-group-item-action bg-light">Quản lí hàng hóa</a>
+            <a asp-controller="NhanVien" asp-action="Index" class="list-group-item list-group-item-action bg-light">Quản lí nhân viên</a>
+        </div>
+    </div>
+
+
+    <!-- Nội dung chính -->
+    <div class="content">
+        @RenderBody()
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

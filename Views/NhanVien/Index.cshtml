@@ -1,0 +1,37 @@
+﻿@model IEnumerable<HShop2024.Data.NhanVien>
+
+@{
+    ViewData["Title"] = "Danh sách nhân viên";
+    Layout = "_Layout2";
+}
+
+<h1>@ViewData["Title"]</h1>
+<hr>
+
+<!-- Danh sách nhân viên -->
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Mã Nhân Viên</th>
+            <th>Họ Tên</th>
+            <th>Email</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var nv in Model)
+        {
+            <tr>
+                <td>@nv.MaNv</td>
+                <td>@nv.HoTen</td>
+                <td>@nv.Email</td>
+                <td>
+                    <a href="@Url.Action("Edit", "NhanVien", new { id = nv.MaNv })" class="btn btn-warning">Sửa</a>
+                    <a href="@Url.Action("Delete", "NhanVien", new { id = nv.MaNv })" class="btn btn-danger">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a href="@Url.Action("Create", "NhanVien")" class="btn btn-primary">Thêm nhân viên mới</a>

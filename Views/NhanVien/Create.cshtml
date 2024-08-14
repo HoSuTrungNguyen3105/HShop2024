@@ -1,4 +1,4 @@
-﻿@model HShop2024.ViewModels.CreateNV_VM
+﻿@model HShop2024.Data.NhanVien
 
 @{
     ViewData["Title"] = "Thêm Nhân viên mới";
@@ -10,8 +10,8 @@
 
 <form asp-action="Create" method="post">
     <div class="form-group">
-        <label for="MaKh">Mã Nhân Viên</label>
-        <input type="text" id="MaNv" name="MaKh" class="form-control" placeholder="Nhập mã" />
+        <label for="MaNv">Mã Nhân Viên</label>
+        <input type="text" id="MaNv" name="MaNv" class="form-control" placeholder="Nhập mã" />
     </div>
     <div class="form-group">
         <label for="HoTen">Họ Tên</label>
@@ -26,7 +26,6 @@
         <input type="password" id="MatKhau" name="MatKhau" class="form-control" placeholder="Nhập mật khẩu" />
     </div>
     <button type="submit" class="btn btn-primary">Thêm khách hàng</button>
-    <a href="@Url.Action("Index", "Admin")" class="btn btn-secondary">Danh sách khách hàng</a>
+    <a href="@Url.Action("Index", "NhanVien")" class="btn btn-secondary">Danh sách Nhân viên</a>
 </form>
-
 

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using HShop2024.Data;
 using HShop2024.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HShop2024.Controllers;
 
@@ -22,46 +23,64 @@ public class AdminController : Controller
         List<KhachHang> employees = _context.KhachHangs.ToList();
         return View(employees);
     }
-
-    public IActionResult Create()
+    // GET: NhanVien/Edit/5
+    public async Task<IActionResult> Edit(string id)
     {
-        return View();
-    }
+        if (id == null)
+        {
+            return NotFound();
+        }
 
-
-    public IActionResult Create(string id)
-    {
-        string id2 = id;
-        KhachHang khachHang = _context.KhachHangs.SingleOrDefault((KhachHang kh) => kh.MaKh == id2);
+        var khachHang = await _context.KhachHangs.FindAsync(id);
         if (khachHang == null)
         {
             return NotFound();
         }
-        _context.KhachHangs.Add(khachHang);
-        _context.SaveChanges();
-        return RedirectToAction("Index");
+
+        return View(khachHang);
     }
 
-    public IActionResult Edit(int id)
+    // POST: Admin/Edit/5
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(string id, [Bind("MaKh,HoTen,Email,HieuLuc")] KhachHang khachHang)
     {
-        KhachHang employee = _context.KhachHangs.Find(id);
-        if (employee == null)
+        if (id != khachHang.MaKh)
         {
             return NotFound();
         }
-        return View(employee);
+
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                var existingKhachHang = await _context.KhachHangs.FindAsync(id);
+                if (existingKhachHang != null)
+                {
+                    existingKhachHang.HieuLuc = khachHang.HieuLuc;
+                    _context.Update(existingKhachHang);
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!KhachHangExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return RedirectToAction(nameof(Index));
+        }
+        return View(khachHang);
     }
 
-    [HttpPost]
-    public IActionResult Edit(KhachHang model)
+    private bool KhachHangExists(string id)
     {
-        if (base.ModelState.IsValid)
-        {
-            _context.KhachHangs.Update(model);
-            _context.SaveChanges();
-            return RedirectToAction("Index");
-        }
-        return View(model);
+        return _context.KhachHangs.Any(e => e.MaKh == id);
     }
 
     public IActionResult Delete(string id)

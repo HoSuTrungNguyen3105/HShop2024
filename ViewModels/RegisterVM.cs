@@ -21,8 +21,9 @@ namespace HShop2024.ViewModels
 		[Required(ErrorMessage = "*")]
 		[MaxLength(50, ErrorMessage = "Tối đa 50 kí tự")]
 		public string? HoTen { get; set; }
+        public string RandomKey { get; set; } // Chìa khóa ngẫu nhiên để băm mật khẩu
 
-		public bool GioiTinh { get; set; } = true;
+        public bool GioiTinh { get; set; } = true;
 
 		[Display(Name = "Ngày sinh")]
 		[DataType(DataType.Date)]
@@ -42,6 +43,7 @@ namespace HShop2024.ViewModels
 		public string? Email { get; set; }
 
         public string? Hinh { get; set; }
+        public bool HieuLuc { get; set; }
 
-	}
+    }
 }
