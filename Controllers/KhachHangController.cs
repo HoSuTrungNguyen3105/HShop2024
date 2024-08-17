@@ -26,89 +26,92 @@ namespace ECommerceMVC.Controllers
         }
 
         #region Register
-        [HttpGet]
+        // GET: NhanVien/Create
         public IActionResult DangKy()
         {
             return View();
         }
+
+        // POST: NhanVien/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DangKy([Bind("MaKh,MatKhau,HoTen,GioiTinh,NgaySinh,DiaChi,DienThoai,Email,Hinh")] KhachHang khachHang, RegisterVM model)
+        public async Task<IActionResult> DangKy([Bind("MaKh,MatKhau,HoTen,GioiTinh,NgaySinh,DiaChi,DienThoai,Email,Hinh")] KhachHang khachhang)
         {
             if (ModelState.IsValid)
             {
-                db.Add(khachHang);
+                db.Add(khachhang);
                 await db.SaveChangesAsync();
-                ModelState.AddModelError("loi", "Đã có khách hàng được thêm vào");
+                return RedirectToAction("DangNhap", "KhachHang");
             }
-            return View(model);
+            return View(khachhang);
         }
-		#endregion
 
-		#region Login
-		[HttpGet]
-		public IActionResult DangNhap(string? ReturnUrl)
-		{
-			ViewBag.ReturnUrl = ReturnUrl;
-			return View();
-		}
 
-		[HttpPost]
-		public async Task<IActionResult> DangNhap(LoginVM model, string? ReturnUrl)
-		{
-			ViewBag.ReturnUrl = ReturnUrl;
-			if (ModelState.IsValid)
-			{
-				var khachHang = db.KhachHangs.SingleOrDefault(kh => kh.MaKh == model.MaKh);
-				if (khachHang == null)
-				{
-					ModelState.AddModelError("loi", "Không có khách hàng này");
-				}
-				else
-				{
-					if (!khachHang.HieuLuc)
-					{
-						ModelState.AddModelError("loi", "Tài khoản đã bị khóa. Vui lòng liên hệ Admin.");
-					}
-					else
-					{
-						if (khachHang.MatKhau == model.MatKhau.ToMd5Hash(khachHang.RandomKey))
-						{
-							ModelState.AddModelError("ok", "Đăng nhập thành công");
-						}
-						else
-						{
-							var claims = new List<Claim> {
-								new Claim(ClaimTypes.Email, khachHang.Email),
-								new Claim(ClaimTypes.Name, khachHang.HoTen),
-								new Claim(MySetting.CLAIM_CUSTOMERID, khachHang.MaKh),
+        #endregion
+        #region Login
+        [HttpGet]
+        public IActionResult DangNhap(string? ReturnUrl)
+        {
+            ViewBag.ReturnUrl = ReturnUrl;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DangNhap(LoginVM model, string? ReturnUrl)
+        {
+            ViewBag.ReturnUrl = ReturnUrl;
+            if (ModelState.IsValid)
+            {
+                var khachHang = db.KhachHangs.SingleOrDefault(kh => kh.MaKh == model.MaKh);
+                if (khachHang == null)
+                {
+                    ModelState.AddModelError("loi", "Không có khách hàng này");
+                }
+                else
+                {
+                    if (!khachHang.HieuLuc)
+                    {
+                        ModelState.AddModelError("loi", "Tài khoản mới đăng kí nên chưa được kích hoạt. Vui lòng liên hệ Admin để mở khóa.");
+                    }
+                    else
+                    {
+                        if (khachHang.MatKhau == model.MatKhau.ToMd5Hash(khachHang.RandomKey))
+                        {
+                            ModelState.AddModelError("ok", "Đăng nhập thành công");
+                        }
+                        else
+                        {
+                            var claims = new List<Claim> {
+                                new Claim(ClaimTypes.Email, khachHang.Email),
+                                new Claim(ClaimTypes.Name, khachHang.HoTen),
+                                new Claim(MySetting.CLAIM_CUSTOMERID, khachHang.MaKh),
 
 								//claim - role động
 								new Claim(ClaimTypes.Role, "Customer")
-							};
+                            };
 
-							var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-							var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+                            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-							await HttpContext.SignInAsync(claimsPrincipal);
+                            await HttpContext.SignInAsync(claimsPrincipal);
 
-							if (Url.IsLocalUrl(ReturnUrl))
-							{
-								return Redirect(ReturnUrl);
-							}
-							else
-							{
-								return Redirect("Profile");
-							}
-						}
-					}
-				}
-			}
-			return View();
-		}
-		#endregion
+                            if (Url.IsLocalUrl(ReturnUrl))
+                            {
+                                return Redirect(ReturnUrl);
+                            }
+                            else
+                            {
+                                return Redirect("Profile");
+                            }
+                        }
+                    }
+                }
+            }
+            return View();
+        }
+        #endregion
 
-		[Authorize]
+        [Authorize]
         public IActionResult Profile()
         {
             return View();
@@ -142,5 +145,4 @@ namespace ECommerceMVC.Controllers
         {
             return View();
         }
-    }
-}
+    } }

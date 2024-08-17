@@ -27,7 +27,7 @@ namespace HShop2024.ViewModels
 
 		[Display(Name = "Ngày sinh")]
 		[DataType(DataType.Date)]
-		public DateTime? NgaySinh { get; set; }
+		public string? NgaySinh { get; set; }
 
 		[Display(Name = "Địa chỉ")]
 		[MaxLength(60, ErrorMessage = "Tối đa 60 kí tự")]

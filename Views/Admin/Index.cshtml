@@ -53,7 +53,7 @@
                 @foreach (var kh in Model.Select((value, index) => new { value, index }))
                 {
                     <tr>
-                        <td>@(kh.index + 1)</td> <!-- Số thứ tự bắt đầu từ 1 -->
+                        <td>@(kh.index + 1)</td>
                         <td>@kh.value.MaKh</td>
                         <td>@kh.value.HoTen</td>
                         <td>@kh.value.Email</td>

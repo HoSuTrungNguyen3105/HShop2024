@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using HShop2024.Data; // Đảm bảo rằng bạn sử dụng namespace đúng cho DbContext và model của bạn
+using HShop2024.Data; 
 using System.Threading.Tasks;
 using System.Linq;
 using HShop2024.ViewModels;
