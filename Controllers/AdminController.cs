@@ -82,17 +82,4 @@ public class AdminController : Controller
     {
         return _context.KhachHangs.Any(e => e.MaKh == id);
     }
-
-    public IActionResult Delete(string id)
-    {
-        string id2 = id;
-        KhachHang khachHang = _context.KhachHangs.SingleOrDefault((KhachHang kh) => kh.MaKh == id2);
-        if (khachHang == null)
-        {
-            return NotFound();
-        }
-        _context.KhachHangs.Remove(khachHang);
-        _context.SaveChanges();
-        return RedirectToAction("Index");
-    }
 }

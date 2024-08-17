@@ -6,6 +6,8 @@ using System.Linq;
 using HShop2024.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using HShop2024.Helpers;
 
 namespace HShop2024.Controllers
 {
@@ -17,37 +19,7 @@ namespace HShop2024.Controllers
         {
             _context = context;
         }
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> DangNhap(LoginVM model)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var user = await _context.NhanViens
-        //            .FirstOrDefaultAsync(u => u.MaNv == model.MaNv && u.MatKhau == model.MatKhau);
-
-        //        if (user != null)
-        //        {
-        //            // Xác thực người dùng và gán vai trò nhân viên
-        //            var claims = new List<Claim>
-        //        {
-        //            new Claim(ClaimTypes.Name, user.MaNv),
-        //            new Claim(ClaimTypes.Role, "NhanVien")
-        //        };
-
-        //            var identity = new ClaimsIdentity(claims, "Login");
-        //            var principal = new ClaimsPrincipal(identity);
-        //            await HttpContext.SignInAsync(principal);
-
-        //            return RedirectToAction("Index", "Admin");
-        //        }
-
-        //        ModelState.AddModelError("", "Thông tin đăng nhập không chính xác.");
-        //    }
-
-        //    return View(model);
-        //}
-        // GET: NhanVien
+      
         public async Task<IActionResult> Index()
         {
             var nhanViens = await _context.NhanViens.ToListAsync();
@@ -141,8 +113,63 @@ namespace HShop2024.Controllers
             return View(nhanVien);
         }
 
-        // GET: NhanVien/Delete/5
-        public async Task<IActionResult> Delete(string? id)
+		#region Login
+		[HttpGet]
+		public IActionResult DangNhap(string? ReturnUrl)
+		{
+			ViewBag.ReturnUrl = ReturnUrl;
+			return View();
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> DangNhap(LoginNV_VM model, string? ReturnUrl)
+		{
+			ViewBag.ReturnUrl = ReturnUrl;
+			if (ModelState.IsValid)
+			{
+                var nhanVien = _context.NhanViens.SingleOrDefault(nv => nv.MaNv == model.MaNv);
+                if (nhanVien != null)
+                {
+                    // Mã nhân viên không cần random key
+                    if (nhanVien.MatKhau == model.MatKhau)
+                    {
+                        // Đăng nhập thành công cho nhân viên
+                        var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Email, nhanVien.Email),
+                    new Claim(ClaimTypes.Name, nhanVien.HoTen),
+                    new Claim(MySetting.CLAIM_EMPLOYEEID, nhanVien.MaNv),
+                    new Claim(ClaimTypes.Role, "Employee")
+                };
+
+                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
+                        await HttpContext.SignInAsync(claimsPrincipal);
+
+                        if (Url.IsLocalUrl(ReturnUrl))
+                        {
+                            return Redirect(ReturnUrl);
+                        }
+                        else
+                        {
+                            return RedirectToAction("Profile", "KhachHang");
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("loi", "Mật khẩu không đúng.");
+                    }
+                }
+
+                // Nếu không phải khách hàng cũng không phải nhân viên
+                ModelState.AddModelError("loi", "Không có tài khoản này.");
+            }
+
+            return View(model);
+        }
+		#endregion
+		public async Task<IActionResult> Delete(string? id)
         {
             if (id == null)
             {
@@ -174,5 +201,6 @@ namespace HShop2024.Controllers
         {
             return _context.NhanViens.Any(e => e.MaNv == id);
         }
+
     }
 }

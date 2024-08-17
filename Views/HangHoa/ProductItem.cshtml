@@ -27,7 +27,41 @@
         });
     });
 </script>
+<style>
+    .fruite-img img {
+        width: 100%;
+        height: 250px; /* Bạn có thể điều chỉnh chiều cao theo ý muốn */
+        object-fit: cover; /* Cắt xén hình ảnh để vừa với khung hình */
+        border-radius: 8px 8px 0 0; /* Giữ viền tròn ở phần trên */
+    }
 
+    .fruite-item {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+        .fruite-item .p-4 {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .fruite-item img {
+            height: 250px; /* Chiều cao cố định cho hình ảnh */
+            object-fit: cover; /* Cắt xén hình ảnh để vừa với khung hình */
+        }
+
+        .fruite-item .p-4 h4 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .fruite-item .p-4 p {
+            flex-grow: 1;
+        }
+</style>
 <h3> Có <b>@Model.Count()</b> sản phẩm.</h3>
 @foreach (var item in Model)
 {

@@ -71,7 +71,6 @@ namespace HShop2024.Controllers
             return View(hangHoa);
         }
 
-        // GET: HangHoas/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -92,6 +91,7 @@ namespace HShop2024.Controllers
         // POST: HangHoas/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: HangHoas/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("MaHh,TenHh,TenAlias,MaLoai,MoTaDonVi,DonGia,Hinh,NgaySx,GiamGia,SoLanXem,MoTa,MaNcc")] HangHoa hangHoa)
@@ -119,10 +119,15 @@ namespace HShop2024.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                // Redirect to HangHoa/Index
+                return RedirectToAction("Index", "HangHoas");
             }
+
+            // Rebind ViewData in case of validation errors
             ViewData["MaLoai"] = new SelectList(_context.Loais, "MaLoai", "MaLoai", hangHoa.MaLoai);
             ViewData["MaNcc"] = new SelectList(_context.NhaCungCaps, "MaNcc", "MaNcc", hangHoa.MaNcc);
+
+            // Return to the edit view if model state is not valid
             return View(hangHoa);
         }
 
@@ -138,6 +143,7 @@ namespace HShop2024.Controllers
                 .Include(h => h.MaLoaiNavigation)
                 .Include(h => h.MaNccNavigation)
                 .FirstOrDefaultAsync(m => m.MaHh == id);
+
             if (hangHoa == null)
             {
                 return NotFound();
@@ -151,14 +157,25 @@ namespace HShop2024.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var hangHoa = await _context.HangHoas.FindAsync(id);
-            if (hangHoa != null)
+            var hangHoa = await _context.HangHoas
+    .Include(h => h.BanBes)
+    .Include(h => h.ChiTietHds)
+    .FirstOrDefaultAsync(h => h.MaHh == id);
+
+            if (hangHoa == null)
             {
-                _context.HangHoas.Remove(hangHoa);
+                return NotFound();
             }
 
+            // Xóa tất cả các bản ghi liên quan trong BanBes và ChiTietHds
+            _context.BanBes.RemoveRange(hangHoa.BanBes);
+            _context.ChiTietHds.RemoveRange(hangHoa.ChiTietHds);
+
+            // Sau đó xóa hangHoa
+            _context.HangHoas.Remove(hangHoa);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+
         }
 
         private bool HangHoaExists(int id)

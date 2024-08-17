@@ -67,17 +67,15 @@
         <div class="list-group list-group-flush">
             <a asp-controller="Home" asp-action="Index" class="list-group-item list-group-item-action bg-light">Trang chủ</a>
             <a asp-controller="Admin" asp-action="Index" class="list-group-item list-group-item-action bg-light">Quản lí khách hàng</a>
-            <a asp-controller="Admin" asp-action="Index_HangHoa" class="list-group-item list-group-item-action bg-light">Quản lí hàng hóa</a>
+            <a asp-controller="HangHoas" asp-action="Index" class="list-group-item list-group-item-action bg-light">Quản lí hàng hóa</a>
             <a asp-controller="NhanVien" asp-action="Index" class="list-group-item list-group-item-action bg-light">Quản lí nhân viên</a>
         </div>
     </div>
-
-
     <!-- Nội dung chính -->
     <div class="content">
         @RenderBody()
     </div>
-
+    @RenderSection("Scripts", required: false)
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
 </body>

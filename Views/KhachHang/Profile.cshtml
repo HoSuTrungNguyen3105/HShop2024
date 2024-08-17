@@ -1,10 +1,30 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Profile";
 }
 
-<h1>Profile</h1>
-<div class="container">
-	<h2>Welcome @Context.User.Identity.Name</h2>
-	<a asp-action="DangXuat">Đăng xuất</a>
+<h1 class="text-center mt-5">Profile</h1>
+
+<div class="container mt-4 p-4 border rounded" style="max-width: 600px; background-color: #f9f9f9;">
+    @if (User.Identity.IsAuthenticated)
+    {
+        var userName = User.Identity.Name;
+        var isEmployee = User.IsInRole("Employee");
+
+        if (isEmployee)
+        {
+            <h2 class="mb-3 text-primary">Chào nhân viên @userName</h2>
+        }
+        else
+        {
+            <h2 class="mb-3 text-primary">Chào khách hàng @userName</h2>
+        }
+    }
+    else
+    {
+        <h2 class="mb-3 text-primary">Chào bạn!</h2>
+    }
+
+    <div class="d-flex justify-content-between">
+        <a asp-action="DangXuat" class="btn btn-danger">Đăng xuất</a>
+    </div>
 </div>
