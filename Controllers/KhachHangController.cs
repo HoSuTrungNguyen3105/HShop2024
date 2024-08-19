@@ -35,10 +35,14 @@ namespace ECommerceMVC.Controllers
         // POST: NhanVien/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DangKy([Bind("MaKh,MatKhau,HoTen,GioiTinh,NgaySinh,DiaChi,DienThoai,Email,Hinh")] KhachHang khachhang)
+        public async Task<IActionResult> DangKy([Bind("MaKh,MatKhau,HoTen,GioiTinh,NgaySinh,DiaChi,DienThoai,Email,Hinh")] KhachHang khachhang, IFormFile Hinh)
         {
             if (ModelState.IsValid)
             {
+                if (Hinh != null)
+                {
+                    khachhang.Hinh = MyUtil.UploadHinh(Hinh, "KhachHang");
+                }
                 db.Add(khachhang);
                 await db.SaveChangesAsync();
                 return RedirectToAction("DangNhap", "KhachHang");
@@ -71,7 +75,7 @@ namespace ECommerceMVC.Controllers
                 {
                     if (!khachHang.HieuLuc)
                     {
-                        ModelState.AddModelError("loi", "Tài khoản mới đăng kí nên chưa được kích hoạt. Vui lòng liên hệ Admin để mở khóa.");
+                        ModelState.AddModelError("loi", "Tài khoản mới đăng kí nên chưa được kích hoạt. Vui lòng liên hệ Admin để kích hoạt.");
                     }
                     else
                     {

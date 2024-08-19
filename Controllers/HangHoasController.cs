@@ -52,10 +52,7 @@ namespace HShop2024.Controllers
             ViewData["MaNcc"] = new SelectList(_context.NhaCungCaps, "MaNcc", "MaNcc");
             return View();
         }
-
-        // POST: HangHoas/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+      
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("MaHh,TenHh,TenAlias,MaLoai,MoTaDonVi,DonGia,Hinh,NgaySx,GiamGia,SoLanXem,MoTa,MaNcc")] HangHoa hangHoa)
@@ -71,6 +68,7 @@ namespace HShop2024.Controllers
             return View(hangHoa);
         }
 
+        // GET: HangHoas/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -89,9 +87,6 @@ namespace HShop2024.Controllers
         }
 
         // POST: HangHoas/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        // POST: HangHoas/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("MaHh,TenHh,TenAlias,MaLoai,MoTaDonVi,DonGia,Hinh,NgaySx,GiamGia,SoLanXem,MoTa,MaNcc")] HangHoa hangHoa)
@@ -101,11 +96,13 @@ namespace HShop2024.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(hangHoa);
+                    // Log để kiểm tra dữ liệu trước khi lưu
+                    Console.WriteLine($"TenHh: {hangHoa.TenHh}, DonGia: {hangHoa.DonGia}");
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -119,19 +116,27 @@ namespace HShop2024.Controllers
                         throw;
                     }
                 }
-                // Redirect to HangHoa/Index
-                return RedirectToAction("Index", "HangHoas");
+                foreach (var value in ModelState.Values)
+                {
+                    foreach (var error in value.Errors)
+                    {
+                        Console.WriteLine(error.ErrorMessage);
+                    }
+                }
+                return RedirectToAction(nameof(Index));
             }
+        
 
-            // Rebind ViewData in case of validation errors
             ViewData["MaLoai"] = new SelectList(_context.Loais, "MaLoai", "MaLoai", hangHoa.MaLoai);
             ViewData["MaNcc"] = new SelectList(_context.NhaCungCaps, "MaNcc", "MaNcc", hangHoa.MaNcc);
-
-            // Return to the edit view if model state is not valid
             return View(hangHoa);
         }
 
-        // GET: HangHoas/Delete/5
+        private bool HangHoaExists(int id)
+        {
+            return _context.HangHoas.Any(e => e.MaHh == id);
+        }
+
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -176,11 +181,6 @@ namespace HShop2024.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
 
-        }
-
-        private bool HangHoaExists(int id)
-        {
-            return _context.HangHoas.Any(e => e.MaHh == id);
         }
     }
 }

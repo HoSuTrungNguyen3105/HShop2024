@@ -5,28 +5,88 @@
     Layout = "_Layout2";
 }
 
-<h1>Edit HangHoa</h1>
+<h2>Edit HangHoa</h2>
 
 <form asp-action="Edit">
-    <div class="form-group">
-        <label asp-for="TenHh" class="control-label"></label>
-        <input asp-for="TenHh" class="form-control" />
-        <span asp-validation-for="TenHh" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="MaLoai" class="control-label"></label>
-        <select asp-for="MaLoai" class="form-control" asp-items="ViewBag.MaLoai"></select>
-        <span asp-validation-for="MaLoai" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="MaNcc" class="control-label"></label>
-        <select asp-for="MaNcc" class="form-control" asp-items="ViewBag.MaNcc"></select>
-        <span asp-validation-for="MaNcc" class="text-danger"></span>
-    </div>
-    <!-- Các trường khác của form -->
-    <div class="form-group">
-        <input type="submit" value="Save" class="btn btn-primary" />
+    <div class="form-horizontal">
+        <input type="hidden" asp-for="MaHh" /> <!-- Ẩn giá trị MaHh -->
+
+        <div class="form-group">
+            <label asp-for="TenHh" class="control-label"></label>
+            <input asp-for="TenHh" class="form-control" />
+            <span asp-validation-for="TenHh" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="TenAlias" class="control-label"></label>
+            <input asp-for="TenAlias" class="form-control" />
+            <span asp-validation-for="TenAlias" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="MaLoai" class="control-label"></label>
+            <select asp-for="MaLoai" class="form-control" asp-items="ViewBag.MaLoai"></select>
+            <span asp-validation-for="MaLoai" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="MoTaDonVi" class="control-label"></label>
+            <input asp-for="MoTaDonVi" class="form-control" />
+            <span asp-validation-for="MoTaDonVi" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="DonGia" class="control-label"></label>
+            <input asp-for="DonGia" class="form-control" />
+            <span asp-validation-for="DonGia" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Hinh" class="control-label"></label>
+            <input asp-for="Hinh" class="form-control" />
+            <span asp-validation-for="Hinh" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="NgaySx" class="control-label"></label>
+            <input asp-for="NgaySx" class="form-control" />
+            <span asp-validation-for="NgaySx" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="GiamGia" class="control-label"></label>
+            <input asp-for="GiamGia" class="form-control" />
+            <span asp-validation-for="GiamGia" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="SoLanXem" class="control-label"></label>
+            <input asp-for="SoLanXem" class="form-control" />
+            <span asp-validation-for="SoLanXem" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="MoTa" class="control-label"></label>
+            <textarea asp-for="MoTa" class="form-control"></textarea>
+            <span asp-validation-for="MoTa" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="MaNcc" class="control-label"></label>
+            <select asp-for="MaNcc" class="form-control" asp-items="ViewBag.MaNcc"></select>
+            <span asp-validation-for="MaNcc" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">Save</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </div>
     </div>
 </form>
 
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
 <a asp-action="Index">Back to List</a>
