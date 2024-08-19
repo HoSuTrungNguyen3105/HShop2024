@@ -60,7 +60,6 @@
                         <td>@(kh.value.HieuLuc ? "Còn hiệu lực" : "Bị khóa")</td>
                         <td>
                             <a href="@Url.Action("Edit", "Admin", new { id = kh.value.MaKh })" class="btn btn-warning btn-sm">Sửa</a>
-                            <a href="@Url.Action("Delete", "Admin", new { id = kh.value.MaKh })" class="btn btn-danger btn-sm">Xóa</a>
                         </td>
                     </tr>
                 }
