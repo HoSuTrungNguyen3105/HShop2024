@@ -3,7 +3,6 @@
 @{
 	ViewData["Title"] = "Checkout";
 }
-
 <!-- Single Page Header start -->
 <div class="container-fluid page-header py-5">
 	<h1 class="text-center text-white display-6">Checkout</h1>
@@ -31,7 +30,7 @@
 					</div>
 					<div class="form-item delivery-info">
 						<label class="form-label my-3">Địa chỉ nhận hàng<sup>*</sup></label>
-						<input type="text" name="DiaChi" class="form-control" placeholder="208 Phạm Tứ, Quận Cẩm Lệ">
+						<input type="text" name="DiaChi" class="form-control">
 					</div>
 					<div class="form-item delivery-info">
 						<label class="form-label my-3">Điện thoại<sup>*</sup></label>
@@ -115,7 +114,7 @@
 									<td class="py-5"></td>
 									<td class="py-5">
 										<div class="py-3 border-bottom border-top">
-											<p class="mb-0 text-dark">$135.00</p>
+											<p class="mb-0 text-dark">$@Model.Sum(p => p.ThanhTien).ToString("#,##0.00")</p>
 										</div>
 									</td>
 								</tr>
@@ -156,8 +155,9 @@
 						</div>
 					</div>
 					<div class="row g-4 text-center align-items-center justify-content-center pt-4">
-						<button type="button" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary">Place Order</button>
+						<button type="button" class="btn btn-primary btn-lg text-uppercase w-100">Đặt Hàng</button>
 					</div>
+
 				</div>
 			</div>
 		</form>

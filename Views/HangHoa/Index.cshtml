@@ -5,11 +5,21 @@
 	ViewData["Title"] = "Index";
 	Layout = "_DanhSachHangHoa";
 }
+    <style>
+        .custom-alert {
+            color: red; /* Màu chữ đỏ */
+            font-weight: bold; /* Chữ đậm */
+            padding: 10px; /* Khoảng cách giữa chữ và viền */
+            margin-bottom: 20px; /* Khoảng cách dưới thông báo */
+        }
+    </style>
 
-@if (ViewBag.SuccessMessage != null)
-{
-	<p class="small text-success">@ViewBag.SuccessMessage</p>
-}
+    @if (TempData["Message"] != null)
+    {
+        <div class="custom-alert">
+            @TempData["Message"]
+        </div>
+    }
 <!-- Single Page Header start -->
 @section BreadCum {
 	<div class="container-fluid page-header py-5">
@@ -26,14 +36,27 @@
 @await Html.PartialAsync("ProductItem", Model)
 
 <div class="col-12">
-	<div class="pagination d-flex justify-content-center mt-5">
-		<a href="#" class="rounded">&laquo;</a>
-		<a href="#" class="active rounded">1</a>
-		<a href="#" class="rounded">2</a>
-		<a href="#" class="rounded">3</a>
-		<a href="#" class="rounded">4</a>
-		<a href="#" class="rounded">5</a>
-		<a href="#" class="rounded">6</a>
-		<a href="#" class="rounded">&raquo;</a>
-	</div>
+    <div class="pagination d-flex justify-content-center mt-5">
+        <a href="#" class="rounded">&laquo;</a>
+        <div id="pagination-links"></div>
+        <a href="#" class="rounded">&raquo;</a>
+    </div>
 </div>
+<script>
+    const totalPages = 6;
+    const paginationContainer = document.getElementById('pagination-links');
+
+    for (let i = 1; i <= totalPages; i++) {
+        const link = document.createElement('a');
+        link.href = "#";
+        link.className = "rounded";
+        link.textContent = i;
+
+        if (i === 1) {
+            link.classList.add('active');
+        }
+
+        paginationContainer.appendChild(link);
+    }
+</script>
+

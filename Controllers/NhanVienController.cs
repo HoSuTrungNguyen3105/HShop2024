@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using HShop2024.Data; 
+using HShop2024.Data;
 using System.Threading.Tasks;
 using System.Linq;
 using HShop2024.ViewModels;
@@ -19,7 +19,7 @@ namespace HShop2024.Controllers
         {
             _context = context;
         }
-      
+
         public async Task<IActionResult> Index()
         {
             var nhanViens = await _context.NhanViens.ToListAsync();
@@ -113,25 +113,27 @@ namespace HShop2024.Controllers
             return View(nhanVien);
         }
 
-		#region Login
-		[HttpGet]
-		public IActionResult DangNhap(string? ReturnUrl)
-		{
-			ViewBag.ReturnUrl = ReturnUrl;
-			return View();
-		}
+        #region Login
+        [HttpGet]
+        public IActionResult DangNhap(string? ReturnUrl)
+        {
+            ViewBag.ReturnUrl = ReturnUrl;
+            return View();
+        }
 
-		[HttpPost]
-		public async Task<IActionResult> DangNhap(LoginNV_VM model, string? ReturnUrl)
-		{
-			ViewBag.ReturnUrl = ReturnUrl;
-			if (ModelState.IsValid)
-			{
+        [HttpPost]
+        public async Task<IActionResult> DangNhap(LoginNV_VM model, string? ReturnUrl)
+        {
+            ViewBag.ReturnUrl = ReturnUrl;
+
+            if (ModelState.IsValid)
+            {
                 var nhanVien = _context.NhanViens.SingleOrDefault(nv => nv.MaNv == model.MaNv);
+
                 if (nhanVien != null)
                 {
-                    // Mã nhân viên không cần random key
-                    if (nhanVien.MatKhau == model.MatKhau)
+                    // Kiểm tra mật khẩu (đảm bảo rằng mật khẩu được mã hóa đúng cách)
+                    if (nhanVien.MatKhau == model.MatKhau) // Kiểm tra cách mã hóa mật khẩu
                     {
                         // Đăng nhập thành công cho nhân viên
                         var claims = new List<Claim>
@@ -145,7 +147,7 @@ namespace HShop2024.Controllers
                         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-                        await HttpContext.SignInAsync(claimsPrincipal);
+                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
 
                         if (Url.IsLocalUrl(ReturnUrl))
                         {
@@ -161,15 +163,19 @@ namespace HShop2024.Controllers
                         ModelState.AddModelError("loi", "Mật khẩu không đúng.");
                     }
                 }
-
-                // Nếu không phải khách hàng cũng không phải nhân viên
-                ModelState.AddModelError("loi", "Không có tài khoản này.");
+                else
+                {
+                    ModelState.AddModelError("loi", "Không có tài khoản này.");
+                }
             }
 
             return View(model);
         }
-		#endregion
-		public async Task<IActionResult> Delete(string? id)
+
+
+
+        #endregion
+        public async Task<IActionResult> Delete(string? id)
         {
             if (id == null)
             {

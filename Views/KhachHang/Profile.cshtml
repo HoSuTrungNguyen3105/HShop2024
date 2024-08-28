@@ -2,9 +2,9 @@
     ViewData["Title"] = "Profile";
 }
 
-<h1 class="text-center mt-5">Profile</h1>
+<h1 class="text-center mt-5 display-4 font-weight-bold">Profile</h1>
 
-<div class="container mt-4 p-4 border rounded" style="max-width: 600px; background-color: #f9f9f9;">
+<div class="container mt-4 p-5 border shadow-lg rounded-lg" style="max-width: 600px; background-color: #f9f9f9; border: 1px solid #ddd;">
     @if (User.Identity.IsAuthenticated)
     {
         var userName = User.Identity.Name;
@@ -12,19 +12,20 @@
 
         if (isEmployee)
         {
-            <h2 class="mb-3 text-primary">Chào nhân viên @userName</h2>
+            <h2 class="mb-4 text-success">👨‍💼 Chào nhân viên @userName!</h2>
         }
         else
         {
-            <h2 class="mb-3 text-primary">Chào khách hàng @userName</h2>
+            <h2 class="mb-4 text-info">👤 Chào khách hàng @userName!</h2>
         }
     }
     else
     {
-        <h2 class="mb-3 text-primary">Chào bạn!</h2>
+        <h2 class="mb-4 text-warning">👋 Chào bạn!</h2>
     }
 
-    <div class="d-flex justify-content-between">
-        <a asp-action="DangXuat" class="btn btn-danger">Đăng xuất</a>
+    <div class="d-flex justify-content-between align-items-center mt-4">
+        <p class="text-muted">Cảm ơn bạn đã ghé thăm.</p>
+        <a asp-action="DangXuat" class="btn btn-danger btn-lg px-4">Đăng xuất</a>
     </div>
 </div>

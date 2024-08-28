@@ -29,6 +29,21 @@
 	<!-- Template Stylesheet -->
 	<link href="~/css/style.css" rel="stylesheet">
 	@RenderSection("Styles", required: false)
+	<style>
+		.back-to-top {
+			position: fixed;
+			bottom: 20px;
+			right: 20px;
+			display: none; /* Ẩn nút khi chưa cuộn xuống */
+			z-index: 1000;
+			transition: opacity 0.3s ease-in-out;
+		}
+
+			.back-to-top.show {
+				display: block; /* Hiển thị nút khi cuộn xuống */
+			}
+	</style>
+
 </head>
 <body>
 	<div>
@@ -145,7 +160,9 @@
 	</div>
 
 	<!-- Back to Top -->
-	<a href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top"><i class="fa fa-arrow-up"></i></a>
+	<a id="ok" href="#" class="btn btn-primary border-3 border-primary rounded-circle back-to-top">
+		<i class="fa fa-arrow-up"></i>
+	</a>
 
 
 	<!-- JavaScript Libraries -->
@@ -159,8 +176,27 @@
 	<!-- Template Javascript -->
 	<script src="~/js/main.js"></script>
 	@RenderSection("Scripts", required: false)
-
 	<script>
+		document.addEventListener('DOMContentLoaded', function () {
+			const backToTopButton = document.querySelector('#ok');
+			window.addEventListener('scroll', function () {
+				if (window.scrollY > 300) { // Hiển thị nút khi cuộn xuống 300px
+					backToTopButton.classList.add('show');
+				} else {
+					backToTopButton.classList.remove('show');
+				}
+			});
+
+			// Khi nhấp vào nút, quay về đầu trang
+			backToTopButton.addEventListener('click', function (e) {
+				e.preventDefault();
+				window.scrollTo({
+					top: 0,
+					behavior: 'smooth' // Cuộn mượt mà
+				});
+			});
+		});
+	
 		$(document).ready(function () {
 			$("#seachButton").click(function () {
 				let url = `/HangHoa/Search?query=` + $("#searchText").val();
