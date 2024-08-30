@@ -11,7 +11,7 @@
             var productId = $(this).data('id'); // Lấy ID sản phẩm từ data attribute
 
             $.ajax({
-                url: '/Cart/AddToCart2', // URL đến action AddToCart của controller Cart
+                url: '/Cart/AddToCart', // URL đến action AddToCart của controller Cart
                 type: 'POST',
                 data: { id: productId, quantity: 1 }, // Dữ liệu gửi lên server
                 success: function (response) {
@@ -23,13 +23,13 @@
                         toastr.success('Sản phẩm đã được thêm vào giỏ hàng', 'Thành công', {
                             closeButton: true,
                             progressBar: true,
-                            timeOut: '3000'
+                            timeOut: '2000'
                         });
                     } else {
                         toastr.error(response.message, 'Lỗi', {
                             closeButton: true,
                             progressBar: true,
-                            timeOut: '3000'
+                            timeOut: '2000'
                         });
                     }
                 },
@@ -37,7 +37,7 @@
                     toastr.error('Có lỗi xảy ra, vui lòng thử lại sau', 'Lỗi', {
                         closeButton: true,
                         progressBar: true,
-                        timeOut: '3000'
+                        timeOut: '2000'
                     });
                 }
             });
@@ -98,8 +98,8 @@
 					<a href="#" data-id="@item.MaHh" class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart">
 						<i class="fa fa-shopping-bag me-2 text-primary"></i> Thêm vào giỏ
 					</a>
-					@* <a asp-action="AddToCart" asp-controller="Cart" asp-route-id="@item.MaHh" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Đưa vào giỏ</a> *@
-				</div>
+@* 					<a asp-action="AddToCart" asp-controller="Cart" asp-route-id="@item.MaHh" class="btn border border-secondary rounded-pill px-3 text-primary"><i class="fa fa-shopping-bag me-2 text-primary"></i> Đưa vào giỏ</a>
+ *@				</div>
 			</div>
 		</div>
 	</div>

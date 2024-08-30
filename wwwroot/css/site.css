@@ -27,7 +27,15 @@ body {
 h1 {
     color: #343a40;
 }
-
+.styled-welcome {
+    font-size: 70px;
+    background: linear-gradient(90deg, #ff8a00, #da1b60);
+    -webkit-background-clip: text;
+    color: transparent;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+}
 .table {
     width: 100%;
     table-layout: fixed;
@@ -102,7 +110,6 @@ th {
     height: auto;
 }
 
-/* Sidebar and content styling based on your latest input */
 .sidebar {
     height: 100vh;
     position: fixed;

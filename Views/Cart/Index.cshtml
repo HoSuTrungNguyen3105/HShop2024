@@ -2,7 +2,8 @@
 @{
     ViewData["Title"] = "Giỏ hàng";
 }
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 <!-- Single Page Header start -->
 <div class="container-fluid page-header py-5">
     <h1 class="text-center text-white display-6">Cart</h1>
@@ -48,28 +49,31 @@
                                 <p class="mb-0 mt-4">$ @item.DonGia</p>
                             </td>
                             <td>
-                                <div class="input-group quantity mt-4" style="width: 100px;">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-minus rounded-circle bg-light border" data-mahh="@item.MaHh" data-action="decrease">
-                                            <i class="fa fa-minus"></i>
-                                        </button>
-                                    </div>
-                                    <input type="text" class="form-control form-control-sm text-center border-0" id="quantity-@item.MaHh" value="@item.SoLuong">
-                                    <div class="input-group-btn">
-                                        <button class="btn btn-sm btn-plus rounded-circle bg-light border" data-mahh="@item.MaHh" data-action="increase">
-                                            <i class="fa fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
+                                <form method="post" action="@Url.Action("UpdateCartQuantity", "Cart")" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.MaHh" />
+                                    <input type="hidden" name="quantity" value="@item.SoLuong" />
+                                    <button type="submit" class="btn btn-plus" name="action" value="increase">
+                                        <i class="fa fa-plus"></i>
+                                    </button>
+                                </form>
+                                <input type="text" id="quantity-@item.MaHh" value="@item.SoLuong" readonly />
+                                <form method="post" action="@Url.Action("UpdateCartQuantity", "Cart")" class="d-inline">
+                                    <input type="hidden" name="id" value="@item.MaHh" />
+                                    <input type="hidden" name="quantity" value="@item.SoLuong" />
+                                    <button type="submit" class="btn btn-minus" name="action" value="decrease">
+                                        <i class="fa fa-minus"></i>
+                                    </button>
+                                </form>
                             </td>
                             <td>
                                 <p class="mb-0 mt-4" id="price-@item.MaHh">$ @item.ThanhTien</p>
                             </td>
                             <td>
-                                <a asp-action="RemoveCart" asp-controller="Cart" asp-route-id="@item.MaHh" class="btn btn-md rounded-circle bg-light border mt-4">
+                                <a href="javascript:void(0);" onclick="confirmDelete('@item.MaHh')" class="btn btn-md rounded-circle bg-light border mt-4">
                                     <i class="fa fa-times text-danger"></i>
                                 </a>
                             </td>
+
                         </tr>
                     }
                 </tbody>
@@ -78,8 +82,8 @@
 
         <!-- Coupon Code Section -->
         <div class="mt-5">
-            <input type="text" class="border-0 border-bottom rounded me-5 py-3 mb-4" placeholder="Coupon Code">
-            <button class="btn border-secondary rounded-pill px-4 py-3 text-primary" type="button">Apply Coupon</button>
+            <input type="text" id="couponCode" class="border-0 border-bottom rounded me-5 py-3 mb-4" placeholder="Coupon Code">
+            <button id="applyCoupon" class="btn border-secondary rounded-pill px-4 py-3 text-primary" type="button">Apply Coupon</button>
         </div>
 
         <!-- Cart Summary Section -->
@@ -102,6 +106,8 @@
                         <h5 class="mb-0 ps-4 me-4">Total</h5>
                         <p class="mb-0 pe-4">$<span id="total">@Model.Sum(p => p.ThanhTien)</span></p>
                     </div>
+                    <p>Total Amount: <span id="totalAmount">@Model.Sum(p => p.ThanhTien)</span></p>
+
                     <a class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4" asp-action="Checkout" asp-controller="Cart">Xác Nhận</a>
                 </div>
             </div>
@@ -111,37 +117,43 @@
 <!-- Cart Page End -->
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('.btn-minus, .btn-plus').off('click').on('click', function () {
-                var button = $(this);
-                var quantityInput = button.closest('div.input-group').find('input');
-                var quantity = parseInt(quantityInput.val());
-                var productId = button.data('mahh');
-                var action = button.data('action');
+    <script>    
+        function confirmDelete(productId) {
+            var result = confirm("Bạn đã chắc chưa ?");
+            if (result) {
+                window.location.href = '/Cart/RemoveCart/' + productId;
+            }
+        }
+        // $(document).ready(function () {
+        //     $('.btn-minus, .btn-plus').on('click', function () {
+        //         var action = $(this).data('action');
+        //         var productId = $(this).data('mahh');
+        //         var quantityElement = $('#quantity-' + productId);
+        //         var quantity = parseInt(quantityElement.val());
 
-                if (action === 'increase') {
-                    quantity++;
-                } else if (action === 'decrease' && quantity > 1) {
-                    quantity--;
-                }
+        //         if (action === 'increase') {
+        //             quantity += 1; // Increase by 1
+        //         } else if (action === 'decrease' && quantity > 1) {
+        //             quantity -= 1; // Decrease by 1
+        //         }
 
-                quantityInput.val(quantity);
+        //         // Send AJAX request to update quantity and price
+        //         $.ajax({
+        //             url: '@Url.Action("UpdateCartQuantity", "Cart")',
+        //             method: 'POST',
+        //             data: { id: productId, quantity: quantity },
+        //             success: function (response) {
+        //                 // Update the quantity and price on the page
+        //                 quantityElement.val(response.newQuantity);
+        //                 $('#price-' + productId).text('$' + response.newPrice);                     
+        //             },
+        //             error: function () {
+        //                 alert('Error updating quantity!');
+        //             }
+        //         });
+        //     });
+        // });
 
-                $.ajax({
-                    url: '@Url.Action("UpdateQuantity", "Cart")',
-                    type: 'POST',
-                    data: {
-                        id: productId,
-                        quantity: quantity
-                    },
-                    success: function (data) {
-                        $('#price-' + productId).text('$' + data.totalPrice);
-                        $('#subtotal').text(data.subtotal);
-                        $('#total').text(data.total);
-                    }
-                });
-            });
-        });
+
     </script>
 }

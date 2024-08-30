@@ -26,41 +26,9 @@ namespace HShop2024.Controllers
         {
             return View(Cart);
         }
-
-        public IActionResult AddToCart(int id, int quantity = 1)
-        {
-            var gioHang = Cart;
-            var item = gioHang.SingleOrDefault(p => p.MaHh == id);
-            if (item == null)
-            {
-                var hangHoa = db.HangHoas.SingleOrDefault(p => p.MaHh == id);
-                if (hangHoa == null)
-                {
-                    TempData["Message"] = $"Không tìm thấy hàng hóa có mã {id}";
-                    return Redirect("/404");
-                }
-                item = new CartItem
-                {
-                    MaHh = hangHoa.MaHh,
-                    TenHH = hangHoa.TenHh,
-                    DonGia = hangHoa.DonGia ?? 0,
-                    Hinh = hangHoa.Hinh ?? string.Empty,
-                    SoLuong = quantity
-                };
-                gioHang.Add(item);
-            }
-            else
-            {
-                item.SoLuong += quantity;
-            }
-
-            HttpContext.Session.Set(MySetting.CART_KEY, gioHang);
-
-            return RedirectToAction("Index");
-        }
-
+   
         [HttpPost]
-        public JsonResult AddToCart2(int id, int quantity = 1)
+        public JsonResult AddToCart(int id, int quantity = 1)
         {
             var gioHang = Cart;
             var item = gioHang.SingleOrDefault(p => p.MaHh == id);
@@ -190,11 +158,96 @@ namespace HShop2024.Controllers
 			}
 			return Json(new { success = false, message = "Dữ liệu không hợp lệ." });
 		}
+        [HttpPost]
+        public IActionResult UpdateCartQuantity(int id, int quantity, string action)
+        {
+            var gioHang = Cart;
+            var item = gioHang.SingleOrDefault(p => p.MaHh == id);
+            if (item != null)
+            {
+                if (action == "increase")
+                {
+                    item.SoLuong += 1; // Increase quantity by 1
+                }
+                else if (action == "decrease" && item.SoLuong > 1)
+                {
+                    item.SoLuong -= 1; // Decrease quantity by 1
+                }
+
+                item.ThanhTien = item.SoLuong * item.DonGia; // Update total price for the item
+
+                // Update cart in session
+                HttpContext.Session.Set(MySetting.CART_KEY, gioHang);
+            }
+
+            // Calculate subtotal and total
+            var subtotal = gioHang.Sum(p => p.ThanhTien);
+            var total = subtotal; // Assuming no shipping cost
+            var totalAmount = total;
+
+            // Return updated quantities, prices, and totals
+            return RedirectToAction("Index");
+        }
 
 
+        [HttpPost]
+        public JsonResult ApplyCoupon(string couponCode)
+        {
+            var result = ApplyVoucherToCart(couponCode);
 
+            if (result.Success)
+            {
+                return Json(new { success = true, newTotal = result.NewTotal });
+            }
+            else
+            {
+                return Json(new { success = false, message = result.ErrorMessage });
+            }
+        }
 
-		[Authorize]
+        private CouponResult ApplyVoucherToCart(string couponCode)
+        {
+            var vouchers = GetVouchers();
+
+            var voucher = vouchers.SingleOrDefault(v => v.Code.Equals(couponCode, StringComparison.OrdinalIgnoreCase));
+
+            if (voucher == null)
+            {
+                return new CouponResult
+                {
+                    Success = false,
+                    ErrorMessage = "Mã voucher không hợp lệ."
+                };
+            }
+
+            var cartTotal = GetCartTotal();
+            decimal discountAmount = voucher.IsPercentage ? (cartTotal * voucher.DiscountAmount / 100) : voucher.DiscountAmount;
+            var newTotal = cartTotal - discountAmount;
+
+            newTotal = Math.Max(newTotal, 0);
+
+            return new CouponResult
+            {
+                Success = true,
+                NewTotal = newTotal
+            };
+        }
+
+        private List<Voucher> GetVouchers()
+        {
+            return new List<Voucher>
+    {
+        new Voucher { Code = "DISCOUNT10", DiscountAmount = 10, IsPercentage = true },
+        new Voucher { Code = "FLAT20", DiscountAmount = 20, IsPercentage = false }
+    };
+        }
+
+        private decimal GetCartTotal()
+        {
+            return 135.00m; 
+        }
+
+        [Authorize]
         public IActionResult PaymentSuccess()
         {
             return View("Success");
@@ -238,7 +291,6 @@ namespace HShop2024.Controllers
                 return BadRequest(error);
             }
         }
-
         #endregion
     }
 }
