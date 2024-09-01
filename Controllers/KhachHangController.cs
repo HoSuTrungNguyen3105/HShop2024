@@ -25,7 +25,7 @@ namespace ECommerceMVC.Controllers
         private readonly IEmailSender _emailSender;
         private readonly Hshop2023Context db;
         private readonly IMapper _mapper;
-        public KhachHangController(Hshop2023Context context, IMapper mapper,IEmailSender emailSender)
+        public KhachHangController(Hshop2023Context context, IMapper mapper, IEmailSender emailSender)
         {
             db = context;
             _mapper = mapper;
@@ -66,33 +66,53 @@ namespace ECommerceMVC.Controllers
             ViewBag.ReturnUrl = ReturnUrl;
             return View();
         }
-
         [HttpPost]
         public async Task<IActionResult> DangNhap(LoginVM model, string? ReturnUrl)
         {
             ViewBag.ReturnUrl = ReturnUrl;
-            if (ModelState.IsValid)
+
+            // Kiểm tra tính hợp lệ của model
+            if (!ModelState.IsValid)
             {
-                var khachHang = db.KhachHangs.SingleOrDefault(kh => kh.MaKh == model.MaKh);
-                if (khachHang == null)
+                return View(model);
+            }
+
+            // Kiểm tra xem MaKh và MatKhau có được nhập không
+            if (string.IsNullOrWhiteSpace(model.MaKh))
+            {
+                ModelState.AddModelError("", "Mã khách hàng không được để trống.");
+                return View(model);
+            }
+
+            if (string.IsNullOrWhiteSpace(model.MatKhau))
+            {
+                ModelState.AddModelError("", "Mật khẩu không được để trống.");
+                return View(model);
+            }
+
+            // Tìm khách hàng dựa trên mã khách hàng
+            var khachHang = db.KhachHangs.SingleOrDefault(kh =>
+                   kh.MaKh == model.MaKh &&
+                   kh.MatKhau == model.MatKhau);
+            if (khachHang == null)
+            {
+                ModelState.AddModelError("", "Mã khách hàng hoặc mật khẩu không đúng.");
+            }
+            else
+            {
+                if (!khachHang.HieuLuc)
                 {
-                    ModelState.AddModelError("loi", "Không có khách hàng này");
+                    ModelState.AddModelError("loi", "Tài khoản mới đăng kí nên chưa được kích hoạt. Vui lòng liên hệ Admin để kích hoạt.");
                 }
                 else
                 {
-                    if (!khachHang.HieuLuc)
+                    if (khachHang.MatKhau == model.MatKhau.ToMd5Hash(khachHang.RandomKey))
                     {
-                        ModelState.AddModelError("loi", "Tài khoản mới đăng kí nên chưa được kích hoạt. Vui lòng liên hệ Admin để kích hoạt.");
+                        ModelState.AddModelError("ok", "Đăng nhập thành công");
                     }
                     else
                     {
-                        if (khachHang.MatKhau == model.MatKhau.ToMd5Hash(khachHang.RandomKey))
-                        {
-                            ModelState.AddModelError("ok", "Đăng nhập thành công");
-                        }
-                        else
-                        {
-                            var claims = new List<Claim> {
+                        var claims = new List<Claim> {
                                 new Claim(ClaimTypes.Email, khachHang.Email),
                                 new Claim(ClaimTypes.Name, khachHang.HoTen),
                                 new Claim(MySetting.CLAIM_CUSTOMERID, khachHang.MaKh),
@@ -101,28 +121,30 @@ namespace ECommerceMVC.Controllers
 								new Claim(ClaimTypes.Role, "Customer")
                             };
 
-                            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                            var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-                            await HttpContext.SignInAsync(claimsPrincipal);
+                        await HttpContext.SignInAsync(claimsPrincipal);
 
-                            if (Url.IsLocalUrl(ReturnUrl))
-                            {
-                                return Redirect(ReturnUrl);
-                            }
-                            else
-                            {
-                                return Redirect("Profile");
-                            }
+                        if (Url.IsLocalUrl(ReturnUrl))
+                        {
+                            return Redirect(ReturnUrl);
+                        }
+                        else
+                        {
+                            return Redirect("Profile");
                         }
                     }
                 }
-            }
-            return View();
+            
         }
-        #endregion
+            return View();
+    }
 
-        [Authorize]
+
+    #endregion
+
+    [Authorize]
         public IActionResult Profile()
         {
             return View();

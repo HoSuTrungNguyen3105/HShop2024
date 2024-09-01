@@ -15,7 +15,6 @@ namespace HShop2024.ViewModels
 		[DataType(DataType.Password)]
 
 		public string MatKhau { get; set; }
-
-
+        
     }
 }

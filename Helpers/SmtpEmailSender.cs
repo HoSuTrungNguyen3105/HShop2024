@@ -2,8 +2,9 @@
 using System.Net.Mail;
 using System.Net;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using HShop2024.ViewModels;
 
-namespace HShop2024.ViewModels
+namespace HShop2024.Helpers
 {
     public class SmtpEmailSender : IEmailSender
     {
