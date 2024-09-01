@@ -3,6 +3,7 @@ using HShop2024.ViewModels;
 using HShop2024.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace HShop2024.Controllers
 {
@@ -24,9 +25,21 @@ namespace HShop2024.Controllers
 
         public IActionResult Index()
         {
+            if (!User.Identity.IsAuthenticated)
+            {
+                TempData["Message"] = "Quý khách hiện chưa đăng nhập !";
+            }
+
+            var userRole = User.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+            if (userRole != null && userRole == "Employee")
+            {
+                TempData["Message"] = "Nhân viên và Admin không thể thực hiện giao dịch!";
+            }
+
             return View(Cart);
         }
-   
+
+
         [HttpPost]
         public JsonResult AddToCart(int id, int quantity = 1)
         {
@@ -150,14 +163,14 @@ namespace HShop2024.Controllers
 
 					return View("Success");
 				}
-				catch (Exception ex)
-				{
-					db.Database.RollbackTransaction();
-					return StatusCode(500, $"Đã xảy ra lỗi: {ex.Message}");
-				}
-			}
-			return Json(new { success = false, message = "Dữ liệu không hợp lệ." });
-		}
+                catch (Exception ex)
+                {
+                    db.Database.RollbackTransaction();
+                    return StatusCode(500, $"Đã xảy ra lỗi: {ex.Message}");
+                }
+            }
+            return View(Cart);
+        }
         [HttpPost]
         public IActionResult UpdateCartQuantity(int id, int quantity, string action)
         {

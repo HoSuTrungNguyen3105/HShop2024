@@ -1,8 +1,11 @@
 ﻿using HShop2024.Data;
 using HShop2024.Helpers;
+using HShop2024.ViewModels;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +15,10 @@ builder.Services.AddDbContext<Hshop2023Context>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("HShop"));
 });
+// Cấu hình SMTP
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SMTP"));
+builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
+
 
 // Add session service
 builder.Services.AddDistributedMemoryCache();
