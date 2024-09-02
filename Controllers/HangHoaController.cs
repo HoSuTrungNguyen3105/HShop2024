@@ -30,6 +30,7 @@ namespace HShop2024.Controllers
                 DonGia = p.DonGia ?? 0,
                 Hinh = p.Hinh ?? "",
                 MoTaNgan = p.MoTaDonVi ?? "",
+                SoLanXem=p.SoLanXem,
                 TenLoai = p.MaLoaiNavigation.TenLoai
             });
             return View(result);
@@ -58,29 +59,36 @@ namespace HShop2024.Controllers
 
         public IActionResult Detail(int id)
         {
-            var data = db.HangHoas
+            var product = db.HangHoas
                 .Include(p => p.MaLoaiNavigation)
                 .SingleOrDefault(p => p.MaHh == id);
-            if (data == null)
+
+            if (product == null)
             {
                 TempData["Message"] = $"Không thấy sản phẩm có mã {id}";
                 return Redirect("/404");
             }
 
-            var result = new ChiTietHangHoaVM
-            {
-                MaHh = data.MaHh,
-                TenHH = data.TenHh,
-                DonGia = data.DonGia ?? 0,
-                ChiTiet = data.MoTa ?? string.Empty,
-                Hinh = data.Hinh ?? string.Empty,
-                MoTaNgan = data.MoTaDonVi ?? string.Empty,
-                TenLoai = data.MaLoaiNavigation.TenLoai,
-                SoLuongTon = 10,
-                DiemDanhGia = 5,
-            };
-            return View(result);
-        }
+            var comments = db.HoiDaps
+                .Where(h => h.MaHd == id) // Adjust as needed
+                .ToList();
 
+            var model = new ChiTietHangHoaVM
+            {
+                MaHh = product.MaHh,
+                TenHH = product.TenHh,
+                DonGia = product.DonGia ?? 0,
+                ChiTiet = product.MoTa ?? string.Empty,
+                Hinh = product.Hinh ?? string.Empty,
+                MoTaNgan = product.MoTaDonVi ?? string.Empty,
+                TenLoai = product.MaLoaiNavigation.TenLoai,
+                SoLuongTon = 10, // Adjust as needed
+                DiemDanhGia = 5, // Adjust as needed
+                SoLanXem = product.SoLanXem,
+                HoiDaps = comments
+            };
+
+            return View(model);
+        }
     }
 }

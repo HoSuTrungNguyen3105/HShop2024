@@ -1,4 +1,6 @@
-﻿namespace HShop2024.ViewModels
+﻿using HShop2024.Data;
+
+namespace HShop2024.ViewModels
 {
 	public class HangHoaVM
 	{
@@ -8,7 +10,8 @@
 		public double DonGia { get; set; }
 		public string MoTaNgan { get; set; }
 		public string TenLoai { get; set; }
-	}
+        public int SoLanXem { get; set; }
+    }
     public class ChiTietHangHoaVM
     {
         public int MaHh { get; set; }
@@ -20,5 +23,8 @@
         public string ChiTiet { get; set; }
         public int DiemDanhGia { get; set; }
         public int SoLuongTon { get; set; }
+        public int SoLanXem { get; set; }
+        public List<HoiDap> HoiDaps { get; set; } = new List<HoiDap>();
+
     }
 }

@@ -8,7 +8,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using NuGet.Configuration;
 using System.Globalization;
 using System.Net;
@@ -140,8 +142,6 @@ namespace ECommerceMVC.Controllers
         }
             return View();
     }
-
-
     #endregion
 
     [Authorize]
@@ -310,5 +310,7 @@ namespace ECommerceMVC.Controllers
                 return StatusCode(500, "Error sending email");
             }
         }
+      
+
     }
 }

@@ -36,7 +36,16 @@ namespace HShop2024.Controllers
                 TempData["Message"] = "Nhân viên và Admin không thể thực hiện giao dịch!";
             }
 
-            return View(Cart);
+            // Retrieve the cart from session
+            var gioHang = Cart;
+
+            // Calculate the total price for each item
+            foreach (var item in gioHang)
+            {
+                item.ThanhTien = item.SoLuong * item.DonGia;
+            }
+
+            return View(gioHang);
         }
 
 
@@ -87,82 +96,82 @@ namespace HShop2024.Controllers
         [HttpGet]
         public IActionResult Checkout()
         {
-			if (Cart.Count == 0)
-			{
-				TempData["Message"] = "Mời bạn chọn sản phẩm!";
-				return RedirectToAction("Index", "HangHoa");
-			}
+            if (Cart.Count == 0)
+            {
+                TempData["Message"] = "Mời bạn chọn sản phẩm!";
+                return RedirectToAction("Index", "HangHoa");
+            }
 
-			ViewBag.PaypalClientdId = _paypalClient.ClientId;
-			return View(Cart);
-		}
+            ViewBag.PaypalClientdId = _paypalClient.ClientId;
+            return View(Cart);
+        }
 
-		[Authorize]
-		[HttpPost]
-		public async Task<IActionResult> Checkout(CheckoutVM model)
-		{
-			if (ModelState.IsValid)
-			{
-				var customerIdClaim = HttpContext.User.Claims.SingleOrDefault(p => p.Type == MySetting.CLAIM_CUSTOMERID);
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Checkout(CheckoutVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                var customerIdClaim = HttpContext.User.Claims.SingleOrDefault(p => p.Type == MySetting.CLAIM_CUSTOMERID);
 
-				if (customerIdClaim == null)
-				{
+                if (customerIdClaim == null)
+                {
                     TempData["Message"] = "Chỉ có khách hàng mới mua hàng được !";
                     return RedirectToAction("Index", "HangHoa");
                 }
 
-				var customerId = customerIdClaim.Value;
-				var khachHang = db.KhachHangs.SingleOrDefault(kh => kh.MaKh == customerId);
+                var customerId = customerIdClaim.Value;
+                var khachHang = db.KhachHangs.SingleOrDefault(kh => kh.MaKh == customerId);
 
-				if (model.GiongKhachHang && khachHang == null)
-				{
-					return Json(new { success = false, message = "Khách hàng không tồn tại." });
-				}
+                if (model.GiongKhachHang && khachHang == null)
+                {
+                    return Json(new { success = false, message = "Khách hàng không tồn tại." });
+                }
 
-				var hoadon = new HoaDon
-				{
-					MaKh = customerId,
-					HoTen = model.HoTen ?? khachHang?.HoTen,
-					DiaChi = model.DiaChi ?? khachHang?.DiaChi,
-					DienThoai = model.DienThoai ?? khachHang?.DienThoai,
-					NgayDat = DateTime.Now,
-					CachThanhToan = "COD",
-					CachVanChuyen = "GRAB",
-					MaTrangThai = 0,
-					GhiChu = model.GhiChu
-				};
+                var hoadon = new HoaDon
+                {
+                    MaKh = customerId,
+                    HoTen = model.HoTen ?? khachHang?.HoTen,
+                    DiaChi = model.DiaChi ?? khachHang?.DiaChi,
+                    DienThoai = model.DienThoai ?? khachHang?.DienThoai,
+                    NgayDat = DateTime.Now,
+                    CachThanhToan = "COD",
+                    CachVanChuyen = "GRAB",
+                    MaTrangThai = 0,
+                    GhiChu = model.GhiChu
+                };
 
-				db.Database.BeginTransaction();
-				try
-				{
-					db.Add(hoadon);
-					db.SaveChanges();
+                db.Database.BeginTransaction();
+                try
+                {
+                    db.Add(hoadon);
+                    db.SaveChanges();
 
-					var cthds = new List<ChiTietHd>();
-					if (Cart == null || Cart.Count == 0)
-					{
-						db.Database.RollbackTransaction();
-						return Json(new { success = false, message = "Giỏ hàng rỗng." });
-					}
-					foreach (var item in Cart)
-					{
-						cthds.Add(new ChiTietHd
-						{
-							MaHd = hoadon.MaHd,
-							SoLuong = item.SoLuong,
-							DonGia = item.DonGia,
-							MaHh = item.MaHh,
-							GiamGia = 0
-						});
-					}
-					db.AddRange(cthds);
-					db.SaveChanges();
-					db.Database.CommitTransaction();
+                    var cthds = new List<ChiTietHd>();
+                    if (Cart == null || Cart.Count == 0)
+                    {
+                        db.Database.RollbackTransaction();
+                        return Json(new { success = false, message = "Giỏ hàng rỗng." });
+                    }
+                    foreach (var item in Cart)
+                    {
+                        cthds.Add(new ChiTietHd
+                        {
+                            MaHd = hoadon.MaHd,
+                            SoLuong = item.SoLuong,
+                            DonGia = item.DonGia,
+                            MaHh = item.MaHh,
+                            GiamGia = 0
+                        });
+                    }
+                    db.AddRange(cthds);
+                    db.SaveChanges();
+                    db.Database.CommitTransaction();
 
-					HttpContext.Session.Set<List<CartItem>>(MySetting.CART_KEY, new List<CartItem>());
+                    HttpContext.Session.Set<List<CartItem>>(MySetting.CART_KEY, new List<CartItem>());
 
-					return View("Success");
-				}
+                    return View("Success");
+                }
                 catch (Exception ex)
                 {
                     db.Database.RollbackTransaction();
@@ -257,7 +266,7 @@ namespace HShop2024.Controllers
 
         private decimal GetCartTotal()
         {
-            return 135.00m; 
+            return 135.00m;
         }
 
         [Authorize]
