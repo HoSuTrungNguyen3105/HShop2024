@@ -57,12 +57,30 @@ namespace HShop2024.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(nhanVien);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    var existingEmployee = await _context.NhanViens
+                        .FirstOrDefaultAsync(nv => nv.MaNv == nhanVien.MaNv);
+
+                    if (existingEmployee != null)
+                    {
+                        ModelState.AddModelError("MaNv", "Mã nhân viên đã tồn tại.");
+                    }
+                    else
+                    {
+                        _context.Add(nhanVien);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "An error occurred while creating the employee.");
+                }
             }
             return View(nhanVien);
         }
+
 
         // GET: NhanVien/Edit/5
         public async Task<IActionResult> Edit(string? id)

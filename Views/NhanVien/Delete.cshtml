@@ -1,30 +1,17 @@
 ﻿@model HShop2024.Data.NhanVien
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Xóa nhân viên";
+    Layout = "_Layout2";
 }
-
-<h1>Delete</h1>
-
-<h3>Are you sure you want to delete this?</h3>
-
+<h1>Xóa nhân viên</h1>
+<h3>Bạn có chắc chắn muốn xóa nhân viên "@Model.MaNv"?</h3>
 <div>
-    <h4>@Model.HoTen</h4>
-    <dl class="row">
-        <dt class="col-sm-2">
-            Mã Nhân Viên
-        </dt>
-        <dd class="col-sm-10">
-            @Model.MaNv
-        </dd>
-        <!-- Thêm thông tin khác nếu cần -->
-    </dl>
-
-    <form asp-action="DeleteConfirmed" method="post">
-        @Html.AntiForgeryToken()
+    <form asp-action="Delete">
         <input type="hidden" asp-for="MaNv" />
-        <p>Bạn có chắc chắn muốn xóa nhân viên này không?</p>
-        <button type="submit" class="btn btn-danger">Xóa</button>
-        <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+        <div class="form-group">
+            <input type="submit" value="Xóa" class="btn btn-danger" />
+            <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+        </div>
     </form>
 </div>

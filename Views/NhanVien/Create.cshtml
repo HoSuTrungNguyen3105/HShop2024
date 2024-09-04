@@ -3,29 +3,39 @@
 @{
     ViewData["Title"] = "Thêm Nhân viên mới";
     Layout = "_Layout2";
-
 }
 
 <h2 class="mb-4">Thêm nhân viên mới</h2>
 
 <form asp-action="Create" method="post">
+    @Html.AntiForgeryToken()
+
     <div class="form-group">
-        <label for="MaNv">Mã Nhân Viên</label>
-        <input type="text" id="MaNv" name="MaNv" class="form-control" placeholder="Nhập mã" />
+        <label asp-for="MaNv" class="control-label"></label>
+        <input asp-for="MaNv" class="form-control" placeholder="Nhập mã" />
+        <span asp-validation-for="MaNv" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label for="HoTen">Họ Tên</label>
-        <input type="text" id="HoTen" name="HoTen" class="form-control" placeholder="Nhập họ tên" />
+        <label asp-for="HoTen" class="control-label"></label>
+        <input asp-for="HoTen" class="form-control" placeholder="Nhập họ tên" />
+        <span asp-validation-for="HoTen" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label for="Email">Email</label>
-        <input type="email" id="Email" name="Email" class="form-control" placeholder="Nhập email" />
+        <label asp-for="Email" class="control-label"></label>
+        <input asp-for="Email" class="form-control" placeholder="Nhập email" />
+        <span asp-validation-for="Email" class="text-danger"></span>
     </div>
     <div class="form-group">
-        <label for="MatKhau">Mật khẩu</label>
-        <input type="password" id="MatKhau" name="MatKhau" class="form-control" placeholder="Nhập mật khẩu" />
+        <label asp-for="MatKhau" class="control-label"></label>
+        <input asp-for="MatKhau" class="form-control" placeholder="Nhập mật khẩu" />
+        <span asp-validation-for="MatKhau" class="text-danger"></span>
     </div>
-    <button type="submit" class="btn btn-primary">Thêm khách hàng</button>
+    <button type="submit" class="btn btn-primary">Thêm nhân viên</button>
     <a href="@Url.Action("Index", "NhanVien")" class="btn btn-secondary">Danh sách Nhân viên</a>
 </form>
 
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

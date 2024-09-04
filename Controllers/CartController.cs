@@ -153,6 +153,11 @@ namespace HShop2024.Controllers
                         db.Database.RollbackTransaction();
                         return Json(new { success = false, message = "Giỏ hàng rỗng." });
                     }
+
+                    // Lấy danh sách sản phẩm từ giỏ hàng
+                    var productIds = Cart.Select(c => c.MaHh).ToList();
+                    var products = db.HangHoas.Where(p => productIds.Contains(p.MaHh)).ToList();
+
                     foreach (var item in Cart)
                     {
                         cthds.Add(new ChiTietHd
@@ -163,7 +168,15 @@ namespace HShop2024.Controllers
                             MaHh = item.MaHh,
                             GiamGia = 0
                         });
+
+                        // Tăng số lượng xem của sản phẩm
+                        var product = products.SingleOrDefault(p => p.MaHh == item.MaHh);
+                        if (product != null)
+                        {
+                            product.SoLanXem += 1;
+                        }
                     }
+
                     db.AddRange(cthds);
                     db.SaveChanges();
                     db.Database.CommitTransaction();

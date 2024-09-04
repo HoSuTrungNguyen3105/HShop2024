@@ -5,66 +5,113 @@
     Layout = "_Layout2";
 }
 
-<h1>Tạo mới hàng hóa</h1>
+<div class="container">
+    <h1 class="my-4">Tạo mới hàng hóa</h1>
+    <hr />
+    <form asp-action="Create" enctype="multipart/form-data">
+        <div class="form-group">
+            <label asp-for="TenHh" class="form-label"></label>
+            <input asp-for="TenHh" class="form-control" />
+            <span asp-validation-for="TenHh" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="TenAlias" class="form-label"></label>
+            <input asp-for="TenAlias" class="form-control" />
+            <span asp-validation-for="TenAlias" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="MaLoai" class="form-label"></label>
+            <select asp-for="MaLoai" class="form-control" id="maLoaiDropdown"></select>
+            <span asp-validation-for="MaLoai" class="text-danger"></span>
+        </div>
+        <div id="categoryInfo" class="form-group mt-2">
+        </div>
+        <div class="form-group">
+            <label asp-for="MoTaDonVi" class="form-label"></label>
+            <input asp-for="MoTaDonVi" class="form-control" />
+            <span asp-validation-for="MoTaDonVi" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="DonGia" class="form-label"></label>
+            <input asp-for="DonGia" class="form-control" />
+            <span asp-validation-for="DonGia" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Hinh" class="form-label"></label>
+            <input type="file" name="Hinh" class="form-control-file" />
+        </div>
+        <div class="form-group">
+            <label asp-for="NgaySx" class="form-label"></label>
+            <input asp-for="NgaySx" class="form-control" type="date" />
+            <span asp-validation-for="NgaySx" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="GiamGia" class="form-label"></label>
+            <input asp-for="GiamGia" class="form-control" />
+            <span asp-validation-for="GiamGia" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="MoTa" class="form-label"></label>
+            <textarea asp-for="MoTa" class="form-control"></textarea>
+            <span asp-validation-for="MoTa" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="MaNcc" class="form-label"></label>
+            <input asp-for="MaNcc" class="form-control" />
+            <span asp-validation-for="MaNcc" class="text-danger"></span>
+        </div>
+        <div class="form-group mt-4">
+            <input type="submit" value="Tạo mới" class="btn btn-primary" />
+        </div>
+    </form>
 
-<h4>HangHoa</h4>
-<hr />
-<form asp-action="Create">
-    <div class="form-group">
-        <label asp-for="TenHh" class="control-label"></label>
-        <input asp-for="TenHh" class="form-control" />
-        <span asp-validation-for="TenHh" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="TenAlias" class="control-label"></label>
-        <input asp-for="TenAlias" class="form-control" />
-        <span asp-validation-for="TenAlias" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="MaLoai" class="control-label"></label>
-        <input asp-for="MaLoai" class="form-control" />
-        <span asp-validation-for="MaLoai" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="MoTaDonVi" class="control-label"></label>
-        <input asp-for="MoTaDonVi" class="form-control" />
-        <span asp-validation-for="MoTaDonVi" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="DonGia" class="control-label"></label>
-        <input asp-for="DonGia" class="form-control" />
-        <span asp-validation-for="DonGia" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="NgaySx" class="control-label"></label>
-        <input asp-for="NgaySx" class="form-control" />
-        <span asp-validation-for="NgaySx" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="GiamGia" class="control-label"></label>
-        <input asp-for="GiamGia" class="form-control" />
-        <span asp-validation-for="GiamGia" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="MoTa" class="control-label"></label>
-        <input asp-for="MoTa" class="form-control" />
-        <span asp-validation-for="MoTa" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="MaNcc" class="control-label"></label>
-        <input asp-for="MaNcc" class="form-control" />
-        <span asp-validation-for="MaNcc" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <input type="submit" value="Create" class="btn btn-primary" />
-    </div>
-</form>
-<!-- Validation Scripts -->
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    <!-- Validation Scripts -->
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
     }
-}
-<p>
-    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
-</p>
+
+    <div class="mt-4">
+        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+    </div>
+</div>
+<script>
+    const dropdown = document.getElementById('maLoaiDropdown');
+    const categoryInfo = document.getElementById('categoryInfo');
+
+    // Define categories with information
+    const categories = {
+        1000: 'Đồng hồ',
+        1001: 'Laptop',
+        1002: 'Điện thoại',
+        1003: 'Máy tính bảng',
+        1004: 'Loa',
+        1005: 'Tai nghe',
+        1006: 'Vali',
+        1007: 'Bàn phím',
+    };
+
+    // Populate dropdown with options
+    for (const [value, text] of Object.entries(categories)) {
+        let option = document.createElement('option');
+        option.value = value;
+        option.text = text;
+        dropdown.add(option);
+    }
+
+    // Display selected category info when dropdown value changes
+    dropdown.addEventListener('change', function () {
+        const selectedValue = this.value;
+        if (categories[selectedValue]) {
+            categoryInfo.innerHTML = `<p><strong>Số:</strong> ${selectedValue} - <strong>Thông tin:</strong> ${categories[selectedValue]}</p>`;
+        } else {
+            categoryInfo.innerHTML = '';
+        }
+    });
+
+    // Optionally, trigger the change event on page load to show initial info
+    dropdown.dispatchEvent(new Event('change'));
+</script>
+
+

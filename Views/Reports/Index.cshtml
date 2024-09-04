@@ -1,0 +1,55 @@
+﻿@model dynamic
+<style>
+    .btn-custom {
+        background-color: #007bff;
+        border-color: #007bff;
+        font-size: 0.8rem;
+        padding: 0.5rem 1rem;
+        color: #f1c40f;
+        text-decoration: none;
+    }
+
+        .btn-custom:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+            color: #f1c40f;
+        }
+
+        .btn-custom .fas {
+            margin-right: 0.5rem;
+        }
+</style>
+<div class="container mt-4">
+    <h1>Báo cáo</h1>
+    <!-- Nút quay lại trang admin/index -->
+    <a href="@Url.Action("Index", "Admin")" class="btn btn-custom mb-4">
+        <i class="fas fa-arrow-left"></i> Quay lại
+    </a>
+    <!-- Báo cáo sản phẩm bán chạy -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h4>Báo cáo sản phẩm bán chạy</h4>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Tên Sản Phẩm</th>
+                        <th>Số Lượng Bán</th>
+                        <th>Doanh Thu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.BestSellingProductsReport.BestSellingProducts)
+                    {
+                        <tr>
+                            <td>@item.ProductName</td>
+                            <td>@item.SalesCount</td>
+                            <td>@item.TotalRevenue.ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>       
+    </div>
+</div>

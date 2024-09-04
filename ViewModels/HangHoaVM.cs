@@ -1,4 +1,5 @@
 ﻿using HShop2024.Data;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HShop2024.ViewModels
 {
@@ -11,6 +12,8 @@ namespace HShop2024.ViewModels
 		public string MoTaNgan { get; set; }
 		public string TenLoai { get; set; }
         public int SoLanXem { get; set; }
+        public IEnumerable<SelectListItem> MaLoaiOptions { get; set; }
+
     }
     public class ChiTietHangHoaVM
     {
