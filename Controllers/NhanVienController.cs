@@ -146,51 +146,58 @@ namespace HShop2024.Controllers
 
             if (ModelState.IsValid)
             {
-                var nhanVien = _context.NhanViens.SingleOrDefault(nv => nv.MaNv == model.MaNv);
+                if (string.IsNullOrWhiteSpace(model.MaNv))
+                {
+                    ModelState.AddModelError("", "Mã khách hàng không được để trống.");
+                    return View(model);
+                }
 
-                if (nhanVien != null)
+                if (string.IsNullOrWhiteSpace(model.MatKhau))
                 {
-                    // Kiểm tra mật khẩu (đảm bảo rằng mật khẩu được mã hóa đúng cách)
-                    if (nhanVien.MatKhau == model.MatKhau) // Kiểm tra cách mã hóa mật khẩu
-                    {
-                        // Đăng nhập thành công cho nhân viên
-                        var claims = new List<Claim>
+                    ModelState.AddModelError("", "Mật khẩu không được để trống.");
+                    return View(model);
+                }
+
+                var nhanVien = _context.NhanViens.SingleOrDefault(nv => nv.MaNv == model.MaNv);
+                if (nhanVien == null)
                 {
-                    new Claim(ClaimTypes.Email, nhanVien.Email),
-                    new Claim(ClaimTypes.Name, nhanVien.HoTen),
-                    new Claim(MySetting.CLAIM_EMPLOYEEID, nhanVien.MaNv),
-                    new Claim(ClaimTypes.Role, "Employee")
+                    ModelState.AddModelError("", "Mã khách hàng không đúng hoặc không tồn tại.");
+                    return View(model);
+                }
+
+                if (nhanVien.MatKhau == model.MatKhau)
+                {
+                    var claims = new List<Claim>
+                {
+                new Claim(ClaimTypes.Email, nhanVien.Email),
+                new Claim(ClaimTypes.Name, nhanVien.HoTen),
+                new Claim(MySetting.CLAIM_EMPLOYEEID, nhanVien.MaNv),
+                new Claim(ClaimTypes.Role, "Employee")
                 };
 
-                        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                        var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
 
-                        if (Url.IsLocalUrl(ReturnUrl))
-                        {
-                            return Redirect(ReturnUrl);
-                        }
-                        else
-                        {
-                            return RedirectToAction("Profile", "KhachHang");
-                        }
+                    if (Url.IsLocalUrl(ReturnUrl))
+                    {
+                        return Redirect(ReturnUrl);
                     }
                     else
                     {
-                        ModelState.AddModelError("loi", "Mật khẩu không đúng.");
+                        return RedirectToAction("Profile", "KhachHang");
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError("loi", "Không có tài khoản này.");
+                    ModelState.AddModelError("", "Mật khẩu không đúng.");
+                    return View(model);
                 }
             }
 
             return View(model);
         }
-
-
 
         #endregion
         public async Task<IActionResult> Delete(string? id)

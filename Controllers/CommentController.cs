@@ -33,7 +33,7 @@ namespace HShop2024.Controllers
                 };
 
                 _context.HoiDaps.Add(newComment);
-                _context.SaveChanges();
+                _context.SaveChangesAsync();
 
                 TempData["SuccessMessage"] = "Bình luận đã được gửi thành công!";
                 return RedirectToAction("PostComment");

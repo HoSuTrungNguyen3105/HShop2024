@@ -226,60 +226,34 @@ namespace HShop2024.Controllers
 
 
         [HttpPost]
-        public JsonResult ApplyCoupon(string couponCode)
+        public IActionResult ApplyCoupon(string couponCode)
         {
-            var result = ApplyVoucherToCart(couponCode);
+            // Replace with your actual coupon validation logic
+            var discount = ValidateCoupon(couponCode);
 
-            if (result.Success)
+            if (discount > 0)
             {
-                return Json(new { success = true, newTotal = result.NewTotal });
+                // Store discount information in TempData or Session
+                TempData["CouponDiscount"] = discount;
+                TempData["CouponMessage"] = "Coupon applied successfully!";
             }
             else
             {
-                return Json(new { success = false, message = result.ErrorMessage });
-            }
-        }
-
-        private CouponResult ApplyVoucherToCart(string couponCode)
-        {
-            var vouchers = GetVouchers();
-
-            var voucher = vouchers.SingleOrDefault(v => v.Code.Equals(couponCode, StringComparison.OrdinalIgnoreCase));
-
-            if (voucher == null)
-            {
-                return new CouponResult
-                {
-                    Success = false,
-                    ErrorMessage = "Mã voucher không hợp lệ."
-                };
+                TempData["CouponMessage"] = "Invalid coupon code.";
             }
 
-            var cartTotal = GetCartTotal();
-            decimal discountAmount = voucher.IsPercentage ? (cartTotal * voucher.DiscountAmount / 100) : voucher.DiscountAmount;
-            var newTotal = cartTotal - discountAmount;
+            return RedirectToAction("Cart");
+        }
 
-            newTotal = Math.Max(newTotal, 0);
-
-            return new CouponResult
+        private double ValidateCoupon(string couponCode)
+        {
+            // Dummy coupon validation
+            // Replace this with your actual coupon validation logic
+            if (couponCode == "DISCOUNT10")
             {
-                Success = true,
-                NewTotal = newTotal
-            };
-        }
-
-        private List<Voucher> GetVouchers()
-        {
-            return new List<Voucher>
-    {
-        new Voucher { Code = "DISCOUNT10", DiscountAmount = 10, IsPercentage = true },
-        new Voucher { Code = "FLAT20", DiscountAmount = 20, IsPercentage = false }
-    };
-        }
-
-        private decimal GetCartTotal()
-        {
-            return 135.00m;
+                return 0.10; // 10% discount
+            }
+            return 0;
         }
 
         [Authorize]

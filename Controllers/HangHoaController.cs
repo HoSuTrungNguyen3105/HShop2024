@@ -30,7 +30,7 @@ namespace HShop2024.Controllers
                 DonGia = p.DonGia ?? 0,
                 Hinh = p.Hinh ?? "",
                 MoTaNgan = p.MoTaDonVi ?? "",
-                SoLanXem=p.SoLanXem,
+                SoLanXem = p.SoLanXem,
                 TenLoai = p.MaLoaiNavigation.TenLoai
             });
             return View(result);
