@@ -18,12 +18,12 @@
 <body>
     <div class="container mt-4">
         <h1 class="mb-4">@ViewData["Title"]</h1>
-
         <div class="table-responsive">
             <table class="table table-striped table-bordered">
                 <thead class="thead-dark">
                     <tr>
                         <th scope="col">Số TT</th>
+                        <th scope="col">Ảnh nhân viên</th>
                         <th scope="col">Mã KH</th>
                         <th scope="col">Họ Tên</th>
                         <th scope="col">Email</th>
@@ -36,6 +36,16 @@
                     {
                         <tr>
                             <td>@(kh.index + 1)</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(kh.value.Hinh))
+                                {
+                                    <img src="@Url.Content("~/Hinh/KhachHang/" + kh.value.Hinh)" alt="Hình ảnh @kh.value.HoTen" class="img-fluid img-thumbnail-custom">
+                                }
+                                else
+                                {
+                                    <img src="@Url.Content("~/Hinh/KhachHang/Author.jpg")" alt="Hình ảnh mặc định" class="img-fluid img-thumbnail-custom">
+                                }
+                            </td>
                             <td>@kh.value.MaKh</td>
                             <td>@kh.value.HoTen</td>
                             <td>@kh.value.Email</td>

@@ -31,6 +31,22 @@
 	</div>
 }
 <!-- Single Page Header End -->
+@{
+    var coupons = new List<string> { "DISCOUNT10", "DISCOUNT20", "SALE15", "NEWUSER25" };
+}
+
+@foreach (var coupon in coupons)
+{
+    <div class="mt-4">
+        <h5>Mã Giảm Giá Đặc Biệt Có Sẵn!</h5>
+        <div class="alert alert-info">
+            Sử dụng mã giảm giá dưới đây để nhận ưu đãi!
+            <br />
+            <input type="text" id="couponCode-@coupon" value="@coupon" readonly class="form-control d-inline w-auto mt-2" />
+            <button class="btn btn-primary mt-2" onclick="copyCoupon('@coupon')">Sao Chép Mã</button>
+        </div>
+    </div>
+}
 
 @await Html.PartialAsync("ProductItem", Model)
 
@@ -56,6 +72,12 @@
         }
 
         paginationContainer.appendChild(link);
+    }
+    function copyCoupon(couponCode) {
+        var copyText = document.getElementById('couponCode-' + couponCode);
+        copyText.select();
+        document.execCommand("copy");
+        alert("Mã đã được sao chép: " + couponCode);
     }
 </script>
 

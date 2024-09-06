@@ -11,31 +11,33 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
     margin-bottom: 60px;
-    background-color: #f8f9fa;
+    background-color: #f0f2f5;
 }
 
 .container {
-    background-color: #fff;
+    background-color: #ffffff;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-top: 20px;
 }
 
 h1 {
     color: #343a40;
 }
+
 .styled-welcome {
-    font-size: 70px;
-    background: linear-gradient(90deg, #ff8a00, #da1b60);
+    font-size: 72px;
+    background: linear-gradient(90deg, #00c6ff, #0072ff);
     -webkit-background-clip: text;
     color: transparent;
     font-weight: bold;
     text-transform: uppercase;
-    letter-spacing: 5px;
+    letter-spacing: 6px;
 }
+
 .table {
     width: 100%;
     table-layout: fixed;
@@ -43,7 +45,7 @@ h1 {
 
     .table th, .table td {
         text-align: center;
-        padding: 8px;
+        padding: 10px;
         vertical-align: middle;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -53,10 +55,11 @@ h1 {
     .table img {
         max-width: 100px;
         height: auto;
+        border-radius: 50%;
     }
 
     .table thead th {
-        background-color: #343a40;
+        background-color: #007bff;
         color: white;
     }
 
@@ -67,7 +70,7 @@ th, td {
 }
 
 th {
-    background-color: #343a40;
+    background-color: #007bff;
     color: white;
 }
 
@@ -76,7 +79,7 @@ th {
 }
 
 .btn-sm {
-    padding: 5px 10px;
+    padding: 6px 12px;
     font-size: 14px;
 }
 
@@ -114,10 +117,11 @@ th {
     font-weight: bold;
 }
 
-.img-thumbnail {
+.img-thumbnail-custom {
     display: block;
-    max-width: 100px;
-    height: auto;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
 }
 
 .sidebar {
@@ -133,7 +137,7 @@ th {
     .sidebar a {
         padding: 10px 15px;
         text-decoration: none;
-        font-size: 20px;
+        font-size: 18px;
         color: #ffffff;
         display: block;
         border-radius: 5px;
@@ -141,8 +145,8 @@ th {
     }
 
         .sidebar a.highlighted {
-            font-family: 'Poppins', sans-serif;
-            font-size: 24px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 20px;
             color: #28a745;
             font-weight: bold;
             text-transform: uppercase;
@@ -161,7 +165,7 @@ th {
 .highlighted {
     padding: 10px 15px;
     text-decoration: none;
-    font-size: 20px;
+    font-size: 18px;
     color: gray;
 }
 
@@ -175,5 +179,5 @@ th {
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.25), 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
 }

@@ -67,13 +67,14 @@ namespace HShop2024.Controllers
             return View();
         }
 
+        // POST: HangHoas/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaHh,TenHh,TenAlias,MaLoai,MoTaDonVi,DonGia,NgaySx,GiamGia,SoLanXem,MoTa,MaNcc")] HangHoa hangHoa, IFormFile Hinh)
+        public async Task<IActionResult> Create([Bind("MaHh,TenHh,TenAlias,MaLoai,MoTaDonVi,DonGia,NgaySx,Hinh,GiamGia,SoLanXem,MoTa,MaNcc")] HangHoa hangHoa, IFormFile Hinh)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                try
                 {
                     // Xử lý lưu hình ảnh
                     if (Hinh != null && Hinh.Length > 0)
@@ -87,7 +88,7 @@ namespace HShop2024.Controllers
                         }
 
                         // Lưu đường dẫn hình ảnh vào thuộc tính Hinh
-                        hangHoa.Hinh = "/Hinh/HangHoa" + fileName;
+                        hangHoa.Hinh = "/Hinh/HangHoa/" + fileName; // Đảm bảo có dấu '/' giữa thư mục và tên file
                     }
 
                     // Thêm hàng hóa vào cơ sở dữ liệu
@@ -95,17 +96,16 @@ namespace HShop2024.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", $"Lỗi xảy ra khi tạo mới hàng hóa: {ex.Message}");
+                }
             }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", $"Lỗi xảy ra khi tạo mới hàng hóa: {ex.Message}");
-            }          
 
             ViewData["MaLoai"] = new SelectList(_context.Loais, "MaLoai", "TenLoai", hangHoa.MaLoai);
             ViewData["MaNcc"] = new SelectList(_context.NhaCungCaps, "MaNcc", "TenNcc", hangHoa.MaNcc);
             return View(hangHoa);
         }
-
 
 
         // GET: HangHoas/Edit/5

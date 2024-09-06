@@ -15,35 +15,17 @@ namespace HShop2024.Controllers
         }
         
         [HttpPost]
-        public IActionResult PostComment(int productId, string review)
-        {
-            if (User.Identity.IsAuthenticated)
+        public async Task<IActionResult> PostComment([Bind("CauHoi,TraLoi")] HoiDap hoiDap) { 
+            if (ModelState.IsValid)
             {
-                var currentUser = User.Identity.Name; // Hoặc lấy thông tin khác để xác định nhân viên
-                var currentUserId = _context.NhanViens
-                                            .Where(nv => nv.HoTen == currentUser) // hoặc điều kiện phù hợp khác
-                                            .Select(nv => nv.MaNv)
-                                            .FirstOrDefault();
-                var newComment = new HoiDap
-                {
-                    CauHoi = $"Bình luận về sản phẩm {productId}",
-                    TraLoi = review,
-                    NgayDua = DateOnly.FromDateTime(DateTime.Now),
-                    MaNv = currentUserId
-                };
+                hoiDap.NgayDua = DateOnly.FromDateTime(DateTime.Now); // Set the current date
+                hoiDap.MaNv = User.Identity.Name; // Assuming the username is used as the MaNv
 
-                _context.HoiDaps.Add(newComment);
-                _context.SaveChangesAsync();
-
-                TempData["SuccessMessage"] = "Bình luận đã được gửi thành công!";
-                return RedirectToAction("PostComment");
+                _context.Add(hoiDap);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Detail", "Product", new { id = hoiDap.MaHd });
             }
-            else
-            {
-                // Người dùng chưa đăng nhập
-                TempData["ErrorMessage"] = "Vui lòng đăng nhập để gửi bình luận.";
-                return RedirectToAction("Login", "Account");
-            }
+            return View(hoiDap);
         }
     }
 }

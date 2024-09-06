@@ -44,7 +44,15 @@ namespace HShop2024.Controllers
             {
                 item.ThanhTien = item.SoLuong * item.DonGia;
             }
-
+            // Lấy giá trị giảm giá từ TempData và chuyển đổi về double
+            if (TempData["CouponDiscount"] != null && double.TryParse(TempData["CouponDiscount"].ToString(), out double discount))
+            {
+                ViewBag.CouponDiscount = discount;
+            }
+            else
+            {
+                ViewBag.CouponDiscount = 0;
+            }
             return View(gioHang);
         }
 
@@ -154,7 +162,6 @@ namespace HShop2024.Controllers
                         return Json(new { success = false, message = "Giỏ hàng rỗng." });
                     }
 
-                    // Lấy danh sách sản phẩm từ giỏ hàng
                     var productIds = Cart.Select(c => c.MaHh).ToList();
                     var products = db.HangHoas.Where(p => productIds.Contains(p.MaHh)).ToList();
 
@@ -169,7 +176,6 @@ namespace HShop2024.Controllers
                             GiamGia = 0
                         });
 
-                        // Tăng số lượng xem của sản phẩm
                         var product = products.SingleOrDefault(p => p.MaHh == item.MaHh);
                         if (product != null)
                         {
@@ -223,38 +229,40 @@ namespace HShop2024.Controllers
             // Return updated quantities, prices, and totals
             return RedirectToAction("Index");
         }
-
-
         [HttpPost]
         public IActionResult ApplyCoupon(string couponCode)
         {
-            // Replace with your actual coupon validation logic
             var discount = ValidateCoupon(couponCode);
 
             if (discount > 0)
             {
-                // Store discount information in TempData or Session
-                TempData["CouponDiscount"] = discount;
-                TempData["CouponMessage"] = "Coupon applied successfully!";
+                TempData["CouponDiscount"] = discount.ToString("0.00");
+                TempData["CouponMessage"] = "Mã giảm giá đã được áp dụng thành công!";
             }
             else
             {
-                TempData["CouponMessage"] = "Invalid coupon code.";
+                TempData["CouponMessage"] = "Mã giảm giá không hợp lệ.";
             }
 
-            return RedirectToAction("Cart");
+            return RedirectToAction("Index", "Cart");
         }
 
         private double ValidateCoupon(string couponCode)
         {
-            // Dummy coupon validation
-            // Replace this with your actual coupon validation logic
-            if (couponCode == "DISCOUNT10")
+            var couponDictionary = new Dictionary<string, double>
+                {
+                    { "DISCOUNT10", 0.10 },
+                    { "DISCOUNT20", 0.20 },
+                    { "SALE15", 0.15 },
+                    { "NEWUSER25", 0.25 }
+                };
+            if (couponDictionary.ContainsKey(couponCode.ToUpper()))
             {
-                return 0.10; // 10% discount
+                return couponDictionary[couponCode.ToUpper()];
             }
             return 0;
         }
+
 
         [Authorize]
         public IActionResult PaymentSuccess()
