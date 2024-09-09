@@ -13,7 +13,16 @@
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="~/css/site.css">
+    @* <link rel="stylesheet" href="~/css/site.css"> *@
+    <style>
+        .img-thumbnail-custom {
+            width: 100px; /* Đặt chiều rộng cho ảnh */
+            height: 100px; /* Đặt chiều cao cho ảnh */
+            object-fit: cover; /* Đảm bảo ảnh không bị kéo dãn và vẫn giữ tỷ lệ */
+            border-radius: 5px; /* Để ảnh có các góc bo tròn nếu cần */
+        }
+
+    </style>
 </head>
 <body>
     <div class="container mt-4">
@@ -23,7 +32,7 @@
                 <thead class="thead-dark">
                     <tr>
                         <th scope="col">Số TT</th>
-                        <th scope="col">Ảnh nhân viên</th>
+                        <th scope="col">Ảnh khách hàng</th>
                         <th scope="col">Mã KH</th>
                         <th scope="col">Họ Tên</th>
                         <th scope="col">Email</th>
@@ -39,11 +48,11 @@
                             <td>
                                 @if (!string.IsNullOrEmpty(kh.value.Hinh))
                                 {
-                                    <img src="@Url.Content("~/Hinh/KhachHang/" + kh.value.Hinh)" alt="Hình ảnh @kh.value.HoTen" class="img-fluid img-thumbnail-custom">
+                                    <img src="@Url.Content("~/Hinh/KhachHang/" + kh.value.Hinh)" alt="Hình ảnh @kh.value.HoTen" class="img-thumbnail-custom">
                                 }
                                 else
                                 {
-                                    <img src="@Url.Content("~/Hinh/KhachHang/Author.jpg")" alt="Hình ảnh mặc định" class="img-fluid img-thumbnail-custom">
+                                    <img src="@Url.Content("~/Hinh/KhachHang/android_300200.png")" alt="Hình ảnh mặc định" class="img-thumbnail-custom">
                                 }
                             </td>
                             <td>@kh.value.MaKh</td>

@@ -138,13 +138,13 @@ namespace ECommerceMVC.Controllers
                         }
                     }
                 }
-            
-        }
-            return View();
-    }
-    #endregion
 
-    [Authorize]
+            }
+            return View();
+        }
+        #endregion
+
+        [Authorize]
         public IActionResult Profile()
         {
             return View();
@@ -162,41 +162,41 @@ namespace ECommerceMVC.Controllers
             return View();
         }
 
-		[HttpPost]
-		public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
-		{
-			if (ModelState.IsValid)
-			{
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
                 // Tìm người dùng theo email
                 var user = db.KhachHangs.FirstOrDefault(kh => kh.Email == model.Email);
 
                 if (user != null)
-				{
-					// Tạo token đặt lại mật khẩu (random password)
-					var resetToken = GenerateRandomPassword(8);
+                {
+                    // Tạo token đặt lại mật khẩu (random password)
+                    var resetToken = GenerateRandomPassword(8);
 
-					// Lưu token này vào cơ sở dữ liệu (bạn có thể lưu trữ vào cột 'ResetPasswordToken' và thời gian hết hạn nếu cần)
-					user.RandomKey = resetToken;
-					db.SaveChanges();
+                    // Lưu token này vào cơ sở dữ liệu (bạn có thể lưu trữ vào cột 'ResetPasswordToken' và thời gian hết hạn nếu cần)
+                    user.RandomKey = resetToken;
+                    db.SaveChanges();
 
-					// Tạo URL đặt lại mật khẩu
-					var resetLink = Url.Action("ResetPassword", "KhachHang", new { token = resetToken }, Request.Scheme);
-					// Gửi email cho người dùng với liên kết đặt lại mật khẩu
-					var subject = "Password Reset Request";
-					var body = $"<p>Please click the following link to reset your password:</p><a href='{resetLink}'>Reset Password</a>";
+                    // Tạo URL đặt lại mật khẩu
+                    var resetLink = Url.Action("ResetPassword", "KhachHang", new { token = resetToken }, Request.Scheme);
+                    // Gửi email cho người dùng với liên kết đặt lại mật khẩu
+                    var subject = "Password Reset Request";
+                    var body = $"<p>Please click the following link to reset your password:</p><a href='{resetLink}'>Reset Password</a>";
 
-					await SendEmailAsync(user.Email, subject, body);
+                    await SendEmailAsync(user.Email, subject, body);
 
-					return View("ForgotPasswordConfirmation");
-				}
-				else
-				{
-					ModelState.AddModelError(string.Empty, "Email không tồn tại.");
-				}
-			}
+                    return View("ForgotPasswordConfirmation");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Email không tồn tại.");
+                }
+            }
 
-			return View(model);
-		}
+            return View(model);
+        }
 
         // Action xử lý khi người dùng click vào link đặt lại mật khẩu (GET)
         [HttpGet]
@@ -242,21 +242,21 @@ namespace ECommerceMVC.Controllers
 
         // Hàm để tạo mật khẩu ngẫu nhiên
         private string GenerateRandomPassword(int length)
-		{
-			const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-			StringBuilder result = new StringBuilder();
-			using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
-			{
-				byte[] uintBuffer = new byte[sizeof(uint)];
-				while (length-- > 0)
-				{
-					rng.GetBytes(uintBuffer);
-					uint num = BitConverter.ToUInt32(uintBuffer, 0);
-					result.Append(validChars[(int)(num % (uint)validChars.Length)]);
-				}
-			}
-			return result.ToString();
-		}
+        {
+            const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+            StringBuilder result = new StringBuilder();
+            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            {
+                byte[] uintBuffer = new byte[sizeof(uint)];
+                while (length-- > 0)
+                {
+                    rng.GetBytes(uintBuffer);
+                    uint num = BitConverter.ToUInt32(uintBuffer, 0);
+                    result.Append(validChars[(int)(num % (uint)validChars.Length)]);
+                }
+            }
+            return result.ToString();
+        }
 
         // Hàm gửi email
         //private async Task SendEmailAsync(string email, string subject, string message)
@@ -310,7 +310,7 @@ namespace ECommerceMVC.Controllers
                 return StatusCode(500, "Error sending email");
             }
         }
-      
+
 
     }
 }

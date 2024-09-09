@@ -27,7 +27,7 @@ public partial class HangHoa
 
     public string? MoTa { get; set; }
 
-    public string MaNcc { get; set; }
+    public string MaNcc { get; set; } = null!;
 
     public virtual ICollection<BanBe> BanBes { get; set; } = new List<BanBe>();
 
@@ -36,6 +36,8 @@ public partial class HangHoa
     public virtual Loai MaLoaiNavigation { get; set; } = null!;
 
     public virtual NhaCungCap MaNccNavigation { get; set; } = null!;
+
+    public virtual ICollection<Voucher> Vouchers { get; set; } = new List<Voucher>();
 
     public virtual ICollection<YeuThich> YeuThiches { get; set; } = new List<YeuThich>();
 }

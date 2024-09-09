@@ -1,46 +1,5 @@
-﻿@model HShop2024.Data.HoaDon
-@{
-    ViewData["Title"] = "Invoice Details";
+﻿@{
+    ViewData["Title"] = "Success";
 }
 
-<!-- Button to trigger invoice display -->
-<button id="show-invoice-btn" class="btn btn-primary">Hiển thị hóa đơn</button>
-
-<!-- Section to display invoice details (initially hidden) -->
-<div id="invoice-details" style="display:none;">
-    <h3>Chi tiết hóa đơn</h3>
-    <p><strong>Mã HD:</strong> <span id="invoice-MaHd"></span></p>
-    <p><strong>Mã KH:</strong> <span id="invoice-MaKh"></span></p>
-    <p><strong>Hình thức thanh toán:</strong> <span id="invoice-CachTt"></span></p>
-    <p><strong>Địa chỉ:</strong> <span id="invoice-DiaChi"></span></p>
-    <p><strong>Phí vận chuyển:</strong> <span id="invoice-Phivc"></span></p>
-    <p><strong>Điện thoại:</strong> <span id="invoice-DienThoai"></span></p>
-</div>
-
-<script>
-    $(document).ready(function () {
-        $('#show-invoice-btn').click(function () {
-            // You can change this URL to match your action method
-            $.ajax({
-                url: '/Cart/GetInvoiceDetails', // Replace 'CartController' with the actual controller name
-                type: 'GET',
-                data: { MaHd: 1 }, // Pass the relevant MaHd parameter
-                success: function (data) {
-                    // Populate the invoice details section with the data received
-                    $('#invoice-MaHd').text(data.maHd);
-                    $('#invoice-MaKh').text(data.maKh);
-                    $('#invoice-CachTt').text(data.cachtt);
-                    $('#invoice-DiaChi').text(data.diachi);
-                    $('#invoice-Phivc').text(data.phivc);
-                    $('#invoice-DienThoai').text(data.dienthoai);
-
-                    // Display the section with invoice details
-                    $('#invoice-details').show();
-                },
-                error: function () {
-                    alert("Có lỗi xảy ra khi lấy dữ liệu hóa đơn.");
-                }
-            });
-        });
-    });
-</script>
+<h1 style="align-items: center;">Đã đặt hàng thành công !!!</h1>

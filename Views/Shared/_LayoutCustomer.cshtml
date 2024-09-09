@@ -108,23 +108,36 @@
 							</div>
 							<a asp-controller="Home" asp-action="PageNotFound" class="nav-item nav-link">Contact</a>
 						</div>
-						<div class="d-flex m-3 me-0">
-							<button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
+						<div class="d-flex m-3 me-0 align-items-center">
+								<!-- Nút tìm kiếm -->
+								<button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal">
+									<i class="fas fa-search text-primary"></i>
+								</button>
 
-							@await Component.InvokeAsync("Cart")
+								<!-- Giỏ hàng (cart) -->
+								@await Component.InvokeAsync("Cart")
 
-							@if (User.Identity.IsAuthenticated)
-							{
-								<a asp-controller="KhachHang" asp-action="Profile" title="Xem thông tin người dùng" class="my-auto">
-									<i class="fas fa-user fa-2x"></i>
-								</a>
-							}
-							else
-							{
-								<a asp-controller="KhachHang" asp-action="DangNhap" title="Đăng nhập" class="my-auto">
-									<i class="fas fa-user fa-2x"></i>
-								</a>
-							}
+								<!-- Thông tin người dùng hoặc Đăng nhập -->
+								@if (User.Identity.IsAuthenticated)
+								{
+									<a asp-controller="KhachHang" asp-action="Profile" title="Xem thông tin người dùng" class="my-auto me-3">
+										<i class="fas fa-user fa-2x"></i>
+									</a>
+								}
+								else
+								{
+									<a asp-controller="KhachHang" asp-action="DangNhap" title="Đăng nhập" class="my-auto me-3">
+										<i class="fas fa-user fa-2x"></i>
+									</a>
+								}
+
+								<!-- Tên người dùng -->
+								@if (User.Identity.IsAuthenticated)
+								{
+									<span class="dropdown-item disabled">
+										@User.Identity.Name
+									</span>
+								}
 						</div>
 					</div>
 				</nav>

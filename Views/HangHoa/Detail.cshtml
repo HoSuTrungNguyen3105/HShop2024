@@ -39,6 +39,14 @@
                             <i class="fa fa-star text-secondary"></i>
                             <i class="fa fa-star"></i>
                         </div>
+                        <form asp-controller="YeuThiches" asp-action="AddToFavorites" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="MaHh" value="@Model.MaHh" />
+                            <input type="hidden" name="MaKh" value="@User.Identity.Name" />
+                            <input type="hidden" name="NgayChon" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")" />
+                            <input type="hidden" name="MoTa" value="@Model.MoTaNgan" />
+                            <button type="submit" class="btn btn-primary">Thêm vào Danh Sách Yêu Thích</button>
+                        </form>
                         <p class="mb-4">@Model.MoTaNgan</p>
                         <form asp-action="AddToCart" asp-controller="Cart" asp-route-id="@Model.MaHh">
                             <div class="input-group quantity mb-5" style="width: 100px;">

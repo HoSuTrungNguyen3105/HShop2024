@@ -33,6 +33,8 @@ public partial class HoaDon
 
     public string? DienThoai { get; set; }
 
+    public decimal? TongTien { get; set; }
+
     public virtual KhachHang MaKhNavigation { get; set; } = null!;
 
     public virtual NhanVien? MaNvNavigation { get; set; }

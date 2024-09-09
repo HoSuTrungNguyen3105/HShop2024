@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace HShop2024.Data;
 
@@ -50,12 +49,13 @@ public partial class Hshop2023Context : DbContext
 
     public virtual DbSet<VChiTietHoaDon> VChiTietHoaDons { get; set; }
 
+    public virtual DbSet<Voucher> Vouchers { get; set; }
+
     public virtual DbSet<YeuThich> YeuThiches { get; set; }
 
-    //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-    //        => optionsBuilder.UseSqlServer("Server=.;Database=Hshop2023;Integrated Security=True;Trust Server Certificate=True");
-   
+//    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
+//        => optionsBuilder.UseSqlServer("Server=.;Database=Hshop2023;Integrated Security=True;Trusted_Connection=True;TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -209,6 +209,7 @@ public partial class Hshop2023Context : DbContext
             entity.Property(e => e.NgayGiao)
                 .HasDefaultValueSql("(((1)/(1))/(1900))")
                 .HasColumnType("datetime");
+            entity.Property(e => e.TongTien).HasColumnType("decimal(18, 2)");
 
             entity.HasOne(d => d.MaKhNavigation).WithMany(p => p.HoaDons)
                 .HasForeignKey(d => d.MaKh)
@@ -413,6 +414,23 @@ public partial class Hshop2023Context : DbContext
             entity.Property(e => e.TenHh)
                 .HasMaxLength(50)
                 .HasColumnName("TenHH");
+        });
+
+        modelBuilder.Entity<Voucher>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Voucher__3214EC0791E65616");
+
+            entity.ToTable("Voucher");
+
+            entity.HasIndex(e => e.Code, "UQ__Voucher__A25C5AA76CEC4E53").IsUnique();
+
+            entity.Property(e => e.Code).HasMaxLength(50);
+            entity.Property(e => e.DiscountAmount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.MaHh).HasColumnName("MaHH");
+
+            entity.HasOne(d => d.MaHhNavigation).WithMany(p => p.Vouchers)
+                .HasForeignKey(d => d.MaHh)
+                .HasConstraintName("FK_Voucher_HangHoa");
         });
 
         modelBuilder.Entity<YeuThich>(entity =>

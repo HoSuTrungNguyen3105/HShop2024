@@ -1,0 +1,24 @@
+﻿@model IEnumerable<HShop2024.Data.Voucher>
+
+<div class="voucher-section">
+    <h5>Mã Giảm Giá Đặc Biệt Có Sẵn!</h5>
+
+    @foreach (var voucher in Model)
+    {
+        <div class="alert alert-info mt-4">
+            <div class="coupon-container">
+                <input type="text" id="couponCode-@voucher.Id" value="@voucher.Code" readonly class="form-control coupon-input" />
+                <button class="btn btn-primary coupon-button mt-2" onclick="copyCoupon('@voucher.Code')">Sao Chép Mã</button>
+            </div>
+            <p>Giảm giá: @voucher.DiscountAmount @if (voucher.IsPercentage)
+                {
+                    <span>%</span>
+                }
+                else
+                {
+                    <span>VNĐ</span>
+                }</p>
+            <p>Hết hạn: @voucher.DiscountAmount.ToString()</p>
+        </div>
+    }
+</div>

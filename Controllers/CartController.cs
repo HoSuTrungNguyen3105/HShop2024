@@ -4,6 +4,8 @@ using HShop2024.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
 
 namespace HShop2024.Controllers
 {
@@ -29,7 +31,6 @@ namespace HShop2024.Controllers
             {
                 TempData["Message"] = "Quý khách hiện chưa đăng nhập !";
             }
-
             var userRole = User.Claims.SingleOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
             if (userRole != null && userRole == "Employee")
             {
@@ -40,10 +41,7 @@ namespace HShop2024.Controllers
             var gioHang = Cart;
 
             // Calculate the total price for each item
-            foreach (var item in gioHang)
-            {
-                item.ThanhTien = item.SoLuong * item.DonGia;
-            }
+           
             // Lấy giá trị giảm giá từ TempData và chuyển đổi về double
             if (TempData["CouponDiscount"] != null && double.TryParse(TempData["CouponDiscount"].ToString(), out double discount))
             {
@@ -110,8 +108,47 @@ namespace HShop2024.Controllers
                 return RedirectToAction("Index", "HangHoa");
             }
 
-            ViewBag.PaypalClientdId = _paypalClient.ClientId;
+            // Lấy mã giảm giá từ Session
+            var appliedCoupon = HttpContext.Session.GetString("AppliedCoupon");
+            if (!string.IsNullOrEmpty(appliedCoupon))
+            {
+                ViewBag.AppliedCoupon = appliedCoupon;
+                var discount = ValidateCoupon(appliedCoupon);
+                ViewBag.CouponDiscount = discount;
+            }
+            else
+            {
+                ViewBag.CouponDiscount = 0;
+            }
+
+            ViewBag.PaypalClientId = _paypalClient.ClientId;
             return View(Cart);
+        }
+        // Action method to get invoice details
+        [HttpGet]
+        public async Task<IActionResult> GetInvoiceDetails(int maHd)
+        {
+            // Fetch the invoice details based on MaHd
+            var invoice = await db.HoaDons
+                .Where(i => i.MaHd == maHd)
+                .Select(i => new
+                {
+                    maHd = i.MaHd,
+                    maKh = i.MaKh,
+                    cachtt = i.NgayDat,
+                    diachi = i.DiaChi,
+                    phivc = i.NgayCan,
+                    ngaygiao=i.NgayGiao,
+                    dienthoai = i.DienThoai
+                })
+                .FirstOrDefaultAsync();
+
+            if (invoice == null)
+            {
+                return NotFound();
+            }
+
+            return Json(invoice);
         }
 
         [Authorize]
@@ -121,6 +158,21 @@ namespace HShop2024.Controllers
             if (ModelState.IsValid)
             {
                 var customerIdClaim = HttpContext.User.Claims.SingleOrDefault(p => p.Type == MySetting.CLAIM_CUSTOMERID);
+
+
+                // Lấy mã giảm giá từ Session
+                var appliedCoupon = HttpContext.Session.GetString("AppliedCoupon");
+                var discount = ValidateCoupon(appliedCoupon);
+
+                // Tính toán tổng giá trị giỏ hàng và giảm giá
+                var subtotal = Cart.Sum(item => item.ThanhTien);
+                var discountAmount = subtotal * discount;
+                var total = subtotal - discountAmount;
+
+                // Đặt giá trị vào ViewBag
+                ViewBag.Subtotal = subtotal;
+                ViewBag.DiscountAmount = discountAmount;
+                ViewBag.Total = total;
 
                 if (customerIdClaim == null)
                 {
@@ -167,8 +219,10 @@ namespace HShop2024.Controllers
 
                     foreach (var item in Cart)
                     {
+
                         cthds.Add(new ChiTietHd
                         {
+
                             MaHd = hoadon.MaHd,
                             SoLuong = item.SoLuong,
                             DonGia = item.DonGia,
@@ -197,7 +251,7 @@ namespace HShop2024.Controllers
                     return StatusCode(500, $"Đã xảy ra lỗi: {ex.Message}");
                 }
             }
-            return View(Cart);
+            return View(model);
         }
         [HttpPost]
         public IActionResult UpdateCartQuantity(int id, int quantity, string action)
@@ -215,7 +269,6 @@ namespace HShop2024.Controllers
                     item.SoLuong -= 1; // Decrease quantity by 1
                 }
 
-                item.ThanhTien = item.SoLuong * item.DonGia; // Update total price for the item
 
                 // Update cart in session
                 HttpContext.Session.Set(MySetting.CART_KEY, gioHang);
@@ -238,6 +291,7 @@ namespace HShop2024.Controllers
             {
                 TempData["CouponDiscount"] = discount.ToString("0.00");
                 TempData["CouponMessage"] = "Mã giảm giá đã được áp dụng thành công!";
+                HttpContext.Session.SetString("AppliedCoupon", couponCode);  // Lưu mã vào Session
             }
             else
             {
@@ -256,10 +310,10 @@ namespace HShop2024.Controllers
                     { "SALE15", 0.15 },
                     { "NEWUSER25", 0.25 }
                 };
-            if (couponDictionary.ContainsKey(couponCode.ToUpper()))
-            {
-                return couponDictionary[couponCode.ToUpper()];
-            }
+            //if (couponDictionary.ContainsKey(couponCode.ToUpper()))
+            //{
+            //    return couponDictionary[couponCode.ToUpper()];
+            //}
             return 0;
         }
 

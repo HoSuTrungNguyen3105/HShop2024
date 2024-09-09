@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HShop2024.Data;
 using HShop2024.ViewModels;
+using HShop2024.Helpers;
 
 namespace HShop2024.Controllers
 {
@@ -76,32 +77,25 @@ namespace HShop2024.Controllers
             {
                 try
                 {
-                    // Xử lý lưu hình ảnh
                     if (Hinh != null && Hinh.Length > 0)
                     {
-                        var fileName = Path.GetFileName(Hinh.FileName);
-                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Hinh/HangHoa", fileName);
-
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await Hinh.CopyToAsync(stream);
-                        }
-
-                        // Lưu đường dẫn hình ảnh vào thuộc tính Hinh
-                        hangHoa.Hinh = "/Hinh/HangHoa/" + fileName; // Đảm bảo có dấu '/' giữa thư mục và tên file
+                        // Lưu hình ảnh và lấy đường dẫn lưu trữ
+                        hangHoa.Hinh = MyUtil.UploadHinh(Hinh, "HangHoa");
                     }
 
-                    // Thêm hàng hóa vào cơ sở dữ liệu
+                    // Thêm sản phẩm vào cơ sở dữ liệu
                     _context.Add(hangHoa);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+
+                    return RedirectToAction(nameof(Index)); // Chuyển hướng đến danh sách sản phẩm sau khi thêm thành công
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError("", $"Lỗi xảy ra khi tạo mới hàng hóa: {ex.Message}");
+                    ModelState.AddModelError("", $"Lỗi khi lưu sản phẩm: {ex.Message}");
                 }
             }
 
+            // Nếu có lỗi hoặc form không hợp lệ, giữ lại các dữ liệu chọn để người dùng có thể sửa lỗi
             ViewData["MaLoai"] = new SelectList(_context.Loais, "MaLoai", "TenLoai", hangHoa.MaLoai);
             ViewData["MaNcc"] = new SelectList(_context.NhaCungCaps, "MaNcc", "TenNcc", hangHoa.MaNcc);
             return View(hangHoa);

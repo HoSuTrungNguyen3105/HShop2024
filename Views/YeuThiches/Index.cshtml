@@ -1,0 +1,54 @@
+﻿@model IEnumerable<HShop2024.Data.YeuThich>
+
+@{
+    ViewData["Title"] = "Danh Sách Sản Phẩm Yêu Thích";
+    Layout = "_Layout2";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<p>
+    <a href="@Url.Action("Create", "YeuThiches")" class="btn btn-primary">Thêm Sản Phẩm Yêu Thích</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.MaHhNavigation.TenHh)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaKhNavigation.HoTen)
+            </th>
+            <th>
+                Ngày Chọn
+            </th>
+            <th>
+                Mô Tả
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @item.MaHhNavigation?.TenHh
+                </td>
+                <td>
+                    @item.MaKhNavigation?.HoTen
+                </td>
+                <td>
+                    @item.NgayChon?.ToString("d")
+                </td>
+                <td>
+                    @item.MoTa
+                </td>
+                <td>
+                    <a href="@Url.Action("Delete", "YeuThich", new { id = item.MaYt })" class="btn btn-danger">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

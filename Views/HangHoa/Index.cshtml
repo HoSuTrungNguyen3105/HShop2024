@@ -1,50 +1,33 @@
-﻿
-@model IEnumerable<HShop2024.ViewModels.HangHoaVM>
+﻿@model IEnumerable<HShop2024.ViewModels.HangHoaVM>
 
 @{
-	ViewData["Title"] = "Index";
-	Layout = "_DanhSachHangHoa";
+    ViewData["Title"] = "Index";
+    Layout = "_DanhSachHangHoa";
 }
-    <style>
-        .custom-alert {
-            color: red; /* Màu chữ đỏ */
-            font-weight: bold; /* Chữ đậm */
-            padding: 10px; /* Khoảng cách giữa chữ và viền */
-            margin-bottom: 20px; /* Khoảng cách dưới thông báo */
-        }
-    </style>
-    @if (TempData["Message"] != null)
-    {
-        <div class="custom-alert">
-            @TempData["Message"]
-        </div>
+<style>
+    .custom-alert {
+        color: red; /* Màu chữ đỏ */
+        font-weight: bold; /* Chữ đậm */
+        padding: 10px; /* Khoảng cách giữa chữ và viền */
+        margin-bottom: 20px; /* Khoảng cách dưới thông báo */
     }
+</style>
+@if (TempData["Message"] != null)
+{
+    <div class="custom-alert">
+        @TempData["Message"]
+    </div>
+}
+
 <!-- Single Page Header start -->
 @section BreadCum {
-	<div class="container-fluid page-header py-5">
-		<h1 class="text-center text-white display-6">Shop</h1>
-		<ol class="breadcrumb justify-content-center mb-0">
-			<li class="breadcrumb-item"><a href="#">Home</a></li>
-			<li class="breadcrumb-item"><a href="#">Pages</a></li>
-			<li class="breadcrumb-item active text-white">Shop</li>
-		</ol>
-	</div>
-}
-<!-- Single Page Header End -->
-@{
-    var coupons = new List<string> { "DISCOUNT10", "DISCOUNT20", "SALE15", "NEWUSER25" };
-}
-
-@foreach (var coupon in coupons)
-{
-    <div class="mt-4">
-        <h5>Mã Giảm Giá Đặc Biệt Có Sẵn!</h5>
-        <div class="alert alert-info">
-            Sử dụng mã giảm giá dưới đây để nhận ưu đãi!
-            <br />
-            <input type="text" id="couponCode-@coupon" value="@coupon" readonly class="form-control d-inline w-auto mt-2" />
-            <button class="btn btn-primary mt-2" onclick="copyCoupon('@coupon')">Sao Chép Mã</button>
-        </div>
+    <div class="container-fluid page-header py-5">
+        <h1 class="text-center text-white display-6">Shop</h1>
+        <ol class="breadcrumb justify-content-center mb-0">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">Pages</a></li>
+            <li class="breadcrumb-item active text-white">Shop</li>
+        </ol>
     </div>
 }
 
@@ -57,27 +40,5 @@
         <a href="#" class="rounded">&raquo;</a>
     </div>
 </div>
-<script>
-    const totalPages = 6;
-    const paginationContainer = document.getElementById('pagination-links');
 
-    for (let i = 1; i <= totalPages; i++) {
-        const link = document.createElement('a');
-        link.href = "#";
-        link.className = "rounded";
-        link.textContent = i;
-
-        if (i === 1) {
-            link.classList.add('active');
-        }
-
-        paginationContainer.appendChild(link);
-    }
-    function copyCoupon(couponCode) {
-        var copyText = document.getElementById('couponCode-' + couponCode);
-        copyText.select();
-        document.execCommand("copy");
-        alert("Mã đã được sao chép: " + couponCode);
-    }
-</script>
-
+           

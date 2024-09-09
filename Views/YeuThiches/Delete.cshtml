@@ -1,0 +1,19 @@
+﻿@model HShop2024.Data.YeuThich
+
+@{
+    ViewData["Title"] = "Xóa Sản Phẩm Yêu Thích";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h4>Are you sure you want to delete this item?</h4>
+<div>
+    <h5>@Model.MaHhNavigation?.TenHh</h5>
+    <p>Ngày Chọn: @Model.NgayChon?.ToString("d")</p>
+    <p>Mô Tả: @Model.MoTa</p>
+</div>
+<form asp-action="DeleteConfirmed">
+    <input type="hidden" asp-for="MaYt" />
+    <input type="submit" value="Delete" class="btn btn-danger" />
+    <a href="@Url.Action("Index", "YeuThich")" class="btn btn-secondary">Cancel</a>
+</form>
