@@ -29,9 +29,15 @@ public partial class HangHoa
 
     public string MaNcc { get; set; } = null!;
 
+    public bool IsOrganic { get; set; }
+
+    public bool IsFantastic { get; set; }
+
     public virtual ICollection<BanBe> BanBes { get; set; } = new List<BanBe>();
 
     public virtual ICollection<ChiTietHd> ChiTietHds { get; set; } = new List<ChiTietHd>();
+
+    public virtual ICollection<HoiDap> HoiDaps { get; set; } = new List<HoiDap>();
 
     public virtual Loai MaLoaiNavigation { get; set; } = null!;
 

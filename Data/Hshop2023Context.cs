@@ -236,11 +236,16 @@ public partial class Hshop2023Context : DbContext
                 .ValueGeneratedNever()
                 .HasColumnName("MaHD");
             entity.Property(e => e.CauHoi).HasMaxLength(50);
+            entity.Property(e => e.MaHh).HasColumnName("MaHH");
             entity.Property(e => e.MaNv)
                 .HasMaxLength(50)
                 .HasColumnName("MaNV");
             entity.Property(e => e.NgayDua).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.TraLoi).HasMaxLength(50);
+
+            entity.HasOne(d => d.MaHhNavigation).WithMany(p => p.HoiDaps)
+                .HasForeignKey(d => d.MaHh)
+                .HasConstraintName("FK_HoiDap_HangHoa");
 
             entity.HasOne(d => d.MaNvNavigation).WithMany(p => p.HoiDaps)
                 .HasForeignKey(d => d.MaNv)
@@ -270,6 +275,7 @@ public partial class Hshop2023Context : DbContext
             entity.Property(e => e.RandomKey)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.Xu).HasDefaultValue(0);
         });
 
         modelBuilder.Entity<Loai>(entity =>

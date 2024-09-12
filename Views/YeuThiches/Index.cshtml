@@ -11,42 +11,36 @@
     <a href="@Url.Action("Create", "YeuThiches")" class="btn btn-primary">Thêm Sản Phẩm Yêu Thích</a>
 </p>
 
-<table class="table">
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.MaHhNavigation.TenHh)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MaKhNavigation.HoTen)
-            </th>
-            <th>
-                Ngày Chọn
-            </th>
-            <th>
-                Mô Tả
-            </th>
-            <th></th>
+            <th>Tên Sản Phẩm</th>
+            <th>Giá</th>
+            <th>Ngày Sản Xuất</th>
+            <th>Giảm Giá</th>
+            <th>Số Lần Xem</th>
+            <th>Thể Loại</th>
+            <th>Thực Vật</th>
+            <th>Hấp Dẫn</th>
+            <th>Mô Tả</th>
+            <th>Hành Động</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
+                <td>@item.MaHhNavigation.TenHh</td>
+                <td>@item.MaHhNavigation.DonGia</td>
+                <td>@item.MaHhNavigation.NgaySx.ToString("d")</td>
+                <td>@item.MaHhNavigation.GiamGia.ToString("C")</td>
+                <td>@item.MaHhNavigation.SoLanXem</td>
+                <td>@item.MaHhNavigation.TenAlias</td>
+                <td>@(item.MaHhNavigation.IsOrganic ? "Có" : "Không")</td>
+                <td>@(item.MaHhNavigation.IsFantastic ? "Có" : "Không")</td>
+                <td>@item.MaHhNavigation.MoTa</td>
                 <td>
-                    @item.MaHhNavigation?.TenHh
-                </td>
-                <td>
-                    @item.MaKhNavigation?.HoTen
-                </td>
-                <td>
-                    @item.NgayChon?.ToString("d")
-                </td>
-                <td>
-                    @item.MoTa
-                </td>
-                <td>
-                    <a href="@Url.Action("Delete", "YeuThich", new { id = item.MaYt })" class="btn btn-danger">Xóa</a>
+                    <a href="@Url.Action("Delete", "YeuThiches", new { id = item.MaYt })" class="btn btn-danger">Xóa</a>
                 </td>
             </tr>
         }

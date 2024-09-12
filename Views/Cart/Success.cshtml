@@ -3,3 +3,9 @@
 }
 
 <h1 style="align-items: center;">Đã đặt hàng thành công !!!</h1>
+@if (TempData["XuMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["XuMessage"]
+    </div>
+}

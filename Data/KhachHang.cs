@@ -29,6 +29,8 @@ public partial class KhachHang
 
     public string? RandomKey { get; set; }
 
+    public int? Xu { get; set; }
+
     public virtual ICollection<BanBe> BanBes { get; set; } = new List<BanBe>();
 
     public virtual ICollection<HoaDon> HoaDons { get; set; } = new List<HoaDon>();

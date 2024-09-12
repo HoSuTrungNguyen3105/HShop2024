@@ -27,5 +27,6 @@ namespace HShop2024.Controllers
             var vouchers = await _context.Vouchers.ToListAsync();
             return PartialView("_VoucherPartial", vouchers);
         }
+
     }
 }

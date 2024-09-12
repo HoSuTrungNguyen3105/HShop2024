@@ -34,9 +34,9 @@ namespace ECommerceMVC.Controllers
             _emailSender = emailSender;
         }
 
-        #region Register
-        // GET: NhanVien/Create
-        public IActionResult DangKy()
+		#region Register
+		// GET: NhanVien/Create
+		public IActionResult DangKy()
         {
             return View();
         }

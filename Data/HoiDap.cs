@@ -15,5 +15,9 @@ public partial class HoiDap
 
     public string MaNv { get; set; } = null!;
 
+    public int? MaHh { get; set; }
+
+    public virtual HangHoa? MaHhNavigation { get; set; }
+
     public virtual NhanVien MaNvNavigation { get; set; } = null!;
 }

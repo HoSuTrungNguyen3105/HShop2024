@@ -7,18 +7,23 @@
     {
         <div class="alert alert-info mt-4">
             <div class="coupon-container">
+                <!-- ID phải khớp với ô input -->
                 <input type="text" id="couponCode-@voucher.Id" value="@voucher.Code" readonly class="form-control coupon-input" />
-                <button class="btn btn-primary coupon-button mt-2" onclick="copyCoupon('@voucher.Code')">Sao Chép Mã</button>
+                <!-- Sửa tham số truyền vào hàm -->
+                <button class="btn btn-primary coupon-button mt-2" onclick="copyCoupon('couponCode-@voucher.Id')">Sao Chép Mã</button>
             </div>
-            <p>Giảm giá: @voucher.DiscountAmount @if (voucher.IsPercentage)
+            <p>
+                Giảm giá: @voucher.DiscountAmount @if (voucher.IsPercentage)
                 {
                     <span>%</span>
                 }
                 else
                 {
                     <span>VNĐ</span>
-                }</p>
-            <p>Hết hạn: @voucher.DiscountAmount.ToString()</p>
+                }
+            </p>
+            <!-- Sửa lại để hiển thị đúng ngày hết hạn -->
+            <p>Hết hạn: ??/??/2025</p>
         </div>
     }
 </div>

@@ -36,6 +36,7 @@
                         <th scope="col">Mã KH</th>
                         <th scope="col">Họ Tên</th>
                         <th scope="col">Email</th>
+                        <th scope="col">Xu</th>
                         <th scope="col">Hiệu lực</th>
                         <th scope="col">Thao tác</th>
                     </tr>
@@ -58,6 +59,7 @@
                             <td>@kh.value.MaKh</td>
                             <td>@kh.value.HoTen</td>
                             <td>@kh.value.Email</td>
+                            <td>@kh.value.Xu Xu</td>
                             <td class="@(kh.value.HieuLuc ? "status-active" : "status-inactive")">
                                 @(kh.value.HieuLuc ? "Còn hiệu lực" : "Bị khóa")
                             </td>
