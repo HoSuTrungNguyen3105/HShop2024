@@ -34,21 +34,21 @@ namespace ECommerceMVC.Controllers
             _emailSender = emailSender;
         }
 
-		#region Register
-		// GET: NhanVien/Create
-		public IActionResult DangKy()
+        #region Register
+        public IActionResult DangKy()
         {
             return View();
         }
 
-        // POST: NhanVien/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DangKy([Bind("MaKh,MatKhau,HoTen,GioiTinh,NgaySinh,DiaChi,DienThoai,Email,Hinh")] KhachHang khachhang, IFormFile Hinh)
         {
             if (ModelState.IsValid)
             {
-                if (Hinh != null)
+				// Generate RandomKey
+				khachhang.RandomKey = GenerateRandomKey(32); // 32 characters for the random key, you can change this as needed
+				if (Hinh != null)
                 {
                     khachhang.Hinh = MyUtil.UploadHinh(Hinh, "KhachHang");
                 }
@@ -59,10 +59,19 @@ namespace ECommerceMVC.Controllers
             return View(khachhang);
         }
 
-
-        #endregion
-        #region Login
-        [HttpGet]
+		// Method to generate random key
+		private string GenerateRandomKey(int length)
+		{
+			using (var rng = new RNGCryptoServiceProvider())
+			{
+				var byteArray = new byte[length];
+				rng.GetBytes(byteArray);
+				return Convert.ToBase64String(byteArray).Substring(0, length);
+			}
+		}
+		#endregion
+		#region Login
+		[HttpGet]
         public IActionResult DangNhap(string? ReturnUrl)
         {
             ViewBag.ReturnUrl = ReturnUrl;
@@ -144,6 +153,31 @@ namespace ECommerceMVC.Controllers
         }
         #endregion
 
+        [HttpPost]
+        public async Task<IActionResult> Delete(string id) // Thay đổi int thành string
+        {
+            var khachHang = await db.KhachHangs.FindAsync(id); // Tìm theo khóa chính kiểu string
+            if (khachHang != null)
+            {
+                db.KhachHangs.Remove(khachHang);
+                await db.SaveChangesAsync();
+            }
+            return RedirectToAction("Index", "Admin");
+        }
+
+		[HttpPost]
+        public async Task<IActionResult> ToggleBan(int id)
+        {
+            var khachHang = await db.KhachHangs.FindAsync(id);
+            if (khachHang != null)
+            {
+                khachHang.HieuLuc = !khachHang.HieuLuc; // Đảo ngược trạng thái hiệu lực
+                await db.SaveChangesAsync();
+            }
+            return RedirectToAction("Index");
+        }
+
+
         [Authorize]
         public IActionResult Profile()
         {
@@ -156,6 +190,31 @@ namespace ECommerceMVC.Controllers
             await HttpContext.SignOutAsync();
             return Redirect("/");
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> XoaTaiKhoan()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId != null)
+            {
+                var khachHang = await db.KhachHangs.FindAsync(userId);
+
+                if (khachHang != null)
+                {
+                    db.KhachHangs.Remove(khachHang);
+                    await db.SaveChangesAsync();
+
+                    // Đăng xuất người dùng
+                    await HttpContext.SignOutAsync();
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+
+            return RedirectToAction("Profile");
+        }
+
         [HttpGet]
         public IActionResult ForgotPassword()
         {

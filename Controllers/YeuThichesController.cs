@@ -84,9 +84,10 @@ namespace HShop2024.Controllers
         // POST: YeuThiches/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: YeuThiches/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaYt,MaHh,MaKh,NgayChon,MoTa")] YeuThich yeuThich)
+        public async Task<IActionResult> Create([Bind("MaYt,MaHh")] YeuThich yeuThich)
         {
             if (ModelState.IsValid)
             {
@@ -94,8 +95,6 @@ namespace HShop2024.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["MaHh"] = new SelectList(_context.HangHoas, "MaHh", "MaHh", yeuThich.MaHh);
-            ViewData["MaKh"] = new SelectList(_context.KhachHangs, "MaKh", "MaKh", yeuThich.MaKh);
             return View(yeuThich);
         }
 

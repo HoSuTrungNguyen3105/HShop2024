@@ -13,65 +13,90 @@
     <title>@ViewData["Title"]</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    @* <link rel="stylesheet" href="~/css/site.css"> *@
+    <link rel="stylesheet" href="~/css/site.css">
     <style>
         .img-thumbnail-custom {
-            width: 100px; /* Đặt chiều rộng cho ảnh */
-            height: 100px; /* Đặt chiều cao cho ảnh */
-            object-fit: cover; /* Đảm bảo ảnh không bị kéo dãn và vẫn giữ tỷ lệ */
-            border-radius: 5px; /* Để ảnh có các góc bo tròn nếu cần */
+            width: 50px; /* Điều chỉnh kích thước hình ảnh */
+            height: 50px;
+            object-fit: cover;
         }
 
+        .status-active {
+            color: #28a745; /* Màu xanh cho trạng thái còn hiệu lực */
+        }
+
+        .status-inactive {
+            color: #dc3545; /* Màu đỏ cho trạng thái bị khóa */
+        }
+
+        .status-label {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 0.2rem;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
     <div class="container mt-4">
         <h1 class="mb-4">@ViewData["Title"]</h1>
         <div class="table-responsive">
-            <table class="table table-striped table-bordered">
-                <thead class="thead-dark">
-                    <tr>
-                        <th scope="col">Số TT</th>
-                        <th scope="col">Ảnh khách hàng</th>
-                        <th scope="col">Mã KH</th>
-                        <th scope="col">Họ Tên</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Xu</th>
-                        <th scope="col">Hiệu lực</th>
-                        <th scope="col">Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var kh in Model.Select((value, index) => new { value, index }))
-                    {
+            <form asp-action="Edit" method="post">
+                <table class="table table-striped table-bordered">
+                    <thead class="thead-dark">
                         <tr>
-                            <td>@(kh.index + 1)</td>
-                            <td>
-                                @if (!string.IsNullOrEmpty(kh.value.Hinh))
-                                {
-                                    <img src="@Url.Content("~/Hinh/KhachHang/" + kh.value.Hinh)" alt="Hình ảnh @kh.value.HoTen" class="img-thumbnail-custom">
-                                }
-                                else
-                                {
-                                    <img src="@Url.Content("~/Hinh/KhachHang/android_300200.png")" alt="Hình ảnh mặc định" class="img-thumbnail-custom">
-                                }
-                            </td>
-                            <td>@kh.value.MaKh</td>
-                            <td>@kh.value.HoTen</td>
-                            <td>@kh.value.Email</td>
-                            <td>@kh.value.Xu Xu</td>
-                            <td class="@(kh.value.HieuLuc ? "status-active" : "status-inactive")">
-                                @(kh.value.HieuLuc ? "Còn hiệu lực" : "Bị khóa")
-                            </td>
-                            <td>
-                                <a href="@Url.Action("Edit", "Admin", new { id = kh.value.MaKh })" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-edit"></i> Sửa
-                                </a>
-                            </td>
+                            <th scope="col">Số TT</th>
+                            <th scope="col">Ảnh nhân viên</th>
+                            <th scope="col">Mã KH</th>
+                            <th scope="col">Họ Tên</th>
+                            <th scope="col">Action</th>
+                            <th scope="col">Hiệu lực</th>
+                            <th scope="col">Save</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var kh in Model.Select((value, index) => new { value, index }))
+                        {
+                            <tr>
+                                <td>@(kh.index + 1)</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(kh.value.Hinh))
+                                    {
+                                        <img src="@Url.Content("~/Hinh/KhachHang/" + kh.value.Hinh)" alt="Hình ảnh @kh.value.HoTen" class="img-fluid img-thumbnail-custom">
+                                    }
+                                    else
+                                    {
+                                        <img src="@Url.Content("~/Hinh/KhachHang/Author.jpg")" alt="Hình ảnh mặc định" class="img-fluid img-thumbnail-custom">
+                                    }
+                                </td>
+                                <td>@kh.value.MaKh</td>
+                                <td>@kh.value.HoTen</td>
+                                <td>
+                                    <input type="checkbox" name="KhachHangs[@(kh.index)].HieuLuc" value="true" @(kh.value.HieuLuc ? "checked" : "") />
+                                </td>
+                                <td>
+                                    @if (kh.value.HieuLuc)
+                                    {
+                                        <span class="status-label status-active">Còn hiệu lực</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-label status-inactive">Bị khóa</span>
+                                    }
+                                </td>
+                                <td>
+                                    <input type="hidden" name="KhachHangs[@(kh.index)].MaKh" value="@kh.value.MaKh" />
+                                    <input type="hidden" name="KhachHangs[@(kh.index)].HoTen" value="@kh.value.HoTen" />
+                                    <input type="hidden" name="KhachHangs[@(kh.index)].Email" value="@kh.value.Email" />
+                                    <button type="submit" class="btn btn-primary btn-sm" name="SaveChanges" value="@kh.value.MaKh">
+                                        <i class="fas fa-save"></i> Lưu
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </form>
         </div>
     </div>
 

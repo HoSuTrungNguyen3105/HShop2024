@@ -22,8 +22,6 @@ namespace HShop2024.Controllers
         {
             return View();
         }
-
-
         public IActionResult Privacy()
 		{
 			return View();

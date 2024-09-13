@@ -43,39 +43,31 @@ public class AdminController : Controller
     // POST: Admin/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(string id, [Bind("MaKh,HoTen,Email,HieuLuc")] KhachHang khachHang)
+    public async Task<IActionResult> Edit(List<KhachHang> KhachHangs)
     {
-        if (id != khachHang.MaKh)
-        {
-            return NotFound();
-        }
-
         if (ModelState.IsValid)
         {
             try
             {
-                var existingKhachHang = await _context.KhachHangs.FindAsync(id);
-                if (existingKhachHang != null)
+                foreach (var khachHang in KhachHangs)
                 {
-                    existingKhachHang.HieuLuc = khachHang.HieuLuc;
-                    _context.Update(existingKhachHang);
-                    await _context.SaveChangesAsync();
+                    var existingKhachHang = await _context.KhachHangs.FindAsync(khachHang.MaKh);
+                    if (existingKhachHang != null)
+                    {
+                        existingKhachHang.HieuLuc = khachHang.HieuLuc;
+                        _context.Update(existingKhachHang);
+                    }
                 }
+                await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!KhachHangExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                // Xử lý lỗi nếu có
+                ModelState.AddModelError("", "Đã xảy ra lỗi khi cập nhật dữ liệu.");
             }
             return RedirectToAction(nameof(Index));
         }
-        return View(khachHang);
+        return View();
     }
 
     private bool KhachHangExists(string id)
