@@ -40,12 +40,8 @@ namespace HShop2024.Controllers
                 TempData["Message"] = "Nhân viên và Admin không thể thực hiện giao dịch!";
             }
 
-            // Retrieve the cart from session
             var gioHang = Cart;
 
-            // Calculate the total price for each item
-
-            // Lấy giá trị giảm giá từ TempData và chuyển đổi về double
             if (TempData["CouponDiscount"] != null && double.TryParse(TempData["CouponDiscount"].ToString(), out double discount))
             {
                 ViewBag.CouponDiscount = discount;

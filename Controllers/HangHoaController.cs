@@ -2,6 +2,7 @@
 using HShop2024.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Protocol;
 using System.Globalization;
 
 namespace HShop2024.Controllers
@@ -17,50 +18,42 @@ namespace HShop2024.Controllers
 
 		public IActionResult Index(int? loai, string sortOrder)
 		{
-			// Khởi tạo IQueryable với tất cả các hàng hóa
-			IQueryable<HangHoa> hangHoas = db.HangHoas;
+            IQueryable<HangHoa> hangHoas = db.HangHoas;
 
-			// Lọc theo loại nếu có
-			if (loai.HasValue)
-			{
-				hangHoas = hangHoas.Where(p => p.MaLoai == loai.Value);
-			}
+            // Sắp xếp theo tiêu chí sortOrder
+            switch (sortOrder)
+            {
+                case "isorganic":
+                    hangHoas = hangHoas.Where(h => h.IsOrganic).OrderBy(h => h.TenHh);
+                    break;
+                case "isfantastic":
+                    hangHoas = hangHoas.Where(h => h.IsFantastic).OrderBy(h => h.TenHh);
+                    break;
+                case "mostviewed":
+                    hangHoas = hangHoas.OrderByDescending(h => h.SoLanXem);
+                    break;
+                default:
+                    hangHoas = hangHoas.OrderBy(h => h.MaLoai);
+                    break;
+            }
 
-			// Sắp xếp theo tiêu chí sortOrder
-			switch (sortOrder)
-			{
-				case "popularity":
-					hangHoas = hangHoas.OrderBy(h => h.SoLanXem); // Giả sử có thuộc tính Đánh Giá
-					break;
-				case "organic":
-					hangHoas = hangHoas.Where(h => h.IsOrganic); // Giả sử có thuộc tính IsOrganic
-					break;
-				case "fantastic":
-					hangHoas = hangHoas.OrderBy(h => h.TenHh); // Sắp xếp theo tên hàng hóa
-					break;
-				default:
-					hangHoas = hangHoas.OrderBy(h => h.TenHh); // Sắp xếp theo tên hàng hóa nếu không có tiêu chí nào
-					break;
-			}
-
-			// Chọn dữ liệu để trả về cho view
-			var result = hangHoas.Select(p => new HangHoaVM
-			{
-				MaHh = p.MaHh,
-				TenHH = p.TenHh,
-				DonGia = p.DonGia ?? 0,
-				Hinh = p.Hinh ?? "",
-				MoTaNgan = p.MoTaDonVi ?? "",
-				SoLanXem = p.SoLanXem,
-				TenLoai = p.MaLoaiNavigation.TenLoai
-			}).ToList();
+            // Chọn dữ liệu để trả về cho view
+            var result = hangHoas.Select(p => new HangHoaVM
+            {
+                MaHh = p.MaHh,
+                TenHH = p.TenHh,
+                DonGia = p.DonGia ?? 0,
+                Hinh = p.Hinh ?? "",
+                MoTaNgan = p.MoTaDonVi ?? "",
+                SoLanXem = p.SoLanXem,
+                TenLoai = p.MaLoaiNavigation.TenLoai
+            });
 
 			// Trả về view với dữ liệu
 			return View(result);
 		}
-
-
-		public IActionResult Search(string? query)
+       
+        public IActionResult Search(string? query)
         {
             var hangHoas = db.HangHoas.AsQueryable();
 

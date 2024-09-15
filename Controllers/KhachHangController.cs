@@ -46,9 +46,9 @@ namespace ECommerceMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-				// Generate RandomKey
-				khachhang.RandomKey = GenerateRandomKey(32); // 32 characters for the random key, you can change this as needed
-				if (Hinh != null)
+                // Generate RandomKey
+                khachhang.RandomKey = GenerateRandomKey(32); // 32 characters for the random key, you can change this as needed
+                if (Hinh != null)
                 {
                     khachhang.Hinh = MyUtil.UploadHinh(Hinh, "KhachHang");
                 }
@@ -59,19 +59,19 @@ namespace ECommerceMVC.Controllers
             return View(khachhang);
         }
 
-		// Method to generate random key
-		private string GenerateRandomKey(int length)
-		{
-			using (var rng = new RNGCryptoServiceProvider())
-			{
-				var byteArray = new byte[length];
-				rng.GetBytes(byteArray);
-				return Convert.ToBase64String(byteArray).Substring(0, length);
-			}
-		}
-		#endregion
-		#region Login
-		[HttpGet]
+        // Method to generate random key
+        private string GenerateRandomKey(int length)
+        {
+            using (var rng = new RNGCryptoServiceProvider())
+            {
+                var byteArray = new byte[length];
+                rng.GetBytes(byteArray);
+                return Convert.ToBase64String(byteArray).Substring(0, length);
+            }
+        }
+        #endregion
+        #region Login
+        [HttpGet]
         public IActionResult DangNhap(string? ReturnUrl)
         {
             ViewBag.ReturnUrl = ReturnUrl;
@@ -165,7 +165,7 @@ namespace ECommerceMVC.Controllers
             return RedirectToAction("Index", "Admin");
         }
 
-		[HttpPost]
+        [HttpPost]
         public async Task<IActionResult> ToggleBan(int id)
         {
             var khachHang = await db.KhachHangs.FindAsync(id);

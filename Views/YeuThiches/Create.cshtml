@@ -1,43 +1,44 @@
-﻿@model HShop2024.Data.YeuThich
+﻿@model IEnumerable<HShop2024.Data.HangHoa>
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Thêm vào Danh Sách Yêu Thích";
+    Layout = "_Layout2";
 }
 
-<h1>Create</h1>
+<h1>@ViewData["Title"]</h1>
 
-<h4>YeuThich</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="MaHh" class="control-label"></label>
-                <select asp-for="MaHh" class ="form-control" asp-items="ViewBag.MaHh"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="MaKh" class="control-label"></label>
-                <select asp-for="MaKh" class ="form-control" asp-items="ViewBag.MaKh"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="NgayChon" class="control-label"></label>
-                <input asp-for="NgayChon" class="form-control" />
-                <span asp-validation-for="NgayChon" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MoTa" class="control-label"></label>
-                <input asp-for="MoTa" class="form-control" />
-                <span asp-validation-for="MoTa" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<!-- Form để chọn tùy chọn -->
+<div class="col-xl-3">
+    <div class="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
+        <label for="sorting">Lọc theo:</label>
+        <select id="sorting" name="sortOrder" class="border-0 form-select-sm bg-light me-3">
+            <option value="">Chọn tùy chọn</option>
+            <option value="isorganic">Organic</option>
+            <option value="isfantastic">Fantastic</option>
+            <option value="mostviewed">Lượt xem nhiều nhất</option>
+        </select>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+<!-- Form để thêm vào yêu thích -->
+<form asp-action="AddToFavorites" method="post" onsubmit="updateSortOrder()">
+    <div class="form-group">
+        <label for="maHh">Chọn Sản Phẩm</label>
+        <select id="maHh" name="maHh" class="form-control">
+            @foreach (var item in Model)
+            {
+                <option value="@item.MaHh">@item.TenHh - @item.DonGia - @item.SoLanXem</option>
+            }
+        </select>
+    </div>
+    <input type="hidden" id="hiddenSortOrder" name="sortOrder" value="" />
+    <button type="submit" class="btn btn-primary">Thêm vào Yêu Thích</button>
+</form>
 
+<!-- JavaScript để cập nhật giá trị của sortOrder -->
+<script>
+    function updateSortOrder() {
+        var selectedValue = document.getElementById("sorting").value;
+        document.getElementById("hiddenSortOrder").value = selectedValue;
+    }
+</script>

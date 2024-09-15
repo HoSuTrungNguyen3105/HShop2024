@@ -28,7 +28,7 @@ namespace HShop2024.Controllers
                     TotalRevenue = hh.ChiTietHds.Sum(ct => (ct.SoLuong ) * (hh.DonGia ?? 0))
                 })
                 .OrderByDescending(ps => ps.SalesCount)
-                .Take(10)
+                .Take(9)
                 .ToList();
 
             var model = new
