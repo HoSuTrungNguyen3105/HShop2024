@@ -16,9 +16,11 @@
     <link rel="stylesheet" href="~/css/site.css">
     <style>
         .img-thumbnail-custom {
-            width: 50px; /* Điều chỉnh kích thước hình ảnh */
-            height: 50px;
-            object-fit: cover;
+            width: 150px; /* Đặt chiều rộng cố định cho hình ảnh */
+            height: 150px; /* Đặt chiều cao cố định cho hình ảnh */
+            object-fit: cover; /* Đảm bảo hình ảnh được căn chỉnh đều */
+            border-radius: 5px; /* Bo góc nếu muốn */
+            border: 1px solid #ddd; /* Đường viền mỏng quanh hình ảnh */
         }
 
         .status-active {
@@ -46,7 +48,7 @@
                     <thead class="thead-dark">
                         <tr>
                             <th scope="col">Số TT</th>
-                            <th scope="col">Ảnh nhân viên</th>
+                            <th scope="col">Ảnh khách hàng</th>
                             <th scope="col">Mã KH</th>
                             <th scope="col">Họ Tên</th>
                             <th scope="col">Action</th>
@@ -62,11 +64,11 @@
                                 <td>
                                     @if (!string.IsNullOrEmpty(kh.value.Hinh))
                                     {
-                                        <img src="@Url.Content("~/Hinh/KhachHang/" + kh.value.Hinh)" alt="Hình ảnh @kh.value.HoTen" class="img-fluid img-thumbnail-custom">
+                                        <img src="@Url.Content("~/Hinh/KhachHang/" + kh.value.Hinh)" alt="Hình ảnh của @kh.value.HoTen" class="img-fluid img-thumbnail-custom" />
                                     }
                                     else
                                     {
-                                        <img src="@Url.Content("~/Hinh/KhachHang/Author.jpg")" alt="Hình ảnh mặc định" class="img-fluid img-thumbnail-custom">
+                                        <img src="@Url.Content("~/Hinh/KhachHang/Author.jpg")" alt="Hình ảnh mặc định" class="img-fluid img-thumbnail-custom" />
                                     }
                                 </td>
                                 <td>@kh.value.MaKh</td>

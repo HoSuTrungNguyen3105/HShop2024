@@ -1,4 +1,8 @@
 ﻿@model dynamic
+@{
+    ViewData["Title"] = "Báo cáo";
+    Layout = "_Layout2";
+}
 <style>
     .btn-custom {
         background-color: #007bff;
@@ -20,7 +24,7 @@
         }
 </style>
 <div class="container mt-4">
-    <h1>Báo cáo</h1>
+    <h1>@ViewData["Title"]</h1>
     <!-- Nút quay lại trang admin/index -->
     <a href="@Url.Action("Index", "Admin")" class="btn btn-custom mb-4">
         <i class="fas fa-arrow-left"></i> Quay lại

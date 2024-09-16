@@ -21,6 +21,8 @@ namespace HShop2024.Controllers
         // GET: YeuThiches
         public IActionResult Index(string sortOrder)
         {
+            Console.WriteLine("sortOrder: " + sortOrder);
+
             IQueryable<HangHoa> hangHoas = _context.HangHoas;
 
             // Sắp xếp theo tiêu chí sortOrder

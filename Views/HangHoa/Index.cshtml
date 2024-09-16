@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Index";
     Layout = "_DanhSachHangHoa";
+    var selectedLoai = TempData["SelectedLoai"] as int?;
 }
 <style>
     .custom-alert {
@@ -17,6 +18,14 @@
     <div class="custom-alert">
         @TempData["Message"]
     </div>
+}
+@if (!Model.Any())
+{
+    <p>Loại đã chọn: @selectedLoai.Value</p>
+}
+else
+{
+    <p>Chưa chọn loại nào.</p>
 }
 
 <!-- Single Page Header start -->

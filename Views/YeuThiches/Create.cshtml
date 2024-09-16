@@ -15,7 +15,6 @@
             <option value="">Chọn tùy chọn</option>
             <option value="isorganic">Organic</option>
             <option value="isfantastic">Fantastic</option>
-            <option value="mostviewed">Lượt xem nhiều nhất</option>
         </select>
     </div>
 </div>
@@ -34,6 +33,13 @@
     <input type="hidden" id="hiddenSortOrder" name="sortOrder" value="" />
     <button type="submit" class="btn btn-primary">Thêm vào Yêu Thích</button>
 </form>
+
+<!-- Nút chuyển hướng đến trang xóa -->
+<div class="mt-3">
+    <a href="@Url.Action("Delete", "YeuThiches")" class="btn btn-danger">
+        <i class="fa fa-trash me-2"></i> Xóa Danh Sách Yêu Thích
+    </a>
+</div>
 
 <!-- JavaScript để cập nhật giá trị của sortOrder -->
 <script>

@@ -29,7 +29,7 @@
                 </div>
 
                 <div class="form-check my-3">
-                    <input asp-for="GioiTinh" class="form-check-input">
+                    <input asp-for="GioiTinh" type="checkbox" class="form-check-input" id="GioiTinh" />
                     <label class="form-check-label" for="GioiTinh">Nam?</label>
                 </div>
 
@@ -58,9 +58,10 @@
                     <input asp-for="Email" class="form-control" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
+
                 <div class="form-group">
-                    <label asp-for="Hinh" class="form-label">Hình ảnh</label>
-                    <input asp-for="Hinh" type="file" class="form-control-file" />
+                    <label asp-for="Hinh" class="form-label">Ảnh đại diện</label>
+                    <input asp-for="Hinh" type="file" class="form-control" />
                     <span asp-validation-for="Hinh" class="text-danger"></span>
                 </div>
             </div>

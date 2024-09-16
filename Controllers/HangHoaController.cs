@@ -16,8 +16,17 @@ namespace HShop2024.Controllers
             db = conetxt;
         }
 
-		public IActionResult Index(int? loai, string sortOrder)
-		{
+        public IActionResult Index(int? loai, string sortOrder)
+        {
+            // Lưu loại vào TempData
+            if (loai.HasValue)
+            {
+                TempData["SelectedLoai"] = loai.Value;
+            }
+
+            // Debugging
+            Console.WriteLine($"SelectedLoai: {TempData["SelectedLoai"]}");
+
             IQueryable<HangHoa> hangHoas = db.HangHoas;
 
             // Sắp xếp theo tiêu chí sortOrder
@@ -37,6 +46,12 @@ namespace HShop2024.Controllers
                     break;
             }
 
+            // Nếu có giá trị loại được chọn, lọc theo loại
+            if (loai.HasValue)
+            {
+                hangHoas = hangHoas.Where(h => h.MaLoai == loai.Value);
+            }
+
             // Chọn dữ liệu để trả về cho view
             var result = hangHoas.Select(p => new HangHoaVM
             {
@@ -49,10 +64,10 @@ namespace HShop2024.Controllers
                 TenLoai = p.MaLoaiNavigation.TenLoai
             });
 
-			// Trả về view với dữ liệu
-			return View(result);
-		}
-       
+            // Trả về view với dữ liệu
+            return View(result);
+        }
+
         public IActionResult Search(string? query)
         {
             var hangHoas = db.HangHoas.AsQueryable();

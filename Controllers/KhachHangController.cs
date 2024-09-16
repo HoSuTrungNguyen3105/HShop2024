@@ -178,13 +178,30 @@ namespace ECommerceMVC.Controllers
         }
 
 
-        [Authorize]
-        public IActionResult Profile()
-        {
-            return View();
-        }
+		public IActionResult Profile()
+		{
+			if (User.Identity.IsAuthenticated)
+			{
+				var tenkh = User.Identity.Name;
+				var customer = db.KhachHangs.FirstOrDefault(k => k.MaKh == tenkh);
 
-        [Authorize]
+				if (customer != null)
+				{
+					// Log giá trị Xu
+					Console.WriteLine($"Customer Xu: {customer.Xu}");
+					TempData["Xu"] = customer.Xu ?? 0;
+				}
+				else
+				{
+					TempData["Xu"] = 0;
+				}
+			}
+
+			return View();
+		}
+
+
+		[Authorize]
         public async Task<IActionResult> DangXuat()
         {
             await HttpContext.SignOutAsync();
