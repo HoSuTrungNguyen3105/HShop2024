@@ -148,20 +148,21 @@ namespace HShop2024.Controllers
             {
                 if (string.IsNullOrWhiteSpace(model.MaNv))
                 {
-                    ModelState.AddModelError("", "Mã khách hàng không được để trống.");
+                    ModelState.AddModelError("MaNv", "Mã nhân viên không được để trống.");
                     return View(model);
                 }
 
                 if (string.IsNullOrWhiteSpace(model.MatKhau))
                 {
-                    ModelState.AddModelError("", "Mật khẩu không được để trống.");
+                    ModelState.AddModelError("MatKhau", "Mật khẩu không được để trống.");
                     return View(model);
                 }
 
-                var nhanVien = _context.NhanViens.SingleOrDefault(nv => nv.MaNv == model.MaNv);
-                if (nhanVien == null)
+                var nhanVien = _context.NhanViens.SingleOrDefault(kh =>
+                                  kh.MaNv == model.MaNv &&
+                                  kh.MatKhau == model.MatKhau); if (nhanVien == null)
                 {
-                    ModelState.AddModelError("", "Mã khách hàng không đúng hoặc không tồn tại.");
+                    ModelState.AddModelError("", "Mã nhân viên không đúng hoặc không tồn tại.");
                     return View(model);
                 }
 

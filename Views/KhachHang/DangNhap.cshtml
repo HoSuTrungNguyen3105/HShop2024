@@ -4,37 +4,39 @@
     ViewData["Title"] = "Đăng nhập";
 }
 <div class="container py-5">
-    <h1 class="mb-4 text-center">Đăng nhập</h1>
-
-    <div class="row g-5">
+    <h2 class="mb-4 text-center">@ViewData["Title"]</h2>
+    <div class="row g-4">
         <!-- Form Đăng Nhập Khách Hàng -->
         <div class="col-md-6">
             <div class="p-4 border rounded shadow-sm bg-light">
-                <h2 class="mb-4 text-center">Khách Hàng</h2>
-                <p class="pb-4 danger">@TempData["Message"]</p>
+                <h3 class="mb-4 text-center">Khách Hàng</h3>
                 <form asp-action="DangNhap" method="post">
-                    <div class="text-danger" asp-validation-summary="All"></div>
+                    <div class="text-danger mb-3" asp-validation-summary="All"></div>
                     <div class="mb-3">
                         <label asp-for="MaKh" class="form-label"></label>
-                        <input asp-for="MaKh" class="form-control" />
+                        <input asp-for="MaKh" class="form-control" placeholder="Hint account:hello" />
                         <span asp-validation-for="MaKh" class="text-danger"></span>
                     </div>
                     <div class="mb-3">
                         <label asp-for="MatKhau" class="form-label"></label>
-                        <input asp-for="MatKhau" type="password" class="form-control" />
+                        <input asp-for="MatKhau" type="password" class="form-control" placeholder="Password:1" />
                         <span asp-validation-for="MatKhau" class="text-danger"></span>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+                    <div class="d-flex justify-content-between mb-3">
+                        <a asp-controller="KhachHang" asp-action="ForgotPassword">Quên mật khẩu?</a>
+                        <a asp-controller="KhachHang" asp-action="DangKy">Tạo tài khoản mới</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Đăng Nhập</button>
                     <input type="hidden" name="ReturnUrl" value="@ViewBag.ReturnUrl" />
                 </form>
             </div>
         </div>
-
+        
         <!-- Button Chuyển Hướng Đến Đăng Nhập Nhân Viên -->
         <div class="col-md-6 d-flex align-items-center justify-content-center">
             <div class="text-center">
-                <h2 class="mb-4">Nhân Viên</h2>
-                <a class="btn btn-secondary btn-lg" asp-controller="NhanVien" asp-action="DangNhap">Đăng nhập nhân viên</a>
+                <h3 class="mb-4">Nhân Viên</h3>
+                <a class="btn btn-secondary btn-lg" asp-controller="NhanVien" asp-action="DangNhap">Đăng Nhập Nhân Viên</a>
             </div>
         </div>
     </div>

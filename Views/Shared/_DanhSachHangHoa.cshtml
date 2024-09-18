@@ -1,4 +1,4 @@
-﻿@{
+﻿﻿@{
     Layout = "_LayoutCustomer";
 }
 
@@ -164,8 +164,16 @@
         $.get('@Url.Action("List", "Voucher")', function (data) {
             $('#voucherSection').html(data);
         });
-    });
 
+        // Khôi phục giá trị đã chọn từ localStorage khi trang tải lại
+        loadSortingPreference();
+
+        // Sự kiện onchange để lưu giá trị khi người dùng thay đổi
+        $('#sorting').on('change', function () {
+            saveSortingPreference();
+            applySorting();
+        });
+    });
     function copyCoupon(couponId) {
         // Get the input element using the ID
         var copyText = document.getElementById(couponId);
@@ -186,10 +194,25 @@
         }
     }
 
+
     function applySorting() {
         var selectedSortOrder = document.getElementById('sorting').value;
         // Điều hướng đến action Index của HangHoaController với tham số sortOrder
         window.location.href = '/HangHoa/Index?sortOrder=' + selectedSortOrder;
     }
 
+    function saveSortingPreference() {
+        var sortingSelect = document.getElementById('sorting');
+        // Lưu giá trị đã chọn vào localStorage
+        localStorage.setItem('sortingPreference', sortingSelect.value);
+    }
+
+    function loadSortingPreference() {
+        var savedValue = localStorage.getItem('sortingPreference');
+        if (savedValue) {
+            // Khôi phục giá trị đã chọn từ localStorage
+            var sortingSelect = document.getElementById('sorting');
+            sortingSelect.value = savedValue;
+        }
+    }
 </script>

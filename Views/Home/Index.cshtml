@@ -3,28 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flatastic Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-        .welcome-container {
-            display: flex;
-            flex-direction: column; /* Đặt các phần tử theo cột */
-            align-items: flex-start; /* Căn lề bên trái */
-            text-align: left; /* Căn chỉnh văn bản bên trái */
+        /* Banner styles */
+        .banner {
+            position: relative;
+            background-size: cover;
+            background-image: url('https://via.placeholder.com/1920x500?text=SALE');
+            text-align: center;
+            color: white;
+            padding: 100px 20px;
         }
 
-            .welcome-container h1 {
-                margin: 0; /* Xóa khoảng cách mặc định giữa các tiêu đề */
+            .banner h1 {
+                font-size: 72px;
+                margin: 0;
             }
+
+            .banner p {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+
+            .banner .shop-now {
+                background-color: #e74c3c;
+                color: white;
+                padding: 10px 20px;
+                text-decoration: none;
+                font-size: 18px;
+            }
+
+                .banner .shop-now:hover {
+                    background-color: #c0392b;
+                }
+
+        /* Product Categories */
+        .categories {
+            text-align: center;
+            padding: 50px 0;
+        }
+
+            .categories h2 {
+                font-size: 32px;
+                margin-bottom: 20px;
+            }
+
+            .categories ul {
+                list-style: none;
+                padding: 0;
+            }
+
+                .categories ul li {
+                    display: inline;
+                    margin: 0 10px;
+                }
+
+                    .categories ul li a {
+                        text-decoration: none;
+                        padding: 10px 20px;
+                        background-color: #333;
+                        color: white;
+                        border-radius: 5px;
+                    }
+
+                        .categories ul li a.active,
+                        .categories ul li a:hover {
+                            background-color: #e74c3c;
+                        }
+
+      
     </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="welcome-container">
-            <h1 class="display-4">Welcome</h1>
-            <h1>Hân hạnh được phục vụ</h1>
-        </div>
+
+    <!-- Banner Section -->
+    <div class="banner">
+        <h1>SALE</h1>
+        <p>UP TO 70% OFF</p>
+        <a asp-controller="HangHoa" asp-action="Index" class="shop-now">Shop Now</a>
+
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <!-- Categories Section -->
+    <div class="categories">
+        <h2>All Products</h2>
+        <ul>
+            <li><a href="#" class="active">ALL</a></li>
+            <li><a href="#">FEATURED</a></li>
+            <li><a href="#">NEW</a></li>
+            <li><a href="#">SPECIALS</a></li>
+            <li><a href="#">HIT</a></li>
+            <li><a href="#">RATED</a></li>
+        </ul>
+    </div>
+
+
 </body>
 </html>

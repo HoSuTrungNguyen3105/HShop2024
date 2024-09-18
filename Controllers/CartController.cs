@@ -9,6 +9,8 @@ using System.ComponentModel;
 using System;
 using System.Transactions;
 using Newtonsoft.Json;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using Microsoft.AspNetCore.Authentication;
 
 namespace HShop2024.Controllers
 {
@@ -150,102 +152,132 @@ namespace HShop2024.Controllers
             return Json(invoice);
         }
 
-		[Authorize]
-		[HttpPost]
-		public async Task<IActionResult> Checkout(CheckoutVM model)
-		{
-			if (ModelState.IsValid)
-			{
-				var customerIdClaim = HttpContext.User.Claims.SingleOrDefault(p => p.Type == MySetting.CLAIM_CUSTOMERID);
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Checkout(CheckoutVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                var customerIdClaim = HttpContext.User.Claims.SingleOrDefault(p => p.Type == MySetting.CLAIM_CUSTOMERID);
 
-				if (customerIdClaim == null)
-				{
-					TempData["Message"] = "Chỉ có khách hàng mới mua hàng được !";
-					return RedirectToAction("Index", "HangHoa");
-				}
+                if (customerIdClaim == null)
+                {
+                    TempData["Message"] = "Chỉ có khách hàng mới mua hàng được!";
+                    return RedirectToAction("Index", "HangHoa");
+                }
+                
+                var customerId = customerIdClaim.Value;
+                var khachHang = db.KhachHangs.SingleOrDefault(kh => kh.MaKh == customerId);
 
-				var customerId = customerIdClaim.Value;
-				var khachHang = db.KhachHangs.SingleOrDefault(kh => kh.MaKh == customerId);
+                if (model.GiongKhachHang && khachHang == null)
+                {
+                    return Json(new { success = false, message = "Khách hàng không tồn tại." });
+                }
 
-				if (model.GiongKhachHang && khachHang == null)
-				{
-					return Json(new { success = false, message = "Khách hàng không tồn tại." });
-				}
+                var hoadon = new HoaDon
+                {
+                    MaKh = customerId,
+                    HoTen = model.HoTen ?? khachHang?.HoTen,
+                    DiaChi = model.DiaChi ?? khachHang?.DiaChi,
+                    DienThoai = model.DienThoai ?? khachHang?.DienThoai,
+                    NgayDat = DateTime.Now,
+                    CachThanhToan = "COD",
+                    CachVanChuyen = "GRAB",
+                    MaTrangThai = 0,
+                    GhiChu = model.GhiChu
+                };
 
-				var hoadon = new HoaDon
-				{
-					MaKh = customerId,
-					HoTen = model.HoTen ?? khachHang?.HoTen,
-					DiaChi = model.DiaChi ?? khachHang?.DiaChi,
-					DienThoai = model.DienThoai ?? khachHang?.DienThoai,
-					NgayDat = DateTime.Now,
-					CachThanhToan = "COD",
-					CachVanChuyen = "GRAB",
-					MaTrangThai = 0,
-					GhiChu = model.GhiChu
-				};
+                using (var transaction = await db.Database.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        db.Add(hoadon);
+                        await db.SaveChangesAsync();
 
-				db.Database.BeginTransaction();
-				try
-				{
-					db.Add(hoadon);
-					db.SaveChanges();
+                        if (Cart == null || Cart.Count == 0)
+                        {
+                            await transaction.RollbackAsync();
+                            return Json(new { success = false, message = "Giỏ hàng rỗng." });
+                        }
 
-					var cthds = new List<ChiTietHd>();
-					if (Cart == null || Cart.Count == 0)
-					{
-						db.Database.RollbackTransaction();
-						return Json(new { success = false, message = "Giỏ hàng rỗng." });
-					}
+                        var productIds = Cart.Select(c => c.MaHh).ToList();
+                        var products = db.HangHoas.Where(p => productIds.Contains(p.MaHh)).ToList();
 
-					var productIds = Cart.Select(c => c.MaHh).ToList();
-					var products = db.HangHoas.Where(p => productIds.Contains(p.MaHh)).ToList();
+                        var cthds = new List<ChiTietHd>();
 
-					foreach (var item in Cart)
-					{
-						cthds.Add(new ChiTietHd
-						{
-							MaHd = hoadon.MaHd,
-							SoLuong = item.SoLuong,
-							DonGia = item.DonGia,
-							MaHh = item.MaHh,
-							GiamGia = 0
-						});
+                        foreach (var item in Cart)
+                        {
+                            cthds.Add(new ChiTietHd
+                            {
+                                MaHd = hoadon.MaHd,
+                                SoLuong = item.SoLuong,
+                                DonGia = item.DonGia,
+                                MaHh = item.MaHh,
+                                GiamGia = 0
+                            });
 
-						var product = products.SingleOrDefault(p => p.MaHh == item.MaHh);
-						if (product != null)
-						{
-							product.SoLanXem += 1;
-						}
-					}
+                            var product = products.SingleOrDefault(p => p.MaHh == item.MaHh);
+                            if (product != null)
+                            {
+                                product.SoLanXem += 1;
+                            }
+                        }
 
-					db.AddRange(cthds);
-					await db.SaveChangesAsync();
+                        db.AddRange(cthds);
+                        await db.SaveChangesAsync();
 
-					if (khachHang != null)
-					{
-						khachHang.Xu = (khachHang.Xu ?? 0) + 100; // Cộng thêm 100 xu
-						await db.SaveChangesAsync();
-					}
+                        if (khachHang != null)
+                        {
+                            khachHang.Xu = (khachHang.Xu ?? 0) + 100; // Cộng thêm 100 xu
+                            db.Update(khachHang);
+                            await db.SaveChangesAsync(); // Lưu thay đổi vào cơ sở dữ liệu
 
-					db.Database.CommitTransaction();
+                            // Cập nhật lại claim để chứa thông tin xu mới
+                            var identity = (ClaimsIdentity)User.Identity;
+                            var oldXuClaim = identity.FindFirst("Xu");
+                            if (oldXuClaim != null)
+                            {
+                                identity.RemoveClaim(oldXuClaim);
+                            }
+                            identity.AddClaim(new Claim("Xu", khachHang.Xu.ToString()));
 
-					HttpContext.Session.Set<List<CartItem>>(MySetting.CART_KEY, new List<CartItem>());
+                            await HttpContext.SignInAsync(new ClaimsPrincipal(identity)); // Cập nhật claims
 
-					TempData["XuMessage"] = "Bạn đã nhận được 100 xu cộng thêm vào tài khoản của bạn.";
+                            HttpContext.Session.SetInt32(MySetting.SESSION_XU_KEY, khachHang.Xu ?? 0);
+                        }
 
-					return View("Success");
-				}
-				catch (Exception ex)
-				{
-					db.Database.RollbackTransaction();
-					return StatusCode(500, $"Đã xảy ra lỗi: {ex.Message}");
-				}
-			}
-			return View(Cart);
-		}
+                        await transaction.CommitAsync(); // Commit transaction nếu mọi thứ OK
+                        HttpContext.Session.Set<List<CartItem>>(MySetting.CART_KEY, new List<CartItem>());
+                        TempData["XuMessage"] = "Bạn đã nhận được 100 xu cộng thêm vào tài khoản của bạn.";
+                        return View("Success");
+                    }
+                    catch (Exception ex)
+                    {
+                        await transaction.RollbackAsync(); // Rollback transaction nếu có lỗi
+                                                           // Log lỗi và xử lý ngoại lệ
+                        TempData["ErrorMessage"] = "Có lỗi xảy ra khi xử lý đơn hàng.";
+                        return View("Error");
+                    }
+                }
+            }
+            return View(Cart);
+        }
+        [HttpPost]
+        public IActionResult ApplyVoucher(string voucherCode)
+        {
+            //var voucher = db.Vouchers.SingleOrDefault(v => v.Code == voucherCode && v.HieuLuc);
+            var voucher = db.Vouchers.SingleOrDefault(v => v.Code == voucherCode );
 
-		private List<CartItem> GetCartItems()
+            if (voucher != null)
+            {
+                HttpContext.Session.SetString("VoucherCode", voucher.Code);
+                return Json(new { success = true });
+            }
+
+            return Json(new { success = false, message = "Mã voucher không hợp lệ hoặc đã hết hạn." });
+        }
+
+        private List<CartItem> GetCartItems()
         {
             // Example logic to get cart items from session or database
             var cartItemsJson = HttpContext.Session.GetString("CartItems");

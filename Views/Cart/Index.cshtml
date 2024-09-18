@@ -80,12 +80,19 @@
                                 <i class="fa fa-times"></i>
                             </a>
                         </td>
+
                     </tr>
+                   
                 }
             </tbody>
         </table>
     </div>
-
+    <div>
+        <h3>Voucher của bạn</h3>
+        <ul id="saved-vouchers-list">
+            <!-- Các mã voucher sẽ được load vào đây -->
+        </ul>
+    </div>
     <!-- Coupon Code Section -->
     <div class="mt-5 d-flex">
         <form method="post" action="@Url.Action("ApplyCoupon", "Cart")" class="d-flex">
@@ -125,5 +132,36 @@
                 window.location.href = '/Cart/RemoveCart/' + productId;
             }
         }         
-    </script>
+
+    $(document).ready(function () {
+        // Load danh sách mã voucher đã lưu
+        $.ajax({
+            url: '/Voucher/GetSavedVouchers',
+            type: 'GET',
+            success: function (data) {
+                if (data.success) {
+                    var voucherList = $('#saved-vouchers-list');
+                    voucherList.empty();
+                    data.vouchers.forEach(function (voucher) {
+                        voucherList.append('<li>' + voucher.MaVoucher +
+                            ' <button class="apply-voucher-btn" data-code="' + voucher.MaVoucher + '">Áp dụng</button></li>');
+                    });
+                }
+            }
+        });
+
+        // Áp dụng mã voucher khi bấm vào nút
+        $(document).on('click', '.apply-voucher-btn', function () {
+            var voucherCode = $(this).data('code');
+            $.post('/Cart/ApplyVoucher', { voucherCode: voucherCode }, function (data) {
+                if (data.success) {
+                    alert('Mã voucher đã được áp dụng.');
+                    location.reload(); // Reload lại trang để cập nhật giỏ hàng
+                } else {
+                    alert(data.message);
+                }
+            });
+        });
+    });
+</script>
 }

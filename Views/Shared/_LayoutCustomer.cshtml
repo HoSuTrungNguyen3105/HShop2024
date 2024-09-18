@@ -101,29 +101,28 @@
 
 							@await Component.InvokeAsync("Cart")
 
-							@if (User.Identity.IsAuthenticated)
+							@if (User.Identity.IsAuthenticated && User.IsInRole("Customer"))
 							{
+								// Lấy số lượng xu từ claims
+								var xu = User.Claims.FirstOrDefault(c => c.Type == "Xu")?.Value;
+
 								<a asp-controller="KhachHang" asp-action="Profile" title="Xem thông tin người dùng" class="my-auto me-3">
 									<i class="fas fa-user fa-2x"></i>
 								</a>
-								<span class="ms-3">
-									Xu: @(TempData["Xu"] ?? "0") Xu
+								<span class="ms-3 text-danger">
+									Xu: @xu Xu
+								</span>
+								<span class="dropdown-item disabled">
+									@User.Identity.Name
 								</span>
 							}
 							else
 							{
 								<a asp-controller="KhachHang" asp-action="DangNhap" title="Đăng nhập" class="my-auto me-3">
 									<i class="fas fa-user fa-2x"></i>
-								</a>
+								</a>								
 							}
-						</div>
-						<div class="d-flex m-3 me-0 align-items-center">
-							@if (User.Identity.IsAuthenticated)
-							{
-								<span class="dropdown-item disabled">
-									@User.Identity.Name
-								</span>
-							}
+
 						</div>
 					</div>
 				</nav>

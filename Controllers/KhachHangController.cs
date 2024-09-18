@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using NuGet.Configuration;
 using System.Globalization;
 using System.Net;
@@ -24,8 +25,8 @@ namespace ECommerceMVC.Controllers
 {
     public class KhachHangController : Controller
     {
-        private readonly IEmailSender _emailSender;
-        private readonly Hshop2023Context db;
+		private readonly IEmailSender _emailSender;
+		private readonly Hshop2023Context db;
         private readonly IMapper _mapper;
         public KhachHangController(Hshop2023Context context, IMapper mapper, IEmailSender emailSender)
         {
@@ -48,6 +49,7 @@ namespace ECommerceMVC.Controllers
             {
                 // Generate RandomKey
                 khachhang.RandomKey = GenerateRandomKey(32); // 32 characters for the random key, you can change this as needed
+                khachhang.HieuLuc = true;
                 if (Hinh != null)
                 {
                     khachhang.Hinh = MyUtil.UploadHinh(Hinh, "KhachHang");
@@ -87,20 +89,6 @@ namespace ECommerceMVC.Controllers
             {
                 return View(model);
             }
-
-            // Kiểm tra xem MaKh và MatKhau có được nhập không
-            if (string.IsNullOrWhiteSpace(model.MaKh))
-            {
-                ModelState.AddModelError("", "Mã khách hàng không được để trống.");
-                return View(model);
-            }
-
-            if (string.IsNullOrWhiteSpace(model.MatKhau))
-            {
-                ModelState.AddModelError("", "Mật khẩu không được để trống.");
-                return View(model);
-            }
-
             // Tìm khách hàng dựa trên mã khách hàng
             var khachHang = db.KhachHangs.SingleOrDefault(kh =>
                    kh.MaKh == model.MaKh &&
@@ -113,7 +101,7 @@ namespace ECommerceMVC.Controllers
             {
                 if (!khachHang.HieuLuc)
                 {
-                    ModelState.AddModelError("loi", "Tài khoản mới đăng kí nên chưa được kích hoạt. Vui lòng liên hệ Admin để kích hoạt.");
+                    ModelState.AddModelError("loi", "Tài khoản đã bị khóa . Vui lòng liên hệ Admin để kích hoạt lại.");
                 }
                 else
                 {
@@ -126,11 +114,11 @@ namespace ECommerceMVC.Controllers
                         var claims = new List<Claim> {
                                 new Claim(ClaimTypes.Email, khachHang.Email),
                                 new Claim(ClaimTypes.Name, khachHang.HoTen),
+                                new Claim("Xu", khachHang.Xu.ToString()), // Thêm xu vào claim
                                 new Claim(MySetting.CLAIM_CUSTOMERID, khachHang.MaKh),
+                                new Claim(ClaimTypes.Role, "Customer")
+                        };
 
-								//claim - role động
-								new Claim(ClaimTypes.Role, "Customer")
-                            };
 
                         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
@@ -151,19 +139,51 @@ namespace ECommerceMVC.Controllers
             }
             return View();
         }
-        #endregion
+		#endregion
+		public IActionResult SaveXuInCookie(int xu)
+		{
+			// Thiết lập cookie lưu trữ số Xu
+			CookieOptions option = new CookieOptions();
+			option.Expires = DateTime.Now.AddDays(7); // Cookie sẽ tồn tại trong 7 ngày
+
+			Response.Cookies.Append("Xu", xu.ToString(), option);
+			return RedirectToAction("Index", "Home");
+		}
 
         [HttpPost]
-        public async Task<IActionResult> Delete(string id) // Thay đổi int thành string
+        [Authorize] // Kiểm tra quyền truy cập nếu cần
+        public async Task<IActionResult> Delete(string id)
         {
-            var khachHang = await db.KhachHangs.FindAsync(id); // Tìm theo khóa chính kiểu string
-            if (khachHang != null)
+            if (string.IsNullOrEmpty(id))
+            {
+                // Nếu id không hợp lệ, quay lại trang danh sách với thông báo lỗi
+                return RedirectToAction("Index", "Admin");
+            }
+
+            var khachHang = await db.KhachHangs.FindAsync(id);
+
+            if (khachHang == null)
+            {
+                // Nếu không tìm thấy tài khoản, quay lại trang danh sách với thông báo lỗi
+                TempData["ErrorMessage"] = "Tài khoản không tồn tại.";
+                return RedirectToAction("Index", "Admin");
+            }
+
+            try
             {
                 db.KhachHangs.Remove(khachHang);
                 await db.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Tài khoản đã được xóa thành công.";
             }
-            return RedirectToAction("Index", "Admin");
+            catch (Exception ex)
+            {
+                // Xử lý lỗi và thông báo cho người dùng
+                TempData["ErrorMessage"] = $"Lỗi xảy ra khi xóa tài khoản: {ex.Message}";
+            }
+
+            return RedirectToAction("Index", "Home");
         }
+
 
         [HttpPost]
         public async Task<IActionResult> ToggleBan(int id)
@@ -178,30 +198,28 @@ namespace ECommerceMVC.Controllers
         }
 
 
-		public IActionResult Profile()
-		{
-			if (User.Identity.IsAuthenticated)
-			{
-				var tenkh = User.Identity.Name;
-				var customer = db.KhachHangs.FirstOrDefault(k => k.MaKh == tenkh);
+        public async Task<IActionResult> Profile()
+        {
+            var userName = User.Identity.Name;
+            var customerIdClaim = HttpContext.User.Claims.SingleOrDefault(p => p.Type == MySetting.CLAIM_CUSTOMERID);
 
-				if (customer != null)
-				{
-					// Log giá trị Xu
-					Console.WriteLine($"Customer Xu: {customer.Xu}");
-					TempData["Xu"] = customer.Xu ?? 0;
-				}
-				else
-				{
-					TempData["Xu"] = 0;
-				}
-			}
+            if (customerIdClaim != null)
+            {
+                var customerId = customerIdClaim.Value;
+                var khachHang = await db.KhachHangs.SingleOrDefaultAsync(kh => kh.MaKh == customerId);
 
-			return View();
-		}
+                if (khachHang != null)
+                {
+                    // Lấy số xu từ session
+                    ViewBag.Xu = HttpContext.Session.GetInt32(MySetting.SESSION_XU_KEY) ?? khachHang.Xu ?? 0;
+                }
+            }
+
+            return View();
+        }
 
 
-		[Authorize]
+        [Authorize]
         public async Task<IActionResult> DangXuat()
         {
             await HttpContext.SignOutAsync();
@@ -231,93 +249,95 @@ namespace ECommerceMVC.Controllers
 
             return RedirectToAction("Profile");
         }
+		[HttpGet]
+		public IActionResult ForgotPassword()
+		{
+			return View();
+		}
 
-        [HttpGet]
-        public IActionResult ForgotPassword()
-        {
-            return View();
-        }
+		[HttpPost]
+		public async Task<IActionResult> ForgotPassword(string email)
+		{
+			var customer = await db.KhachHangs.FirstOrDefaultAsync(c => c.Email == email);
+			if (customer == null)
+			{
+				TempData["ErrorMessage"] = "Email không tồn tại.";
+				return RedirectToAction("ForgotPassword");
+			}
 
-        [HttpPost]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                // Tìm người dùng theo email
-                var user = db.KhachHangs.FirstOrDefault(kh => kh.Email == model.Email);
+			// Tạo mã đặt lại mật khẩu
+			var resetToken = Guid.NewGuid().ToString();
+			customer.RandomKey = resetToken;
+			db.Update(customer);
+			await db.SaveChangesAsync();
 
-                if (user != null)
-                {
-                    // Tạo token đặt lại mật khẩu (random password)
-                    var resetToken = GenerateRandomPassword(8);
+			// Gửi email với mã đặt lại mật khẩu
+			var subject = "Đặt lại mật khẩu";
+			var resetLink = Url.Action("ResetPassword", "Account", new { token = resetToken }, Request.Scheme);
+			var message = $"Bạn đã yêu cầu đặt lại mật khẩu. Vui lòng nhấp vào liên kết sau để đặt lại mật khẩu của bạn: <a href='{resetLink}'>Đặt lại mật khẩu</a>";
 
-                    // Lưu token này vào cơ sở dữ liệu (bạn có thể lưu trữ vào cột 'ResetPasswordToken' và thời gian hết hạn nếu cần)
-                    user.RandomKey = resetToken;
-                    db.SaveChanges();
+			try
+			{
+				await _emailSender.SendEmailAsync(email, "Đặt lại mật khẩu", "Link đặt lại mật khẩu của bạn");
+			}
+			catch (Exception ex)
+			{
+				TempData["ErrorMessage"] = "Có lỗi xảy ra khi gửi email. Vui lòng thử lại.";
+				return RedirectToAction("ForgotPassword");
+			}
 
-                    // Tạo URL đặt lại mật khẩu
-                    var resetLink = Url.Action("ResetPassword", "KhachHang", new { token = resetToken }, Request.Scheme);
-                    // Gửi email cho người dùng với liên kết đặt lại mật khẩu
-                    var subject = "Password Reset Request";
-                    var body = $"<p>Please click the following link to reset your password:</p><a href='{resetLink}'>Reset Password</a>";
+			TempData["SuccessMessage"] = "Đã gửi email để đặt lại mật khẩu.";
+			return RedirectToAction("ForgotPassword");
+		}
 
-                    await SendEmailAsync(user.Email, subject, body);
 
-                    return View("ForgotPasswordConfirmation");
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Email không tồn tại.");
-                }
-            }
+		//[HttpGet]
+		//public IActionResult ResetPassword(string token)
+		//{
+		//	var model = new ResetPasswordViewModel { Token = token };
+		//	return View(model);
+		//}
 
-            return View(model);
-        }
+		[HttpGet]
+		public IActionResult ResetPassword(string token)
+		{
+			var customer = db.KhachHangs.SingleOrDefault(c => c.RandomKey == token);
+			if (customer == null)
+			{
+				TempData["ErrorMessage"] = "Mã đặt lại không hợp lệ.";
+				return RedirectToAction("ForgotPassword");
+			}
 
-        // Action xử lý khi người dùng click vào link đặt lại mật khẩu (GET)
-        [HttpGet]
-        public IActionResult ResetPassword(string token)
-        {
-            if (string.IsNullOrEmpty(token))
-            {
-                return BadRequest("Token không hợp lệ.");
-            }
+			return View(new ResetPasswordViewModel { Token = token });
+		}
 
-            var user = db.KhachHangs.SingleOrDefault(kh => kh.RandomKey == token);
-            if (user == null)
-            {
-                return BadRequest("Token không hợp lệ hoặc đã hết hạn.");
-            }
+		[HttpPost]
+		public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+		{
+			if (ModelState.IsValid)
+			{
+				var customer = db.KhachHangs.SingleOrDefault(c => c.RandomKey == model.Token);
+				if (customer == null)
+				{
+					TempData["ErrorMessage"] = "Mã đặt lại không hợp lệ.";
+					return RedirectToAction("ForgotPassword");
+				}
 
-            return View(new ResetPasswordViewModel { Token = token });
-        }
+				customer.MatKhau = model.NewPassword.ToMd5Hash(customer.RandomKey);
+				customer.RandomKey = null; // Xóa mã đặt lại sau khi đổi mật khẩu
+				db.Update(customer);
+				await db.SaveChangesAsync();
 
-        // Action xử lý khi người dùng đặt lại mật khẩu (POST)
-        [HttpPost]
-        public IActionResult ResetPassword(ResetPasswordViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var user = db.KhachHangs.SingleOrDefault(kh => kh.RandomKey == model.Token);
-                if (user != null)
-                {
-                    user.MatKhau = HashPassword(model.NewPassword);
-                    user.RandomKey = null;
-                    db.SaveChanges();
+				TempData["SuccessMessage"] = "Mật khẩu đã được đổi thành công.";
+				return RedirectToAction("Login");
+			}
 
-                    return RedirectToAction("ResetPasswordConfirmation");
-                }
-                else
-                {
-                    ModelState.AddModelError("", "Token không hợp lệ.");
-                }
-            }
+			return View(model);
+		}
 
-            return View(model);
-        }
 
-        // Hàm để tạo mật khẩu ngẫu nhiên
-        private string GenerateRandomPassword(int length)
+		// Hàm để tạo mật khẩu ngẫu nhiên
+		private string GenerateRandomPassword(int length)
         {
             const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
             StringBuilder result = new StringBuilder();

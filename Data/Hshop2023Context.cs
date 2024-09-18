@@ -43,6 +43,8 @@ public partial class Hshop2023Context : DbContext
 
     public virtual DbSet<PhongBan> PhongBans { get; set; }
 
+    public virtual DbSet<SavedVoucher> SavedVouchers { get; set; }
+
     public virtual DbSet<TrangThai> TrangThais { get; set; }
 
     public virtual DbSet<TrangWeb> TrangWebs { get; set; }
@@ -52,10 +54,10 @@ public partial class Hshop2023Context : DbContext
     public virtual DbSet<Voucher> Vouchers { get; set; }
 
     public virtual DbSet<YeuThich> YeuThiches { get; set; }
+
 //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
 //        => optionsBuilder.UseSqlServer("Server=.;Database=Hshop2023;Integrated Security=True;Trusted_Connection=True;TrustServerCertificate=True");
-
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -385,6 +387,17 @@ public partial class Hshop2023Context : DbContext
                 .HasColumnName("TenPB");
         });
 
+        modelBuilder.Entity<SavedVoucher>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__SavedVou__3214EC07B60139CD");
+
+            entity.Property(e => e.CustomerId).HasMaxLength(50);
+            entity.Property(e => e.MaVoucher).HasMaxLength(50);
+            entity.Property(e => e.NgayLuu)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+        });
+
         modelBuilder.Entity<TrangThai>(entity =>
         {
             entity.HasKey(e => e.MaTrangThai);
@@ -432,6 +445,7 @@ public partial class Hshop2023Context : DbContext
 
             entity.Property(e => e.Code).HasMaxLength(50);
             entity.Property(e => e.DiscountAmount).HasColumnType("decimal(18, 2)");
+            entity.Property(e => e.ExpirationDate).HasColumnType("datetime");
             entity.Property(e => e.MaHh).HasColumnName("MaHH");
 
             entity.HasOne(d => d.MaHhNavigation).WithMany(p => p.Vouchers)

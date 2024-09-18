@@ -15,5 +15,11 @@ public partial class Voucher
 
     public int? MaHh { get; set; }
 
+    public DateTime? ExpirationDate { get; set; }
+
+    public int? UsageLimit { get; set; }
+
+    public int? TimesUsed { get; set; }
+
     public virtual HangHoa? MaHhNavigation { get; set; }
 }

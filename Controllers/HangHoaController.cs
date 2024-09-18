@@ -18,15 +18,6 @@ namespace HShop2024.Controllers
 
         public IActionResult Index(int? loai, string sortOrder)
         {
-            // Lưu loại vào TempData
-            if (loai.HasValue)
-            {
-                TempData["SelectedLoai"] = loai.Value;
-            }
-
-            // Debugging
-            Console.WriteLine($"SelectedLoai: {TempData["SelectedLoai"]}");
-
             IQueryable<HangHoa> hangHoas = db.HangHoas;
 
             // Sắp xếp theo tiêu chí sortOrder

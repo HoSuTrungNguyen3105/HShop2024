@@ -1,47 +1,45 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Builder.Extensions;
 using System.Net.Mail;
 using System.Net;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using HShop2024.ViewModels;
 
-namespace HShop2024.Helpers
+public class SmtpEmailSender : IEmailSender
 {
-    public class SmtpEmailSender : IEmailSender
-    {
-        private readonly SmtpSettings _smtpSettings;
+	private readonly SmtpSettings _smtpOptions;
 
-        public SmtpEmailSender(IOptions<SmtpSettings> smtpSettings)
-        {
-            _smtpSettings = smtpSettings.Value;
-        }
+	public SmtpEmailSender(SmtpSettings smtpOptions)
+	{
+		_smtpOptions = smtpOptions ?? throw new ArgumentNullException(nameof(smtpOptions));
+	}
 
-        public async Task SendEmailAsync(string email, string subject, string message)
-        {
-            var smtpClient = new SmtpClient(_smtpSettings.Host, _smtpSettings.Port)
-            {
-                Credentials = new NetworkCredential(_smtpSettings.Username, _smtpSettings.Password),
-                EnableSsl = _smtpSettings.EnableSsl
-            };
+	public async Task SendEmailAsync(string email, string subject, string message)
+	{
+		var smtpClient = new SmtpClient(_smtpOptions.Host)
+		{
+			Port = _smtpOptions.Port,
+			Credentials = new NetworkCredential(_smtpOptions.Username, _smtpOptions.Password),
+			EnableSsl = _smtpOptions.EnableSsl,
+		};
 
-            var mailMessage = new MailMessage
-            {
-                From = new MailAddress(_smtpSettings.Username),
-                Subject = subject,
-                Body = message,
-                IsBodyHtml = true
-            };
-            mailMessage.To.Add(email);
+		var mailMessage = new MailMessage
+		{
+			From = new MailAddress(_smtpOptions.Username),
+			Subject = subject,
+			Body = message,
+			IsBodyHtml = true,
+		};
+		mailMessage.To.Add(email);
 
-            try
-            {
-                await smtpClient.SendMailAsync(mailMessage);
-            }
-            catch (Exception ex)
-            {
-                // Xử lý lỗi nếu cần
-                throw new InvalidOperationException("Error sending email", ex);
-            }
-        }
-    }
-
+		try
+		{
+			await smtpClient.SendMailAsync(mailMessage);
+		}
+		catch (Exception ex)
+		{
+			// Xử lý lỗi gửi email
+			Console.WriteLine($"Error sending email: {ex.Message}");
+			throw;
+		}
+	}
 }

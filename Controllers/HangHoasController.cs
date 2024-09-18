@@ -71,33 +71,33 @@ namespace HShop2024.Controllers
         // POST: HangHoas/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaHh,TenHh,TenAlias,MaLoai,MoTaDonVi,DonGia,NgaySx,Hinh,GiamGia,SoLanXem,MoTa,MaNcc")] HangHoa hangHoa, IFormFile Hinh)
+        public async Task<IActionResult> Create([Bind("MaHh,TenHh,TenAlias,MaLoai,MoTaDonVi,DonGia,NgaySx,GiamGia,SoLanXem,MoTa,MaNcc")] HangHoa hangHoa, IFormFile Hinh)
         {
             if (ModelState.IsValid)
             {
-                try
+                // Nếu có file hình được tải lên
+                if (Hinh != null && Hinh.Length > 0)
                 {
-                    if (Hinh != null && Hinh.Length > 0)
+                    // Đường dẫn đến thư mục wwwroot/Hinh/HangHoa
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Hinh/HangHoa", Hinh.FileName);
+
+                    // Lưu file vào thư mục
+                    using (var stream = new FileStream(path, FileMode.Create))
                     {
-                        // Lưu hình ảnh và lấy đường dẫn lưu trữ
-                        hangHoa.Hinh = MyUtil.UploadHinh(Hinh, "HangHoa");
+                        await Hinh.CopyToAsync(stream);
                     }
 
-                    // Thêm sản phẩm vào cơ sở dữ liệu
-                    _context.Add(hangHoa);
-                    await _context.SaveChangesAsync();
+                    // Lưu tên file vào database
+                    hangHoa.Hinh = Hinh.FileName;
+                }
 
-                    return RedirectToAction(nameof(Index)); // Chuyển hướng đến danh sách sản phẩm sau khi thêm thành công
-                }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError("", $"Lỗi khi lưu sản phẩm: {ex.Message}");
-                }
+                _context.Add(hangHoa);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
 
-            // Nếu có lỗi hoặc form không hợp lệ, giữ lại các dữ liệu chọn để người dùng có thể sửa lỗi
-            ViewData["MaLoai"] = new SelectList(_context.Loais, "MaLoai", "TenLoai", hangHoa.MaLoai);
-            ViewData["MaNcc"] = new SelectList(_context.NhaCungCaps, "MaNcc", "TenNcc", hangHoa.MaNcc);
+            ViewData["MaLoai"] = new SelectList(_context.Loais, "MaLoai", "MaLoai", hangHoa.MaLoai);
+            ViewData["MaNcc"] = new SelectList(_context.NhaCungCaps, "MaNcc", "MaNcc", hangHoa.MaNcc);
             return View(hangHoa);
         }
 
