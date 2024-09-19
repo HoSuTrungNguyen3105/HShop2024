@@ -165,6 +165,7 @@ public partial class Hshop2023Context : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime")
                 .HasColumnName("NgaySX");
+            entity.Property(e => e.SoLuong).HasDefaultValue(0);
             entity.Property(e => e.TenAlias).HasMaxLength(50);
             entity.Property(e => e.TenHh)
                 .HasMaxLength(50)

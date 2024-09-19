@@ -8,15 +8,15 @@
 <h1>@ViewData["Title"]</h1>
 <!-- Liên kết đến trang Create -->
 <div class="mb-3">
-    <a asp-action="Create" asp-controller="YeuThiches" class="btn btn-primary">Thêm vào Danh Sách Yêu Thích</a>
+    <a asp-action="Create" asp-controller="YeuThiches" class="btn btn-primary">Thêm sản phẩm Yêu Thích</a>
 </div>
 <!-- Form để chọn tùy chọn -->
 <form method="get" action="@Url.Action("Index", "YeuThiches")" class="mb-3">
     <div class="col-xl-3">
         <div class="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
-            <label for="sorting">Lọc theo:</label>
-            <select id="sorting" name="sortOrder" class="border-0 form-select-sm bg-light me-3" onchange="this.form.submit()">
-                <option value="">Chọn tùy chọn</option>
+            <label for="sorting">Default Sorting:</label>
+            <select id="sorting" name="sortOrder" class="border-0 form-select-sm bg-light me-3" onchange="applySorting()">
+                <option value="">Nothing</option>
                 <option value="isorganic">Organic</option>
                 <option value="isfantastic">Fantastic</option>
                 <option value="mostviewed">Lượt mua nhiều nhất</option>
@@ -49,3 +49,39 @@
         }
     </tbody>
 </table>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Ensure jQuery is included -->
+<script>
+    $(document).ready(function () {
+        // Khôi phục giá trị đã chọn từ localStorage khi trang tải lại
+        loadSortingPreference();
+
+        // Sự kiện onchange để lưu giá trị khi người dùng thay đổi
+        $('#sorting').on('change', function () {
+            saveSortingPreference();
+            applySorting();
+        });
+    });
+
+
+    function applySorting() {
+        var selectedSortOrder = document.getElementById('sorting').value;
+        // Điều hướng đến action Index của HangHoaController với tham số sortOrder
+        window.location.href = '/Yeuthiches/Index?sortOrder=' + selectedSortOrder;
+    }
+
+    function saveSortingPreference() {
+        var sortingSelect = document.getElementById('sorting');
+        // Lưu giá trị đã chọn vào localStorage
+        localStorage.setItem('sortingPreference', sortingSelect.value);
+    }
+
+    function loadSortingPreference() {
+        var savedValue = localStorage.getItem('sortingPreference');
+        if (savedValue) {
+            // Khôi phục giá trị đã chọn từ localStorage
+            var sortingSelect = document.getElementById('sorting');
+            sortingSelect.value = savedValue;
+        }
+    }
+</script>
+

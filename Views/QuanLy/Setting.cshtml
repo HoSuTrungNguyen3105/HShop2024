@@ -1,0 +1,128 @@
+﻿@{
+    ViewData["Title"] = "Cài đặt";
+    Layout = "_Layout2";
+}
+
+<h2>Cài đặt</h2>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar for settings categories -->
+        <div class="col-md-3">
+            <ul class="list-group">
+                <li class="list-group-item active">Tài khoản</li>
+                <li class="list-group-item">Thông báo</li>
+                @if (User.IsInRole("Admin"))
+                {
+                    <li class="list-group-item">Tôi là admin</li>
+                }
+                else if (User.IsInRole("Employee"))
+                {
+                    <li class="list-group-item">Tôi là nhân viên</li>
+                }
+                @if (User.IsInRole("Admin"))
+                {
+                    <li class="list-group-item">Bảo mật</li>
+                    <li class="list-group-item">Ngôn ngữ</li>
+                    <li class="list-group-item">Giao diện</li>
+                    <li class="list-group-item">Quyền riêng tư</li>
+                }
+            </ul>
+        </div>
+
+        <!-- Main content for each setting category -->
+        <div class="col-md-9">
+            <!-- Account Settings -->
+            <h5>Tài khoản</h5>
+            <form>
+                <div class="form-group">
+                    <label for="username">Tên tài khoản</label>
+                    <input type="text" class="form-control" id="username" value="@User.Identity.Name" disabled />
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" />
+                </div>
+                <div class="form-group">
+                    <label for="phone">Số điện thoại</label>
+                    <!-- Assuming you have a way to get phone number -->
+                    <input type="tel" class="form-control" id="phone" value="0123456789" />
+                </div>
+                <button type="submit" class="btn btn-primary mt-2">Cập nhật thông tin</button>
+            </form>
+
+            <!-- Notification Settings -->
+            <h5 class="mt-5">Thông báo</h5>
+            <form>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="emailNotifications" checked />
+                    <label class="form-check-label" for="emailNotifications">
+                        Nhận thông báo qua email
+                    </label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="smsNotifications" />
+                    <label class="form-check-label" for="smsNotifications">
+                        Nhận thông báo qua tin nhắn SMS
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary mt-2">Lưu cài đặt</button>
+            </form>
+
+            @if (User.IsInRole("Admin"))
+            {
+                <!-- Security Settings -->
+                <h5 class="mt-5">Bảo mật</h5>
+                <form>
+                    <div class="form-group">
+                        <label for="currentPassword">Mật khẩu hiện tại</label>
+                        <input type="password" class="form-control" id="currentPassword" />
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">Mật khẩu mới</label>
+                        <input type="password" class="form-control" id="newPassword" />
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Xác nhận mật khẩu mới</label>
+                        <input type="password" class="form-control" id="confirmPassword" />
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-2">Cập nhật mật khẩu</button>
+                </form>
+
+                <!-- Language Settings -->
+                <h5 class="mt-5">Ngôn ngữ</h5>
+                <div class="form-group">
+                    <label for="languageSelect">Chọn ngôn ngữ</label>
+                    <select class="form-control" id="languageSelect">
+                        <option>Tiếng Việt</option>
+                        <option>English</option>
+                        <option>中文</option>
+                    </select>
+                </div>
+
+                <!-- Interface Settings -->
+                <h5 class="mt-5">Giao diện</h5>
+                <div class="form-group">
+                    <label for="themeSelect">Chọn giao diện</label>
+                    <select class="form-control" id="themeSelect">
+                        <option>Giao diện sáng</option>
+                        <option>Giao diện tối</option>
+                    </select>
+                </div>
+
+                <!-- Privacy Settings -->
+                <h5 class="mt-5">Quyền riêng tư</h5>
+                <form>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="dataSharing" />
+                        <label class="form-check-label" for="dataSharing">
+                            Cho phép chia sẻ dữ liệu với đối tác
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-2">Lưu cài đặt quyền riêng tư</button>
+                </form>
+            }
+        </div>
+    </div>
+</div>
+

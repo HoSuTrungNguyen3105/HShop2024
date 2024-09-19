@@ -74,11 +74,17 @@
 										@if (User.IsInRole("Customer"))
 										{
 											<a asp-controller="KhachHang" asp-action="Profile" class="dropdown-item">Profile</a>
-											<a asp-controller="KhachHang" asp-action="DangXuat" class="dropdown-item">Logout</a>
+											<a asp-controller="KhachHang" asp-action="DangXuat" class="dropdown-item text-danger">Logout</a>
 										}
 										else if (User.IsInRole("Employee"))
 										{
-											<a asp-controller="Admin" asp-action="Index" class="dropdown-item">Dashboard</a>
+											<a asp-controller="QuanLy" asp-action="Index" class="dropdown-item text-dark">Dashboard</a>
+											<a asp-controller="KhachHang" asp-action="Profile" class="dropdown-item">Profile</a>
+											<a asp-controller="KhachHang" asp-action="DangXuat" class="dropdown-item">Logout</a>
+										}
+										else if (User.IsInRole("Admin"))
+										{
+											<a asp-controller="QuanLy" asp-action="Index" class="dropdown-item text-dark">Dashboard</a>
 											<a asp-controller="KhachHang" asp-action="Profile" class="dropdown-item">Profile</a>
 											<a asp-controller="KhachHang" asp-action="DangXuat" class="dropdown-item">Logout</a>
 										}
@@ -89,13 +95,15 @@
 										<a asp-controller="KhachHang" asp-action="DangNhap" class="dropdown-item">Log in</a>
 										<a asp-controller="KhachHang" asp-action="ForgotPassword" class="dropdown-item">Forgot password</a>
 									}
+
 								</div>
 
 							</div>
 							<a asp-controller="Home" asp-action="PageNotFound" class="nav-item nav-link">Contact</a>
 						</div>
-						<div class="d-flex m-3 me-0 align-items-center">
-							<button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal">
+						<div class="d-flex align-items-center">
+							<button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4 custom-btn-search"
+									data-bs-toggle="modal" data-bs-target="#searchModal">
 								<i class="fas fa-search text-primary"></i>
 							</button>
 
@@ -103,27 +111,23 @@
 
 							@if (User.Identity.IsAuthenticated && User.IsInRole("Customer"))
 							{
-								// Lấy số lượng xu từ claims
-								var xu = User.Claims.FirstOrDefault(c => c.Type == "Xu")?.Value;
-
-								<a asp-controller="KhachHang" asp-action="Profile" title="Xem thông tin người dùng" class="my-auto me-3">
-									<i class="fas fa-user fa-2x"></i>
-								</a>
-								<span class="ms-3 text-danger">
-									Xu: @xu Xu
-								</span>
-								<span class="dropdown-item disabled">
-									@User.Identity.Name
-								</span>
+								<div class="user-info ms-3">
+									<span class="xu-info">Xu: @User.Claims.FirstOrDefault(c => c.Type == "Xu")?.Value Xu</span>
+									<a asp-controller="KhachHang" asp-action="Profile" title="Xem thông tin người dùng" class="user-icon">
+										<i class="fas fa-user fa-2x">
+											@User.Identity.Name
+										</i>
+									</a>
+								</div>
 							}
 							else
 							{
-								<a asp-controller="KhachHang" asp-action="DangNhap" title="Đăng nhập" class="my-auto me-3">
+								<a asp-controller="KhachHang" asp-action="DangNhap" title="Đăng nhập" class="user-icon">
 									<i class="fas fa-user fa-2x"></i>
-								</a>								
+								</a>
 							}
-
 						</div>
+
 					</div>
 				</nav>
 			</div>
@@ -178,22 +182,6 @@
 				let url = `/HangHoa/Search?query=` + $("#searchText").val();
 				window.location.href = url;
 			});
-		});
-
-		// Hiển thị nút khi cuộn xuống
-		window.addEventListener('scroll', function () {
-			const backToTopButton = document.querySelector('.back-to-top');
-			if (window.scrollY > 200) { // Hiển thị nút khi cuộn xuống hơn 200px
-				backToTopButton.classList.add('show');
-			} else {
-				backToTopButton.classList.remove('show');
-			}
-		});
-
-		// Cuộn lên trang đầu khi nhấp vào nút
-		document.querySelector('.back-to-top').addEventListener('click', function (event) {
-			event.preventDefault(); // Ngăn chặn hành vi mặc định của liên kết
-			window.scrollTo({ top: 0, behavior: 'smooth' }); // Cuộn lên trang đầu với hiệu ứng mượt mà
 		});
 	</script>
 </body>

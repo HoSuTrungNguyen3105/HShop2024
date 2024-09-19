@@ -23,7 +23,7 @@ namespace HShop2024.Controllers
 
                 _context.Add(hoiDap);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Detail", "Product", new { id = hoiDap.MaHd });
+                return RedirectToAction("Detail", "HangHoa", new { id = hoiDap.MaHd });
             }
             return View(hoiDap);
         }

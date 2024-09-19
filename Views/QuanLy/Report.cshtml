@@ -26,13 +26,13 @@
 <div class="container mt-4">
     <h1>@ViewData["Title"]</h1>
     <!-- Nút quay lại trang admin/index -->
-    <a href="@Url.Action("Index", "Admin")" class="btn btn-custom mb-4">
+    <a href="@Url.Action("Index", "QuanLy")" class="btn btn-custom mb-4">
         <i class="fas fa-arrow-left"></i> Quay lại
     </a>
     <!-- Báo cáo sản phẩm bán chạy -->
     <div class="card mt-4">
         <div class="card-header">
-            <h4>Báo cáo sản phẩm bán chạy</h4>
+            <h4>Báo cáo sản phẩm bán chạy tuần này </h4>
         </div>
         <div class="card-body">
             <table class="table table-striped">
@@ -54,6 +54,6 @@
                     }
                 </tbody>
             </table>
-        </div>       
+        </div>
     </div>
 </div>

@@ -10,10 +10,9 @@
 <hr>
 
 <!-- Form chỉnh sửa thông tin nhân viên -->
-<form asp-action="Edit" method="post">
+<form asp-action="NhanVienEdit" method="post">
     <div class="form-group">
-        <label for="MaNv">Mã NV</label>
-        <input type="text" class="form-control" id="MaNv" name="MaNv" value="@Model.MaNv" readonly />
+        <input type="hidden" asp-for="MaNv" />
     </div>
     <div class="form-group">
         <label for="HoTen">Họ Tên</label>
@@ -35,7 +34,7 @@
         </div>
     </div>
     <button type="submit" class="btn btn-success">Lưu thay đổi</button>
-    <a href="@Url.Action("Index", "NhanVien")" class="btn btn-secondary">Hủy</a>
+    <a href="@Url.Action("NhanVienIndex", "QuanLy")" class="btn btn-secondary">Hủy</a>
 </form>
 <script>
     document.getElementById('togglePassword').addEventListener('click', function () {
@@ -53,4 +52,5 @@
         }
     });
 </script>
+
 

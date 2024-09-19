@@ -171,7 +171,8 @@ namespace HShop2024.Controllers
 
                 if (model.GiongKhachHang && khachHang == null)
                 {
-                    return Json(new { success = false, message = "Khách hàng không tồn tại." });
+                     TempData["Message"] = "Khách hàng không tồn tại." ;
+                    return RedirectToAction("Index", "HangHoa");
                 }
 
                 var hoadon = new HoaDon
@@ -215,12 +216,23 @@ namespace HShop2024.Controllers
                                 MaHh = item.MaHh,
                                 GiamGia = 0
                             });
-
                             var product = products.SingleOrDefault(p => p.MaHh == item.MaHh);
                             if (product != null)
                             {
                                 product.SoLanXem += 1;
-                            }
+                                // Giảm số lượng hàng hóa
+                                if (product.SoLuong >= item.SoLuong)
+                                {
+                                    product.SoLuong -= item.SoLuong;
+                                }
+                                else
+                                {
+                                    // Nếu số lượng không đủ, có thể thêm thông báo lỗi hoặc xử lý theo cách khác
+                                    TempData["ErrorMessage"] = $"Không đủ số lượng hàng hóa với mã {item.MaHh}.";
+                                    await transaction.RollbackAsync();
+                                    return View("Error");
+                                }
+                            }                          
                         }
 
                         db.AddRange(cthds);

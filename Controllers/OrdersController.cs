@@ -1,6 +1,7 @@
 ﻿using HShop2024.Data;
 using HShop2024.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HShop2024.Controllers
 {
@@ -15,7 +16,12 @@ namespace HShop2024.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var orders = _context.HoaDons.ToList();
+            // Lấy tất cả đơn hàng và sắp xếp theo ngày đặt hàng giảm dần
+            var orders = await _context.HoaDons
+                .OrderByDescending(o => o.NgayDat) // Sắp xếp theo ngày đặt hàng giảm dần
+                .ToListAsync();
+
+            // Tạo danh sách ViewModel cho các đơn hàng
             var orderViewModel = orders.Select(order => new OrderVM
             {
                 MaHd = order.MaHd,
@@ -26,10 +32,13 @@ namespace HShop2024.Controllers
                     .Sum(c => (decimal)c.DonGia * c.SoLuong) // Cast to decimal for correct sum
             }).ToList();
 
+            // Tính tổng doanh thu
             var totalRevenue = orderViewModel.Sum(o => o.TotalAmount);
             ViewBag.TotalRevenue = totalRevenue;
 
+            // Trả về dữ liệu cho View
             return View(orderViewModel);
         }
+
     }
 }

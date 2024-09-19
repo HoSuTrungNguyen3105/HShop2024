@@ -7,7 +7,7 @@
 
 <h2 class="mb-4">Thêm nhân viên mới</h2>
 
-<form asp-action="Create" method="post">
+<form asp-action="NhanVienCreate" method="post">
     @Html.AntiForgeryToken()
 
     <div class="form-group">
@@ -31,7 +31,7 @@
         <span asp-validation-for="MatKhau" class="text-danger"></span>
     </div>
     <button type="submit" class="btn btn-primary">Thêm nhân viên</button>
-    <a href="@Url.Action("Index", "NhanVien")" class="btn btn-secondary">Danh sách Nhân viên</a>
+    <a href="@Url.Action("NhanVienIndex", "QuanLy")" class="btn btn-secondary">Danh sách Nhân viên</a>
 </form>
 
 @section Scripts {

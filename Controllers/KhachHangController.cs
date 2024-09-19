@@ -25,8 +25,8 @@ namespace ECommerceMVC.Controllers
 {
     public class KhachHangController : Controller
     {
-		private readonly IEmailSender _emailSender;
-		private readonly Hshop2023Context db;
+        private readonly IEmailSender _emailSender;
+        private readonly Hshop2023Context db;
         private readonly IMapper _mapper;
         public KhachHangController(Hshop2023Context context, IMapper mapper, IEmailSender emailSender)
         {
@@ -34,6 +34,7 @@ namespace ECommerceMVC.Controllers
             _mapper = mapper;
             _emailSender = emailSender;
         }
+
 
         #region Register
         public IActionResult DangKy()
@@ -139,16 +140,16 @@ namespace ECommerceMVC.Controllers
             }
             return View();
         }
-		#endregion
-		public IActionResult SaveXuInCookie(int xu)
-		{
-			// Thiết lập cookie lưu trữ số Xu
-			CookieOptions option = new CookieOptions();
-			option.Expires = DateTime.Now.AddDays(7); // Cookie sẽ tồn tại trong 7 ngày
+        #endregion
+        public IActionResult SaveXuInCookie(int xu)
+        {
+            // Thiết lập cookie lưu trữ số Xu
+            CookieOptions option = new CookieOptions();
+            option.Expires = DateTime.Now.AddDays(7); // Cookie sẽ tồn tại trong 7 ngày
 
-			Response.Cookies.Append("Xu", xu.ToString(), option);
-			return RedirectToAction("Index", "Home");
-		}
+            Response.Cookies.Append("Xu", xu.ToString(), option);
+            return RedirectToAction("Index", "Home");
+        }
 
         [HttpPost]
         [Authorize] // Kiểm tra quyền truy cập nếu cần
@@ -226,118 +227,97 @@ namespace ECommerceMVC.Controllers
             return Redirect("/");
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> XoaTaiKhoan()
+  
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return View();
+        }
 
-            if (userId != null)
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            var customer = await db.KhachHangs.FirstOrDefaultAsync(c => c.Email == email);
+            if (customer == null)
             {
-                var khachHang = await db.KhachHangs.FindAsync(userId);
-
-                if (khachHang != null)
-                {
-                    db.KhachHangs.Remove(khachHang);
-                    await db.SaveChangesAsync();
-
-                    // Đăng xuất người dùng
-                    await HttpContext.SignOutAsync();
-                    return RedirectToAction("Index", "Home");
-                }
+                TempData["ErrorMessage"] = "Email không tồn tại.";
+                return RedirectToAction("ForgotPassword");
             }
 
-            return RedirectToAction("Profile");
+            // Tạo mã đặt lại mật khẩu
+            var resetToken = Guid.NewGuid().ToString();
+            customer.RandomKey = resetToken;
+            db.Update(customer);
+            await db.SaveChangesAsync();
+
+            // Gửi email với mã đặt lại mật khẩu
+            var subject = "Đặt lại mật khẩu";
+            var resetLink = Url.Action("ResetPassword", "Account", new { token = resetToken }, Request.Scheme);
+            var message = $"Bạn đã yêu cầu đặt lại mật khẩu. Vui lòng nhấp vào liên kết sau để đặt lại mật khẩu của bạn: <a href='{resetLink}'>Đặt lại mật khẩu</a>";
+
+            try
+            {
+                await _emailSender.SendEmailAsync(email, "Đặt lại mật khẩu", "Link đặt lại mật khẩu của bạn");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Có lỗi xảy ra khi gửi email. Vui lòng thử lại.";
+                return RedirectToAction("ForgotPassword");
+            }
+
+            TempData["SuccessMessage"] = "Đã gửi email để đặt lại mật khẩu.";
+            return RedirectToAction("ForgotPassword");
         }
-		[HttpGet]
-		public IActionResult ForgotPassword()
-		{
-			return View();
-		}
-
-		[HttpPost]
-		public async Task<IActionResult> ForgotPassword(string email)
-		{
-			var customer = await db.KhachHangs.FirstOrDefaultAsync(c => c.Email == email);
-			if (customer == null)
-			{
-				TempData["ErrorMessage"] = "Email không tồn tại.";
-				return RedirectToAction("ForgotPassword");
-			}
-
-			// Tạo mã đặt lại mật khẩu
-			var resetToken = Guid.NewGuid().ToString();
-			customer.RandomKey = resetToken;
-			db.Update(customer);
-			await db.SaveChangesAsync();
-
-			// Gửi email với mã đặt lại mật khẩu
-			var subject = "Đặt lại mật khẩu";
-			var resetLink = Url.Action("ResetPassword", "Account", new { token = resetToken }, Request.Scheme);
-			var message = $"Bạn đã yêu cầu đặt lại mật khẩu. Vui lòng nhấp vào liên kết sau để đặt lại mật khẩu của bạn: <a href='{resetLink}'>Đặt lại mật khẩu</a>";
-
-			try
-			{
-				await _emailSender.SendEmailAsync(email, "Đặt lại mật khẩu", "Link đặt lại mật khẩu của bạn");
-			}
-			catch (Exception ex)
-			{
-				TempData["ErrorMessage"] = "Có lỗi xảy ra khi gửi email. Vui lòng thử lại.";
-				return RedirectToAction("ForgotPassword");
-			}
-
-			TempData["SuccessMessage"] = "Đã gửi email để đặt lại mật khẩu.";
-			return RedirectToAction("ForgotPassword");
-		}
 
 
-		//[HttpGet]
-		//public IActionResult ResetPassword(string token)
-		//{
-		//	var model = new ResetPasswordViewModel { Token = token };
-		//	return View(model);
-		//}
+        //[HttpGet]
+        //public IActionResult ResetPassword(string token)
+        //{
+        //	var model = new ResetPasswordViewModel { Token = token };
+        //	return View(model);
+        //}
 
-		[HttpGet]
-		public IActionResult ResetPassword(string token)
-		{
-			var customer = db.KhachHangs.SingleOrDefault(c => c.RandomKey == token);
-			if (customer == null)
-			{
-				TempData["ErrorMessage"] = "Mã đặt lại không hợp lệ.";
-				return RedirectToAction("ForgotPassword");
-			}
+        [HttpGet]
+        public IActionResult ResetPassword(string token)
+        {
+            var customer = db.KhachHangs.SingleOrDefault(c => c.RandomKey == token);
+            if (customer == null)
+            {
+                TempData["ErrorMessage"] = "Mã đặt lại không hợp lệ.";
+                return RedirectToAction("ForgotPassword");
+            }
 
-			return View(new ResetPasswordViewModel { Token = token });
-		}
+            return View(new ResetPasswordViewModel { Token = token });
+        }
 
-		[HttpPost]
-		public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
-		{
-			if (ModelState.IsValid)
-			{
-				var customer = db.KhachHangs.SingleOrDefault(c => c.RandomKey == model.Token);
-				if (customer == null)
-				{
-					TempData["ErrorMessage"] = "Mã đặt lại không hợp lệ.";
-					return RedirectToAction("ForgotPassword");
-				}
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var customer = db.KhachHangs.SingleOrDefault(c => c.RandomKey == model.Token);
+                if (customer == null)
+                {
+                    TempData["ErrorMessage"] = "Mã đặt lại không hợp lệ.";
+                    return RedirectToAction("ForgotPassword");
+                }
 
-				customer.MatKhau = model.NewPassword.ToMd5Hash(customer.RandomKey);
-				customer.RandomKey = null; // Xóa mã đặt lại sau khi đổi mật khẩu
-				db.Update(customer);
-				await db.SaveChangesAsync();
+                customer.MatKhau = model.NewPassword.ToMd5Hash(customer.RandomKey);
+                customer.RandomKey = null; // Xóa mã đặt lại sau khi đổi mật khẩu
+                db.Update(customer);
+                await db.SaveChangesAsync();
 
-				TempData["SuccessMessage"] = "Mật khẩu đã được đổi thành công.";
-				return RedirectToAction("Login");
-			}
+                TempData["SuccessMessage"] = "Mật khẩu đã được đổi thành công.";
+                return RedirectToAction("Login");
+            }
 
-			return View(model);
-		}
+            return View(model);
+        }
 
 
-		// Hàm để tạo mật khẩu ngẫu nhiên
-		private string GenerateRandomPassword(int length)
+        // Hàm để tạo mật khẩu ngẫu nhiên
+        private string GenerateRandomPassword(int length)
         {
             const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
             StringBuilder result = new StringBuilder();

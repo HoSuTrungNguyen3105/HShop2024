@@ -8,16 +8,19 @@ using Microsoft.EntityFrameworkCore;
 using HShop2024.Data;
 using HShop2024.ViewModels;
 using HShop2024.Helpers;
+using Microsoft.Extensions.Hosting;
 
 namespace HShop2024.Controllers
 {
     public class HangHoasController : Controller
     {
         private readonly Hshop2023Context _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public HangHoasController(Hshop2023Context context)
+        public HangHoasController(Hshop2023Context context,IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: HangHoas
@@ -60,47 +63,29 @@ namespace HShop2024.Controllers
             return View(hangHoa);
         }
 
-        // GET: HangHoas/Create
         public IActionResult Create()
         {
-            ViewData["MaLoai"] = new SelectList(_context.Loais, "MaLoai", "TenLoai"); // Hiển thị tên loại thay vì mã
-            ViewData["MaNcc"] = new SelectList(_context.NhaCungCaps, "MaNcc", "TenNcc"); // Hiển thị tên NCC thay vì mã
+            ViewData["MaLoai"] = new SelectList(_context.Loais, "MaLoai", "TenLoai");
+            ViewData["MaNcc"] = new SelectList(_context.NhaCungCaps, "MaNcc", "TenNcc");
             return View();
         }
 
-        // POST: HangHoas/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaHh,TenHh,TenAlias,MaLoai,MoTaDonVi,DonGia,NgaySx,GiamGia,SoLanXem,MoTa,MaNcc")] HangHoa hangHoa, IFormFile Hinh)
+        public async Task<IActionResult> Create([Bind("TenHh,TenAlias,MaLoai,MoTaDonVi,DonGia,Hinh,NgaySx,GiamGia,MaNcc,IsOrganic,IsFantastic,SoLuong,SoLanXem")] HangHoaVM hangHoa, IFormFile Hinh)
         {
             if (ModelState.IsValid)
             {
-                // Nếu có file hình được tải lên
-                if (Hinh != null && Hinh.Length > 0)
+                if (Hinh != null)
                 {
-                    // Đường dẫn đến thư mục wwwroot/Hinh/HangHoa
-                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Hinh/HangHoa", Hinh.FileName);
-
-                    // Lưu file vào thư mục
-                    using (var stream = new FileStream(path, FileMode.Create))
-                    {
-                        await Hinh.CopyToAsync(stream);
-                    }
-
-                    // Lưu tên file vào database
-                    hangHoa.Hinh = Hinh.FileName;
+                    hangHoa.Hinh = MyUtil.UploadHinh(Hinh, "HangHoa");
                 }
-
                 _context.Add(hangHoa);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "HangHoas");
             }
-
-            ViewData["MaLoai"] = new SelectList(_context.Loais, "MaLoai", "MaLoai", hangHoa.MaLoai);
-            ViewData["MaNcc"] = new SelectList(_context.NhaCungCaps, "MaNcc", "MaNcc", hangHoa.MaNcc);
             return View(hangHoa);
         }
-
 
         // GET: HangHoas/Edit/5
         public async Task<IActionResult> Edit(int? id)

@@ -47,7 +47,7 @@ namespace HShop2024.Controllers
             var result = hangHoas.Select(p => new HangHoaVM
             {
                 MaHh = p.MaHh,
-                TenHH = p.TenHh,
+                TenHh = p.TenHh,
                 DonGia = p.DonGia ?? 0,
                 Hinh = p.Hinh ?? "",
                 MoTaNgan = p.MoTaDonVi ?? "",
@@ -71,7 +71,7 @@ namespace HShop2024.Controllers
             var result = hangHoas.Select(p => new HangHoaVM
             {
                 MaHh = p.MaHh,
-                TenHH = p.TenHh,
+                TenHh = p.TenHh,
                 DonGia = p.DonGia ?? 0,
                 Hinh = p.Hinh ?? "",
                 MoTaNgan = p.MoTaDonVi ?? "",
@@ -105,7 +105,7 @@ namespace HShop2024.Controllers
                 Hinh = product.Hinh ?? string.Empty,
                 MoTaNgan = product.MoTaDonVi ?? string.Empty,
                 TenLoai = product.MaLoaiNavigation.TenLoai,
-                SoLuongTon = 10, // Adjust as needed
+                SoLuongTon = product.SoLuong ?? 0, // Adjust as needed
                 DiemDanhGia = 5, // Adjust as needed
                 SoLanXem = product.SoLanXem,
                 HoiDaps = comments

@@ -96,7 +96,7 @@
                 <img src="~/hinh/icons/add to basket.png" alt="Logo" class="me-2" style="width: 40px; height: auto;" />
             </a>
             <!-- Add New Button -->
-            <a href="@Url.Action("Create", "NhanVien")" class="btn btn-primary d-flex align-items-center">
+            <a href="@Url.Action("NhanVienCreate", "QuanLy")" class="btn btn-primary d-flex align-items-center">
                 <i class="fas fa-plus me-2"></i> Thêm nhân viên mới
             </a>
         </div>
@@ -119,10 +119,10 @@
                             <td>@nv.HoTen</td>
                             <td>@nv.Email</td>
                             <td class="text-center">
-                                <a href="@Url.Action("Edit", "NhanVien", new { id = nv.MaNv })" class="btn btn-warning btn-sm">
+                                <a href="@Url.Action("NhanVienEdit", "QuanLy", new { id = nv.MaNv })" class="btn btn-warning btn-sm">
                                     <i class="fas fa-edit"></i> Sửa
                                 </a>
-                                <a href="@Url.Action("Delete", "NhanVien", new { id = nv.MaNv })" class="btn btn-danger btn-sm">
+                                <a href="@Url.Action("NhanVienDelete", "QuanLy", new { id = nv.MaNv })" class="btn btn-danger btn-sm">
                                     <i class="fas fa-trash"></i> Xóa
                                 </a>
                             </td>

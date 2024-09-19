@@ -30,23 +30,16 @@
                     <div class="col-lg-6">
                         <h4 class="fw-bold mb-3">@Model.TenHH</h4>
                         <p class="mb-3">Category: @Model.TenLoai</p>
+                        <p class="mb-3">Số lượng: @Model.SoLuongTon</p>
                         <h5 class="fw-bold mb-3">$ @Model.DonGia</h5>
                         <p class="text-muted">Lượt mua: @Model.SoLanXem</p>
                         <div class="d-flex mb-4">
                             <i class="fa fa-star text-secondary"></i>
                             <i class="fa fa-star text-secondary"></i>
                             <i class="fa fa-star text-secondary"></i>
-                            <i class="fa fa-star text-secondary"></i>
+                            <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
                         </div>
-                        <form asp-controller="YeuThiches" asp-action="AddToFavorites" method="post">
-                            @Html.AntiForgeryToken()
-                            <input type="hidden" name="MaHh" value="@Model.MaHh" />
-                            <input type="hidden" name="MaKh" value="@User.Identity.Name" />
-                            <input type="hidden" name="NgayChon" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss")" />
-                            <input type="hidden" name="MoTa" value="@Model.MoTaNgan" />
-                            <button type="submit" class="btn btn-primary">Thêm vào Danh Sách Yêu Thích</button>
-                        </form>
                         <p class="mb-4">@Model.MoTaNgan</p>
                         <form asp-action="AddToCart" asp-controller="Cart" asp-route-id="@Model.MaHh">
                             <div class="input-group quantity mb-5" style="width: 100px;">
@@ -61,6 +54,7 @@
                                         <i class="fa fa-plus"></i>
                                     </button>
                                 </div>
+                                <div></div>
                             </div>
                             <a href="#" data-id="@Model.MaHh" class="btn border border-secondary rounded-pill px-3 text-primary add-to-cart">
                                 <i class="fa fa-shopping-bag me-2 text-primary"></i> Thêm vào giỏ
@@ -124,8 +118,8 @@
                         else
                         {
                             <div class="alert alert-info">
-                                <p>Vui lòng <a href="@Url.Action("DangNhap", "KhachHang")">đăng nhập</a> để gửi bình luận.</p>
-                            </div>
+                                    <p>Vui lòng <a href="@Url.Action("DangNhap", "KhachHang", new { returnUrl = Url.Action("Detail", "HangHoa", new { id = Model.MaHh }) })">đăng nhập</a> để gửi bình luận.</p>
+                                </div>
                         }
                     </div>
                 </div>
