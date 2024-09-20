@@ -1,4 +1,5 @@
 ﻿@model HShop2024.Data.HangHoa
+
 @{
     ViewData["Title"] = "Edit";
     Layout = "_Layout2";
@@ -15,7 +16,14 @@
                 <input asp-for="TenHh" class="form-control" />
                 <span asp-validation-for="TenHh" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="Hinh" class="control-label"></label>
+                <input asp-for="Hinh" class="form-control" />
+                <span asp-validation-for="Hinh" class="text-danger"></span>
 
+                <!-- Trường ẩn để lưu hình ảnh cũ -->
+                <input type="hidden" name="OldHinh" value="@Model.Hinh" />
+            </div>
             <div class="form-group">
                 <label asp-for="TenAlias" class="control-label"></label>
                 <input asp-for="TenAlias" class="form-control" />
@@ -63,11 +71,45 @@
                 <textarea asp-for="MoTa" class="form-control"></textarea>
                 <span asp-validation-for="MoTa" class="text-danger"></span>
             </div>
-
+            <div class="form-group">
+                <label asp-for="NgaySx" class="control-label"></label>
+                <input asp-for="NgaySx" class="form-control" />
+                <span asp-validation-for="NgaySx" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GiamGia" class="control-label"></label>
+                <input asp-for="GiamGia" class="form-control" />
+                <span asp-validation-for="GiamGia" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SoLanXem" class="control-label"></label>
+                <input asp-for="SoLanXem" class="form-control" />
+                <span asp-validation-for="SoLanXem" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MoTa" class="control-label"></label>
+                <input asp-for="MoTa" class="form-control" />
+                <span asp-validation-for="MoTa" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="MaNcc" class="control-label"></label>
                 <select asp-for="MaNcc" class="form-control" asp-items="ViewBag.MaNcc"></select>
                 <span asp-validation-for="MaNcc" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsOrganic" /> @Html.DisplayNameFor(model => model.IsOrganic)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsFantastic" /> @Html.DisplayNameFor(model => model.IsFantastic)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="SoLuong" class="control-label"></label>
+                <input asp-for="SoLuong" class="form-control" />
+                <span asp-validation-for="SoLuong" class="text-danger"></span>
             </div>
         </div>
     </div>

@@ -18,12 +18,12 @@
         else if (isEmployee)
         {
             <h2 class="mb-4 text-success">👨‍💼 Chào nhân viên @userName!</h2>
-            <p>Bạn hiện chưa đăng nhập</p>
         }
     }
     else
     {
         <h2 class="mb-4 text-warning">👋 Chào bạn!</h2>
+        <p>Bạn hiện chưa đăng nhập</p>
     }
 
     <!-- Display User Information -->
@@ -42,34 +42,61 @@
             {
                 @if (User.IsInRole("Customer"))
                 {
-                    <div class="form-group">
-                        <label for="phone">Số điện thoại</label>
-                        <input type="tel" class="form-control" id="phone" value="@User.FindFirstValue(ClaimTypes.MobilePhone)" disabled />
-                    </div>
-                    <div class="form-group">
-                        <label for="address">Địa chỉ</label>
-                        <input type="text" class="form-control" id="address" value="@User.FindFirstValue(ClaimTypes.StreetAddress)" disabled />
+                    <div class="row">
+                        <!-- Cột chứa hình ảnh, hình ảnh nhỏ lại -->
+                        <div class="col-md-3 text-center">
+                            <label for="hinh">Hình đại diện</label>
+                            <img src="/Hinh/KhachHang/@User.FindFirstValue("Hinh")" alt="Hình đại diện" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;" />
+                        </div>
+
+                        <!-- Cột chứa thông tin -->
+                        <div class="col-md-9">
+                            <div class="row">
+                                <!-- Số điện thoại -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="phone">Số điện thoại</label>
+                                        <input type="tel" class="form-control" id="phone" value="@User.FindFirstValue(ClaimTypes.MobilePhone)" disabled />
+                                    </div>
+                                </div>
+
+                                <!-- Địa chỉ -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="address">Địa chỉ</label>
+                                        <input type="text" class="form-control" id="address" value="@User.FindFirstValue(ClaimTypes.StreetAddress)" disabled />
+                                    </div>
+                                </div>
+
+                                <!-- Ngày sinh -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="birthdate">Ngày sinh</label>
+                                        <input type="text" class="form-control" id="birthdate" value="@User.FindFirstValue(ClaimTypes.DateOfBirth)" disabled />
+                                    </div>
+                                </div>
+
+                                <!-- Số xu -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="xu">Số xu</label>
+                                        <input type="text" class="form-control" id="xu" value="@User.FindFirstValue("Xu")" disabled />
+                                    </div>
+                                </div>
+
+                                <!-- Giới tính -->
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="gender">Giới tính</label>
+                                        <input type="text" class="form-control" id="gender"
+                                               value="@(User.FindFirstValue(ClaimTypes.Gender) ?? "Chưa có thông tin")"
+                                               disabled />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="birthdate">Ngày sinh</label>
-                        <input type="text" class="form-control" id="birthdate" value="@User.FindFirstValue(ClaimTypes.DateOfBirth)" disabled />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="hinh">Hình đại diện</label>
-                        <img src="/Hinh/KhachHang/@User.FindFirstValue("Hinh")" alt="Hình đại diện" class="img-thumbnail" />
-                    </div>
-                    <div class="form-group">
-                        <label for="xu">Số xu</label>
-                        <input type="text" class="form-control" id="xu" value="@User.FindFirstValue("Xu")" disabled />
-                    </div>
-                    <div class="form-group">
-                        <label for="gender">Giới tính</label>
-                        <input type="text" class="form-control" id="gender"
-                               value="@(User.FindFirstValue(ClaimTypes.Gender) ?? "Chưa có thông tin")"
-                               disabled />
-                    </div>
                 }
 
                 <div class="d-flex justify-content-between align-items-center mt-4">

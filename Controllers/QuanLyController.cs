@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HShop2024.Data;
 using HShop2024.ViewModels;
@@ -13,124 +14,124 @@ using static HShop2024.ViewModels.ReportVM;
 
 namespace HShop2024.Controllers
 {
-	public class QuanLyController : Controller
-	{
-		private readonly Hshop2023Context _context;
+    public class QuanLyController : Controller
+    {
+        private readonly Hshop2023Context _context;
 
-		public QuanLyController(Hshop2023Context context)
-		{
-			_context = context;
-		}
+        public QuanLyController(Hshop2023Context context)
+        {
+            _context = context;
+        }
 
-		// Quản lý Khách Hàng
-		public IActionResult Index()
-		{
-			List<KhachHang> khachHangs = _context.KhachHangs.ToList();
-			return View(khachHangs);
-		}
+        // Quản lý Khách Hàng
+        public IActionResult Index()
+        {
+            List<KhachHang> khachHangs = _context.KhachHangs.ToList();
+            return View(khachHangs);
+        }
 
-		public async Task<IActionResult> Edit(string id)
-		{
-			if (id == null)
-			{
-				return NotFound();
-			}
+        public async Task<IActionResult> Edit(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-			var khachHang = await _context.KhachHangs.FindAsync(id);
-			if (khachHang == null)
-			{
-				return NotFound();
-			}
+            var khachHang = await _context.KhachHangs.FindAsync(id);
+            if (khachHang == null)
+            {
+                return NotFound();
+            }
 
-			return View(khachHang);
-		}
+            return View(khachHang);
+        }
 
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Edit(List<KhachHang> khachHangs)
-		{
-			if (ModelState.IsValid)
-			{
-				try
-				{
-					foreach (var khachHang in khachHangs)
-					{
-						var existingKhachHang = await _context.KhachHangs.FindAsync(khachHang.MaKh);
-						if (existingKhachHang != null)
-						{
-							existingKhachHang.HieuLuc = khachHang.HieuLuc;
-							_context.Update(existingKhachHang);
-						}
-					}
-					await _context.SaveChangesAsync();
-				}
-				catch (DbUpdateConcurrencyException)
-				{
-					ModelState.AddModelError("", "Đã xảy ra lỗi khi cập nhật dữ liệu.");
-				}
-				return RedirectToAction(nameof(Index));
-			}
-			return View(khachHangs);
-		}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(List<KhachHang> khachHangs)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    foreach (var khachHang in khachHangs)
+                    {
+                        var existingKhachHang = await _context.KhachHangs.FindAsync(khachHang.MaKh);
+                        if (existingKhachHang != null)
+                        {
+                            existingKhachHang.HieuLuc = khachHang.HieuLuc;
+                            _context.Update(existingKhachHang);
+                        }
+                    }
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    ModelState.AddModelError("", "Đã xảy ra lỗi khi cập nhật dữ liệu.");
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(khachHangs);
+        }
 
-		// Quản lý Nhân Viên
-		public async Task<IActionResult> NhanVienIndex()
-		{
-			var nhanViens = await _context.NhanViens.ToListAsync();
-			return View(nhanViens);
-		}
+        // Quản lý Nhân Viên
+        public async Task<IActionResult> NhanVienIndex()
+        {
+            var nhanViens = await _context.NhanViens.ToListAsync();
+            return View(nhanViens);
+        }
 
-		public async Task<IActionResult> NhanVienDetails(string? id)
-		{
-			if (id == null)
-			{
-				return NotFound();
-			}
+        public async Task<IActionResult> NhanVienDetails(string? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-			var nhanVien = await _context.NhanViens
-				.FirstOrDefaultAsync(m => m.MaNv == id);
-			if (nhanVien == null)
-			{
-				return NotFound();
-			}
+            var nhanVien = await _context.NhanViens
+                .FirstOrDefaultAsync(m => m.MaNv == id);
+            if (nhanVien == null)
+            {
+                return NotFound();
+            }
 
-			return View(nhanVien);
-		}
+            return View(nhanVien);
+        }
 
-		public IActionResult NhanVienCreate()
-		{
-			return View();
-		}
+        public IActionResult NhanVienCreate()
+        {
+            return View();
+        }
 
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> NhanVienCreate([Bind("MaNv,HoTen,Email,MatKhau")] NhanVien nhanVien)
-		{
-			if (ModelState.IsValid)
-			{
-				try
-				{
-					var existingEmployee = await _context.NhanViens
-						.FirstOrDefaultAsync(nv => nv.MaNv == nhanVien.MaNv);
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> NhanVienCreate([Bind("MaNv,HoTen,Email,MatKhau")] NhanVien nhanVien)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var existingEmployee = await _context.NhanViens
+                        .FirstOrDefaultAsync(nv => nv.MaNv == nhanVien.MaNv);
 
-					if (existingEmployee != null)
-					{
-						ModelState.AddModelError("MaNv", "Mã nhân viên đã tồn tại.");
-					}
-					else
-					{
-						_context.Add(nhanVien);
-						await _context.SaveChangesAsync();
-						return RedirectToAction(nameof(NhanVienIndex));
-					}
-				}
-				catch (Exception ex)
-				{
-					ModelState.AddModelError("", "An error occurred while creating the employee.");
-				}
-			}
-			return View(nhanVien);
-		}
+                    if (existingEmployee != null)
+                    {
+                        ModelState.AddModelError("MaNv", "Mã nhân viên đã tồn tại.");
+                    }
+                    else
+                    {
+                        _context.Add(nhanVien);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(NhanVienIndex));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "An error occurred while creating the employee.");
+                }
+            }
+            return View(nhanVien);
+        }
         // GET: NhanVien/Edit/5
         public async Task<IActionResult> NhanVienEdit(string? id)
         {
@@ -222,11 +223,10 @@ namespace HShop2024.Controllers
                 new Claim(MySetting.CLAIM_EMPLOYEEID, nhanVien.MaNv),
                 new Claim(ClaimTypes.Role, nhanVien.VaiTro == 2 ? "Admin" : "Employee")
                 };
-
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+                    await HttpContext.SignInAsync(claimsPrincipal);
 
                     if (Url.IsLocalUrl(ReturnUrl))
                     {
@@ -243,16 +243,15 @@ namespace HShop2024.Controllers
                     return View(model);
                 }
             }
-
-            return View(model);
+            return View();
         }
 
 
 
         private bool NhanVienExists(string id)
-		{
-			return _context.NhanViens.Any(e => e.MaNv == id);
-		}
+        {
+            return _context.NhanViens.Any(e => e.MaNv == id);
+        }
         public async Task<IActionResult> NhanVienDelete(string? id)
         {
             if (id == null)
