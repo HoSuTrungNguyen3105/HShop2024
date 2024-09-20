@@ -57,6 +57,18 @@
 
                     <dt class="col-sm-4">Nhà cung cấp</dt>
                     <dd class="col-sm-8">@Model.MaNcc</dd>
+
+                    <dt class="col-sm-4">Số lượng</dt>
+                    <dd class="col-sm-8">@Model.SoLuong ?? "Không có thông tin"</dd>
+
+                    <dt class="col-sm-4">Số lần xem</dt>
+                    <dd class="col-sm-8">@Model.SoLanXem</dd>
+
+                    <dt class="col-sm-4">Hàng hữu cơ</dt>
+                    <dd class="col-sm-8">@Model.IsOrganic ? "Có" : "Không"</dd>
+
+                    <dt class="col-sm-4">Sản phẩm đặc biệt</dt>
+                    <dd class="col-sm-8">@Model.IsFantastic ? "Có" : "Không"</dd>
                 </dl>
             </div>
         </div>

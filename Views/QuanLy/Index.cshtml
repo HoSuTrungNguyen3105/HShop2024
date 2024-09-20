@@ -15,13 +15,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="~/css/site.css">
     <style>
-        .img-thumbnail-custom {
-            width: 100px; /* Đặt chiều rộng cố định */
-            height: 100px; /* Đặt chiều cao cố định */
-            object-fit: cover; /* Đảm bảo ảnh không bị méo, cắt ảnh nếu quá lớn */
-        }
-
-
         .status-active {
             color: #28a745;
         }
@@ -64,7 +57,7 @@
                                 <td>
                                     @if (!string.IsNullOrEmpty(kh.value.Hinh))
                                     {
-                                        <img src="@Url.Content("~/Hinh/KhachHang/" + kh.value.Hinh)" alt="Image of @kh.value.HoTen" class="img-thumbnail img-thumbnail-custom" />
+                                        <img src="@Url.Content("~/Hinh/KhachHang/" + kh.value.Hinh)" alt="Image of @kh.value.HoTen" class="img-fluid img-thumbnail rounded" style="max-width: 100px; height: auto;">
                                     }
                                     else
                                     {

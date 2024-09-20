@@ -113,12 +113,19 @@ namespace ECommerceMVC.Controllers
                     else
                     {
                         var claims = new List<Claim> {
-                                new Claim(ClaimTypes.Email, khachHang.Email),
-                                new Claim(ClaimTypes.Name, khachHang.HoTen),
-                                new Claim("Xu", khachHang.Xu.ToString()), // Thêm xu vào claim
-                                new Claim(MySetting.CLAIM_CUSTOMERID, khachHang.MaKh),
-                                new Claim(ClaimTypes.Role, "Customer")
-                        };
+                            new Claim(ClaimTypes.Email, khachHang.Email),
+                            new Claim(ClaimTypes.Name, khachHang.HoTen),
+                            new Claim("Xu", khachHang.Xu.ToString()),
+                            new Claim(MySetting.CLAIM_CUSTOMERID, khachHang.MaKh),
+                            new Claim(ClaimTypes.Role, "Customer"),
+                            new Claim(ClaimTypes.MobilePhone, khachHang.DienThoai ?? ""),
+                            new Claim(ClaimTypes.Gender, khachHang.GioiTinh ? "Nam" : "Nữ"),
+                            new Claim(ClaimTypes.DateOfBirth, khachHang.NgaySinh.ToString("yyyy-MM-dd")),
+                            new Claim("Hinh", khachHang.Hinh ?? ""),
+                            new Claim(ClaimTypes.StreetAddress, khachHang.DiaChi ?? "")  // Sử dụng ClaimTypes.StreetAddress
+                                            };
+
+                        // Đảm bảo các giá trị không null
 
 
                         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -141,16 +148,7 @@ namespace ECommerceMVC.Controllers
             return View();
         }
         #endregion
-        public IActionResult SaveXuInCookie(int xu)
-        {
-            // Thiết lập cookie lưu trữ số Xu
-            CookieOptions option = new CookieOptions();
-            option.Expires = DateTime.Now.AddDays(7); // Cookie sẽ tồn tại trong 7 ngày
-
-            Response.Cookies.Append("Xu", xu.ToString(), option);
-            return RedirectToAction("Index", "Home");
-        }
-
+      
         [HttpPost]
         [Authorize] // Kiểm tra quyền truy cập nếu cần
         public async Task<IActionResult> Delete(string id)

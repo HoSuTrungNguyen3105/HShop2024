@@ -1,21 +1,24 @@
 ﻿@{
     ViewData["Title"] = "Profile";
 }
+@using System.Security.Claims
 
 <h1 class="text-center mt-5 display-4 font-weight-bold">Profile</h1>
 <div class="container mt-4 p-5 border shadow-lg rounded-lg" style="max-width: 600px; background-color: #f9f9f9; border: 1px solid #ddd;">
     @if (User.Identity.IsAuthenticated)
     {
         var userName = User.Identity.Name;
+        var isCustomer = User.IsInRole("Customer");
         var isEmployee = User.IsInRole("Employee");
 
-        if (isEmployee)
+        if (isCustomer)
+        {
+            <h2 class="mb-4 text-info">👤👋 Chào bạn !!!</h2>
+        }
+        else if (isEmployee)
         {
             <h2 class="mb-4 text-success">👨‍💼 Chào nhân viên @userName!</h2>
-        }
-        else
-        {
-            <h2 class="mb-4 text-info">👤 Chào khách hàng @userName!</h2> 
+            <p>Bạn hiện chưa đăng nhập</p>
         }
     }
     else
@@ -23,11 +26,60 @@
         <h2 class="mb-4 text-warning">👋 Chào bạn!</h2>
     }
 
-    <div class="d-flex justify-content-between align-items-center mt-4">
-        <p class="text-muted">Cảm ơn bạn đã ghé thăm.</p>
-        <a asp-action="DangXuat" class="btn btn-danger btn-lg px-4">Đăng xuất</a>
-    </div>
-   @*  <form asp-action="XoaTaiKhoan" method="post" class="mt-3">
+    <!-- Display User Information -->
+    <div class="mt-4">
+        <h4>Thông tin cá nhân</h4>
+        <form>
+            <div class="form-group">
+                <label for="username">Tên tài khoản</label>
+                <input type="text" class="form-control" id="username" value="@User.FindFirstValue(ClaimTypes.Name)" disabled />
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" value="@User.FindFirstValue(ClaimTypes.Email)" disabled />
+            </div>
+            @if (User.Identity.IsAuthenticated)
+            {
+                @if (User.IsInRole("Customer"))
+                {
+                    <div class="form-group">
+                        <label for="phone">Số điện thoại</label>
+                        <input type="tel" class="form-control" id="phone" value="@User.FindFirstValue(ClaimTypes.MobilePhone)" disabled />
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Địa chỉ</label>
+                        <input type="text" class="form-control" id="address" value="@User.FindFirstValue(ClaimTypes.StreetAddress)" disabled />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="birthdate">Ngày sinh</label>
+                        <input type="text" class="form-control" id="birthdate" value="@User.FindFirstValue(ClaimTypes.DateOfBirth)" disabled />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="hinh">Hình đại diện</label>
+                        <img src="/Hinh/KhachHang/@User.FindFirstValue("Hinh")" alt="Hình đại diện" class="img-thumbnail" />
+                    </div>
+                    <div class="form-group">
+                        <label for="xu">Số xu</label>
+                        <input type="text" class="form-control" id="xu" value="@User.FindFirstValue("Xu")" disabled />
+                    </div>
+                    <div class="form-group">
+                        <label for="gender">Giới tính</label>
+                        <input type="text" class="form-control" id="gender"
+                               value="@(User.FindFirstValue(ClaimTypes.Gender) ?? "Chưa có thông tin")"
+                               disabled />
+                    </div>
+                }
+
+                <div class="d-flex justify-content-between align-items-center mt-4">
+                    <p class="text-muted">Cảm ơn bạn đã ghé thăm.</p>
+                    <a asp-action="DangXuat" class="btn btn-danger btn-lg px-4">Đăng xuất</a>
+                </div>
+            }
+        </form>
+        @* <form asp-action="XoaTaiKhoan" method="post" class="mt-3">
         <button type="submit" class="btn btn-outline-danger btn-lg px-4">Xóa tài khoản</button>
-    </form> *@
+        </form> *@
+    </div>
 </div>

@@ -1,5 +1,6 @@
 ﻿using HShop2024.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace HShop2024.ViewModels
 {
@@ -12,19 +13,19 @@ namespace HShop2024.ViewModels
         public string? MoTaDonVi { get; set; }
         public double? DonGia { get; set; }
         public string? Hinh { get; set; }
+        public string MoTa{ get; set; }
         public DateTime NgaySx { get; set; }
         public double GiamGia { get; set; }
-        public string? MoTa { get; set; }
-        public string MaNcc { get; set; } = null!;
         public bool IsOrganic { get; set; }
         public bool IsFantastic { get; set; }
         public int? SoLuong { get; set; }
+        public string MoTaNgan { get; set; }
+        public string TenLoai { get; set; }
         public int SoLanXem { get; set; }
-        public string? MoTaNgan { get; set; }
-        public string? TenLoai { get; set; }
-        public IEnumerable<SelectListItem> MaLoaiOptions { get; set; } = new List<SelectListItem>();
+        public List<SelectListItem> MaLoaiOptions { get; set; } = new List<SelectListItem>(); // Dropdown options for categories
 
     }
+
     public class ChiTietHangHoaVM
     {
         public int MaHh { get; set; }

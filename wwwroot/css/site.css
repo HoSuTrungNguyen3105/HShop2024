@@ -117,12 +117,6 @@ th {
     font-weight: bold;
 }
 
-.img-thumbnail-custom {
-    display: block;
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-}
 
 .sidebar {
     height: 100vh;

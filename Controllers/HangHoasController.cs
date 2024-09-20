@@ -8,25 +8,22 @@ using Microsoft.EntityFrameworkCore;
 using HShop2024.Data;
 using HShop2024.ViewModels;
 using HShop2024.Helpers;
-using Microsoft.Extensions.Hosting;
 
 namespace HShop2024.Controllers
 {
     public class HangHoasController : Controller
     {
         private readonly Hshop2023Context _context;
-        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public HangHoasController(Hshop2023Context context,IWebHostEnvironment webHostEnvironment)
+        public HangHoasController(Hshop2023Context context)
         {
             _context = context;
-            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: HangHoas
         public async Task<IActionResult> Index(string searchString)
         {
-            var hshop2023Context = _context.HangHoas.Include(h => h.MaLoaiNavigation).Include(h => h.MaNccNavigation);     
+            var hshop2023Context = _context.HangHoas.Include(h => h.MaLoaiNavigation).Include(h => h.MaNccNavigation);
             var hangHoas = _context.HangHoas
                                    .Include(h => h.MaLoaiNavigation)
                                    .Include(h => h.MaNccNavigation)
@@ -42,7 +39,7 @@ namespace HShop2024.Controllers
             ViewData["SearchString"] = searchString;
             return View(await hangHoas.ToListAsync());
         }
-      
+
         // GET: HangHoas/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -63,27 +60,44 @@ namespace HShop2024.Controllers
             return View(hangHoa);
         }
 
+        // GET: HangHoas/Create
         public IActionResult Create()
         {
-            ViewData["MaLoai"] = new SelectList(_context.Loais, "MaLoai", "TenLoai");
-            ViewData["MaNcc"] = new SelectList(_context.NhaCungCaps, "MaNcc", "TenNcc");
+            ViewData["MaLoai"] = new SelectList(_context.Loais, "MaLoai", "TenLoai"); // Hiển thị tên loại thay vì mã
+            ViewData["MaNcc"] = new SelectList(_context.NhaCungCaps, "MaNcc", "TenNcc"); // Hiển thị tên NCC thay vì mã
             return View();
         }
 
+        // POST: HangHoas/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TenHh,TenAlias,MaLoai,MoTaDonVi,DonGia,Hinh,NgaySx,GiamGia,MaNcc,IsOrganic,IsFantastic,SoLuong,SoLanXem")] HangHoaVM hangHoa, IFormFile Hinh)
+        public async Task<IActionResult> Create([Bind("MaHh,TenHh,TenAlias,MaLoai,MoTaDonVi,DonGia,NgaySx,Hinh,GiamGia,SoLanXem,MoTa,MaNcc")] HangHoa hangHoa, IFormFile Hinh)
         {
             if (ModelState.IsValid)
             {
-                if (Hinh != null)
+                try
                 {
-                    hangHoa.Hinh = MyUtil.UploadHinh(Hinh, "HangHoa");
+                    if (Hinh != null && Hinh.Length > 0)
+                    {
+                        // Lưu hình ảnh và lấy đường dẫn lưu trữ
+                        hangHoa.Hinh = MyUtil.UploadHinh(Hinh, "HangHoa");
+                    }
+
+                    // Thêm sản phẩm vào cơ sở dữ liệu
+                    _context.Add(hangHoa);
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction(nameof(Index)); // Chuyển hướng đến danh sách sản phẩm sau khi thêm thành công
                 }
-                _context.Add(hangHoa);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index", "HangHoas");
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", $"Lỗi khi lưu sản phẩm: {ex.Message}");
+                }
             }
+
+            // Nếu có lỗi hoặc form không hợp lệ, giữ lại các dữ liệu chọn để người dùng có thể sửa lỗi
+            ViewData["MaLoai"] = new SelectList(_context.Loais, "MaLoai", "TenLoai", hangHoa.MaLoai);
+            ViewData["MaNcc"] = new SelectList(_context.NhaCungCaps, "MaNcc", "TenNcc", hangHoa.MaNcc);
             return View(hangHoa);
         }
 
@@ -108,7 +122,7 @@ namespace HShop2024.Controllers
         // POST: HangHoas/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("MaHh,TenHh,TenAlias,MaLoai,MoTaDonVi,DonGia,Hinh,NgaySx,GiamGia,SoLanXem,MoTa,MaNcc")] HangHoa hangHoa)
+        public async Task<IActionResult> Edit(int id, [Bind("MaHh,TenHh,TenAlias,MaLoai,MoTaDonVi,DonGia,Hinh,NgaySx,GiamGia,SoLanXem,MoTa,MaNcc,IsOrganic,IsFantastic,SoLuong")] HangHoa hangHoa)
         {
             if (id != hangHoa.MaHh)
             {
@@ -160,6 +174,7 @@ namespace HShop2024.Controllers
         {
             return _context.HangHoas.Any(e => e.MaHh == id);
         }
+
 
         public async Task<IActionResult> Delete(int? id)
         {
