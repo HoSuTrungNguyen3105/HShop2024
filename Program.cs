@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Owin;
 using System.Configuration;
 
 
@@ -28,8 +31,6 @@ builder.Services.AddSingleton<IEmailSender, SmtpEmailSender>(provider =>
 	return new SmtpEmailSender(smtpOptions);
 });
 
-
-// Thêm các dịch vụ khác
 builder.Services.AddControllersWithViews(); 
 builder.Services.AddDbContext<Hshop2023Context>(options =>
 {
@@ -62,10 +63,21 @@ builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Logging.AddConsole();
 
 // https://learn.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-8.0
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+builder.Services.AddAuthentication(options =>
 {
-    options.LoginPath = "/KhachHang/DangNhap";
-    options.AccessDeniedPath = "/AccessDenied";
+	options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+	options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+})
+.AddCookie(options =>
+{
+	options.LoginPath = "/KhachHang/DangNhap";
+	options.LogoutPath = "/KhachHang/Logout";
+	options.AccessDeniedPath = "/AccessDenied";
+})
+.AddGoogle(googleOptions =>
+{
+	googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+	googleOptions.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
 });
 
 // đăng ký PaypalClient dạng Singleton() - chỉ có 1 instance duy nhất trong toàn ứng dụng

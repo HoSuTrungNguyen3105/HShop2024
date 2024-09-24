@@ -148,7 +148,7 @@ namespace ECommerceMVC.Controllers
             return View();
         }
         #endregion
-      
+
         [HttpPost]
         [Authorize] // Kiểm tra quyền truy cập nếu cần
         public async Task<IActionResult> Delete(string id)
@@ -225,7 +225,7 @@ namespace ECommerceMVC.Controllers
             return Redirect("/");
         }
 
-  
+
 
         [HttpGet]
         public IActionResult ForgotPassword()

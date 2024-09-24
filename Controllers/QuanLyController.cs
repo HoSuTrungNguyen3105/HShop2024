@@ -81,22 +81,24 @@ namespace HShop2024.Controllers
             return View(nhanViens);
         }
 
-        public async Task<IActionResult> NhanVienDetails(string? id)
+        public async Task<IActionResult> NhanVienDetail(string id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var nhanVien = await _context.NhanViens
-                .FirstOrDefaultAsync(m => m.MaNv == id);
+            var nhanVien = await _context.NhanViens.FindAsync(id);
             if (nhanVien == null)
             {
                 return NotFound();
             }
 
+            var logins = await _context.LoginHistories
+                .Where(l => l.MaNv == id) // Giả sử bạn có bảng LoginHistory lưu lại các lần đăng nhập
+                .OrderByDescending(l => l.LoginTime) // Sắp xếp theo thời gian đăng nhập
+                .ToListAsync();
+
+            ViewBag.LoginHistory = logins; // Gửi danh sách các lần đăng nhập đến view
+
             return View(nhanVien);
         }
+
 
         public IActionResult NhanVienCreate()
         {
@@ -213,6 +215,16 @@ namespace HShop2024.Controllers
                     ModelState.AddModelError("", "Mã nhân viên không đúng hoặc không tồn tại.");
                     return View(model);
                 }
+                // Đăng nhập thành công, lưu vào LoginHistory
+                var loginHistory = new LoginHistory
+                {
+                    MaNv = nhanVien.MaNv,
+                    LoginTime = DateTime.Now,
+                    IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() // Lấy địa chỉ IP
+                };
+
+                _context.LoginHistories.Add(loginHistory);
+                await _context.SaveChangesAsync();
 
                 if (nhanVien.MatKhau == model.MatKhau)
                 {
@@ -221,12 +233,19 @@ namespace HShop2024.Controllers
                 new Claim(ClaimTypes.Email, nhanVien.Email),
                 new Claim(ClaimTypes.Name, nhanVien.HoTen),
                 new Claim(MySetting.CLAIM_EMPLOYEEID, nhanVien.MaNv),
-                new Claim(ClaimTypes.Role, nhanVien.VaiTro == 2 ? "Admin" : "Employee")
+                new Claim(ClaimTypes.Role, nhanVien.VaiTro == 2 ? "Admin" : "Employee"),
+                new Claim("LastLoginTime", DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"))  // Lưu thời gian đăng nhập
+
                 };
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
                     await HttpContext.SignInAsync(claimsPrincipal);
+
+
+                    // Cập nhật LastLoginTime
+                    nhanVien.LastLoginTime = DateTime.Now;
+                    _context.Update(nhanVien);
 
                     if (Url.IsLocalUrl(ReturnUrl))
                     {
@@ -245,8 +264,6 @@ namespace HShop2024.Controllers
             }
             return View();
         }
-
-
 
         private bool NhanVienExists(string id)
         {
@@ -277,7 +294,7 @@ namespace HShop2024.Controllers
             var nhanVien = await _context.NhanViens.FindAsync(id);
             _context.NhanViens.Remove(nhanVien);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("NhanVienIndex");
         }
         public async Task<IActionResult> Setting()
         {

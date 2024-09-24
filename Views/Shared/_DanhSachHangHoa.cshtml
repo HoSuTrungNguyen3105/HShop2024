@@ -33,11 +33,20 @@
                         <div class="row g-4">
                             @await Component.InvokeAsync("MenuLoai")
 
-                            <div class="col-lg-12">
-                                <div id="voucherSection">
-                                    <!-- Voucher list will be loaded here -->
-                                </div>
-                            </div>
+                          <div class="col-lg-12">
+    <div id="voucherSection">
+        <!-- Voucher list will be loaded here -->
+    </div>
+</div>
+<div id="toastNotification" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+        <strong class="me-auto">Thông báo</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+        <!-- Toast message will be inserted here -->
+    </div>
+</div>
 
                             <div class="col-lg-12">
                                 <div class="mb-3">
@@ -167,24 +176,31 @@
         });
     });
     function copyCoupon(couponId) {
-        // Get the input element using the ID
         var copyText = document.getElementById(couponId);
 
-        // Check if the element exists
         if (copyText) {
-            // Select the text field
             copyText.select();
             copyText.setSelectionRange(0, 99999); // For mobile devices
-
-            // Copy the text inside the text field
             document.execCommand("copy");
 
-            // Alert the copied text
-            alert("Mã đã được sao chép: " + copyText.value);
+            // Hiển thị toast thông báo mã đã được sao chép
+            showToast("Mã đã được sao chép: " + copyText.value);
         } else {
-            alert("Không tìm thấy mã giảm giá.");
+            showToast("Không tìm thấy mã giảm giá.");
         }
     }
+
+    function showToast(message) {
+        var toast = document.getElementById("toast");
+        var toastMessage = toast.querySelector(".toast-message");
+        toastMessage.textContent = message;
+        toast.classList.add("show");
+
+        setTimeout(function () {
+            toast.classList.remove("show");
+        }, 3000); // Ẩn sau 3 giây
+    }
+
 
 
     function applySorting() {

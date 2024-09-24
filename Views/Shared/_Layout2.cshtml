@@ -10,6 +10,25 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="~/css/site.css" rel="stylesheet" />
+    <style>
+        .last-login {
+            margin-top: 14px;
+            padding: 9px;
+            border: 1px solid #007bff; /* Đường viền màu xanh */
+            border-radius: 2px; /* Góc bo tròn */
+            background-color: #f0f8ff; /* Màu nền nhẹ */
+            display: flex; /* Sử dụng flexbox để căn chỉnh nội dung */
+            align-items: center; /* Căn giữa dọc */
+        }
+
+        .last-login-text {
+            font-weight: bold; /* Làm cho nhãn đậm */
+            color: #007bff; /* Màu chữ nhãn xanh */
+            font-size:14px;
+            margin-right: 5px; /* Khoảng cách giữa nhãn và giá trị */
+            font-style: italic; /* Thêm kiểu chữ nghiêng */
+        }
+    </style>
 </head>
 <body>
     <!-- Sidebar -->
@@ -41,6 +60,10 @@
                 <i class="fas fa-cogs"></i> Cài đặt
             </a>
         </div>
+        <div class="last-login">
+            <span class="last-login-text">Đăng nhập lần cuối:@User.FindFirst("LastLoginTime")?.Value</span>
+        </div>
+
     </div>
     <!-- Nội dung chính -->
     <div class="content">

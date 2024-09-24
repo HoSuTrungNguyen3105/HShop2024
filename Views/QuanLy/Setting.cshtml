@@ -2,6 +2,17 @@
     ViewData["Title"] = "Cài đặt";
     Layout = "_Layout2";
 }
+<script>
+    function checkPasswordStrength(password) {
+        const passwordHelp = document.getElementById('passwordHelp');
+        // Kiểm tra độ mạnh của mật khẩu và cập nhật cảnh báo
+        if (password.length < 8) {
+            passwordHelp.innerHTML = "Mật khẩu phải có ít nhất 8 ký tự.";
+        } else {
+            passwordHelp.innerHTML = "";
+        }
+    }
+</script>
 @using System.Security.Claims
 
 <h2>Cài đặt</h2>
@@ -11,7 +22,10 @@
         <!-- Sidebar for settings categories -->
         <div class="col-md-3">
             <ul class="list-group">
-                <li class="list-group-item active">Tài khoản</li>
+                <!-- Thêm Icon cho các mục cài đặt -->
+                <li class="list-group-item active">
+                    <i class="fas fa-user"></i> Tài khoản
+                </li>
                 <li class="list-group-item">Thông báo</li>
                 @if (User.IsInRole("Admin"))
                 {
@@ -78,9 +92,11 @@
                         <label for="currentPassword">Mật khẩu hiện tại</label>
                         <input type="password" class="form-control" id="currentPassword" />
                     </div>
+                    <!-- Thêm cảnh báo mật khẩu yếu -->
                     <div class="form-group">
                         <label for="newPassword">Mật khẩu mới</label>
-                        <input type="password" class="form-control" id="newPassword" />
+                        <input type="password" class="form-control" id="newPassword" oninput="checkPasswordStrength(this.value)" />
+                        <small id="passwordHelp" class="form-text text-muted"></small>
                     </div>
                     <div class="form-group">
                         <label for="confirmPassword">Xác nhận mật khẩu mới</label>
@@ -125,3 +141,4 @@
         </div>
     </div>
 </div>
+

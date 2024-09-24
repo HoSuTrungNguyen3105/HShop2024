@@ -33,6 +33,8 @@ public partial class Hshop2023Context : DbContext
 
     public virtual DbSet<Loai> Loais { get; set; }
 
+    public virtual DbSet<LoginHistory> LoginHistories { get; set; }
+
     public virtual DbSet<NhaCungCap> NhaCungCaps { get; set; }
 
     public virtual DbSet<NhanVien> NhanViens { get; set; }
@@ -278,6 +280,7 @@ public partial class Hshop2023Context : DbContext
             entity.Property(e => e.RandomKey)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.SoLanSai).HasDefaultValue(0);
             entity.Property(e => e.Xu).HasDefaultValue(0);
         });
 
@@ -290,6 +293,22 @@ public partial class Hshop2023Context : DbContext
             entity.Property(e => e.Hinh).HasMaxLength(50);
             entity.Property(e => e.TenLoai).HasMaxLength(50);
             entity.Property(e => e.TenLoaiAlias).HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<LoginHistory>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__LoginHis__3214EC07CE316663");
+
+            entity.ToTable("LoginHistory");
+
+            entity.Property(e => e.IpAddress).HasMaxLength(50);
+            entity.Property(e => e.LoginTime).HasColumnType("datetime");
+            entity.Property(e => e.MaNv).HasMaxLength(50);
+
+            entity.HasOne(d => d.MaNvNavigation).WithMany(p => p.LoginHistories)
+                .HasForeignKey(d => d.MaNv)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_LoginHistory_NhanVien");
         });
 
         modelBuilder.Entity<NhaCungCap>(entity =>
@@ -320,7 +339,9 @@ public partial class Hshop2023Context : DbContext
                 .HasColumnName("MaNV");
             entity.Property(e => e.Email).HasMaxLength(50);
             entity.Property(e => e.HoTen).HasMaxLength(50);
+            entity.Property(e => e.LastLoginTime).HasColumnType("datetime");
             entity.Property(e => e.MatKhau).HasMaxLength(50);
+            entity.Property(e => e.SoLanSai).HasDefaultValue(0);
         });
 
         modelBuilder.Entity<PhanCong>(entity =>

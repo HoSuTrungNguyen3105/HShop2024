@@ -15,11 +15,17 @@ public partial class NhanVien
 
     public int? VaiTro { get; set; }
 
+    public DateTime? LastLoginTime { get; set; }
+
+    public int? SoLanSai { get; set; }
+
     public virtual ICollection<ChuDe> ChuDes { get; set; } = new List<ChuDe>();
 
     public virtual ICollection<HoaDon> HoaDons { get; set; } = new List<HoaDon>();
 
     public virtual ICollection<HoiDap> HoiDaps { get; set; } = new List<HoiDap>();
+
+    public virtual ICollection<LoginHistory> LoginHistories { get; set; } = new List<LoginHistory>();
 
     public virtual ICollection<PhanCong> PhanCongs { get; set; } = new List<PhanCong>();
 }
