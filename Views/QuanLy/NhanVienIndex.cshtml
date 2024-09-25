@@ -13,11 +13,6 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-        }
-
         .container {
             background-color: #fff;
             padding: 30px;
@@ -101,7 +96,6 @@
 <body>
     <div class="container">
         <h1 class="text-center">@ViewData["Title"]</h1>
-
         <div class="mb-4 text-end">
             <a href="@Url.Action("NhanVienCreate", "QuanLy")" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Thêm nhân viên mới
@@ -116,7 +110,7 @@
                         <th scope="col">Họ Tên</th>
                         <th scope="col">Email</th>
                         <th scope="col" class="text-center">Hành Động</th>
-                        <th scope="col" class="text-center">Chi tiết</th>
+                        <th scope="col" class="text-center">Thông tin đăng nhập</th>
                     </tr>
                 </thead>
                 <tbody>

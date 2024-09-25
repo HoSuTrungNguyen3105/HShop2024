@@ -215,13 +215,19 @@ namespace HShop2024.Controllers
                     ModelState.AddModelError("", "Mã nhân viên không đúng hoặc không tồn tại.");
                     return View(model);
                 }
-                // Đăng nhập thành công, lưu vào LoginHistory
+                var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                if (ipAddress == "::1")
+                {
+                    ipAddress = "127.0.0.1";
+                }
+
                 var loginHistory = new LoginHistory
                 {
                     MaNv = nhanVien.MaNv,
                     LoginTime = DateTime.Now,
-                    IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString() // Lấy địa chỉ IP
+                    IpAddress = ipAddress // Lưu địa chỉ IP
                 };
+
 
                 _context.LoginHistories.Add(loginHistory);
                 await _context.SaveChangesAsync();

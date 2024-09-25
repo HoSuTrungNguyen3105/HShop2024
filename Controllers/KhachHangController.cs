@@ -123,10 +123,7 @@ namespace ECommerceMVC.Controllers
                             new Claim(ClaimTypes.DateOfBirth, khachHang.NgaySinh.ToString("yyyy-MM-dd")),
                             new Claim("Hinh", khachHang.Hinh ?? ""),
                             new Claim(ClaimTypes.StreetAddress, khachHang.DiaChi ?? "")  // Sử dụng ClaimTypes.StreetAddress
-                                            };
-
-                        // Đảm bảo các giá trị không null
-
+                         };
 
                         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
