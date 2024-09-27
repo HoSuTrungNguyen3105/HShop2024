@@ -2,6 +2,12 @@
     ViewData["Title"] = "Profile";
 }
 @using System.Security.Claims
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
 
 <h1 class="text-center mt-5 display-4 font-weight-bold">Profile</h1>
 <div class="container mt-4 p-5 border shadow-lg rounded-lg" style="max-width: 600px; background-color: #f9f9f9; border: 1px solid #ddd;">
@@ -9,15 +15,13 @@
     {
         var userName = User.Identity.Name;
         var isCustomer = User.IsInRole("Customer");
-        var isEmployee = User.IsInRole("Employee");
-
         if (isCustomer)
         {
-            <h2 class="mb-4 text-info">👤👋 Chào bạn !!!</h2>
+            <h2 class="mb-4 text-info">👤👋 Chào bạn @isCustomer!!!</h2>
         }
-        else if (isEmployee)
+        else if (userName == null)
         {
-            <h2 class="mb-4 text-success">👨‍💼 Chào nhân viên @userName!</h2>
+            <h2 class="mb-4 text-success">Chào !!!</h2>
         }
     }
     else
@@ -29,84 +33,131 @@
     <!-- Display User Information -->
     <div class="mt-4">
         <h4>Thông tin cá nhân</h4>
-        <form>
+        <form id="profileForm" asp-controller="KhachHang" asp-action="UpdateProfile" method="post">
             <div class="form-group">
                 <label for="username">Tên tài khoản</label>
-                <input type="text" class="form-control" id="username" value="@User.FindFirstValue(ClaimTypes.Name)" disabled />
+                <input type="text" class="form-control" id="username" name="Username" value="@User.FindFirstValue(ClaimTypes.Name)" readonly />
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" class="form-control" id="email" value="@User.FindFirstValue(ClaimTypes.Email)" disabled />
+                <input type="email" class="form-control" id="email" name="Email" value="@User.FindFirstValue(ClaimTypes.Email)" readonly />
             </div>
-            @if (User.Identity.IsAuthenticated)
+            @if (User.Identity.IsAuthenticated && User.IsInRole("Customer"))
             {
-                @if (User.IsInRole("Customer"))
-                {
-                    <div class="row">
-                        <!-- Cột chứa hình ảnh, hình ảnh nhỏ lại -->
-                        <div class="col-md-3 text-center">
-                            <label for="hinh">Hình đại diện</label>
-                            <img src="/Hinh/KhachHang/@User.FindFirstValue("Hinh")" alt="Hình đại diện" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;" />
-                        </div>
-
-                        <!-- Cột chứa thông tin -->
-                        <div class="col-md-9">
-                            <div class="row">
-                                <!-- Số điện thoại -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="phone">Số điện thoại</label>
-                                        <input type="tel" class="form-control" id="phone" value="@User.FindFirstValue(ClaimTypes.MobilePhone)" disabled />
-                                    </div>
+                <div class="row">
+                    <div class="col-md-3 text-center">
+                        <label for="hinh">Hình đại diện</label>
+                        <img src="/Hinh/KhachHang/@User.FindFirstValue("Hinh")" alt="Hình đại diện" class="img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;" />
+                    </div>
+                    <div class="col-md-9">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="phone">Số điện thoại</label>
+                                    <input type="tel" class="form-control" id="phone" name="Phone" value="@User.FindFirstValue(ClaimTypes.MobilePhone)" readonly />
                                 </div>
-
-                                <!-- Địa chỉ -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="address">Địa chỉ</label>
-                                        <input type="text" class="form-control" id="address" value="@User.FindFirstValue(ClaimTypes.StreetAddress)" disabled />
-                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="address">Địa chỉ</label>
+                                    <input type="text" class="form-control" id="address" name="Address" value="@User.FindFirstValue(ClaimTypes.StreetAddress)" readonly />
                                 </div>
-
-                                <!-- Ngày sinh -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="birthdate">Ngày sinh</label>
-                                        <input type="text" class="form-control" id="birthdate" value="@User.FindFirstValue(ClaimTypes.DateOfBirth)" disabled />
-                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="birthdate">Ngày sinh</label>
+                                    <input type="date" class="form-control" id="birthdate" name="Birthdate" value="@User.FindFirstValue(ClaimTypes.DateOfBirth)" readonly />
                                 </div>
-
-                                <!-- Số xu -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="xu">Số xu</label>
-                                        <input type="text" class="form-control" id="xu" value="@User.FindFirstValue("Xu")" disabled />
-                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="xu">Số xu</label>
+                                    <input type="text" class="form-control" id="xu" name="Xu" value="@User.FindFirstValue("Xu")" readonly />
                                 </div>
-
-                                <!-- Giới tính -->
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="gender">Giới tính</label>
-                                        <input type="text" class="form-control" id="gender"
-                                               value="@(User.FindFirstValue(ClaimTypes.Gender) ?? "Chưa có thông tin")"
-                                               disabled />
-                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="gender">Giới tính</label>
+                                    <input type="text" class="form-control" id="gender_disable"
+                                           value="@(User.FindFirstValue(ClaimTypes.Gender) ?? "Chưa có thông tin")"
+                                           readonly />
+                                    <select class="form-control" id="gender" name="Gender" style="display: none;" disabled>
+                                        <option value="">Chọn giới tính</option>
+                                        <option value="Nam">Nam</option>
+                                        <option value="Nữ">Nữ</option>
+                                        <option value="Khác">Khác</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                }
-
-                <div class="d-flex justify-content-between align-items-center mt-4">
-                    <p class="text-muted">Cảm ơn bạn đã ghé thăm.</p>
-                    <a asp-action="DangXuat" class="btn btn-danger btn-lg px-4">Đăng xuất</a>
                 </div>
             }
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <button type="button" id="editButton" class="btn btn-primary btn-lg px-4">Sửa thông tin</button>
+                <button type="submit" id="saveButton" class="btn btn-success btn-lg px-4" style="display: none;">Lưu thay đổi</button>
+                <a asp-action="DangXuat" class="btn btn-danger btn-lg px-4">Đăng xuất</a>
+            </div>
         </form>
-        @* <form asp-action="XoaTaiKhoan" method="post" class="mt-3">
-        <button type="submit" class="btn btn-outline-danger btn-lg px-4">Xóa tài khoản</button>
-        </form> *@
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $('#profileForm').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: '/KhachHang/UpdateProfile',
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (result) {
+                    // Cập nhật thông tin trong giao diện, ví dụ: hiển thị thông báo
+                    // và cập nhật lại các trường thông tin nếu cần
+                    alert('Cập nhật thông tin thành công!');
+                },
+                error: function (error) {
+                    alert('Có lỗi xảy ra khi cập nhật thông tin!');
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            const editButton = $('#editButton');
+            const genderInput = $('#gender_disable');
+            const genderSelect = $('#gender');
+
+            // Ẩn select khi tải trang
+            genderSelect.hide();
+
+            editButton.click(function () {
+                // Ẩn input và hiển thị select
+                genderInput.hide();
+                genderSelect.prop('disabled', false).show();
+
+                // Khi người dùng chọn giới tính, có thể cập nhật giá trị của input
+                genderSelect.change(function () {
+                    genderInput.val($(this).val());
+                });
+            });
+        });
+
+        $(document).ready(function () {
+            const form = $('#profileForm');
+            const editButton = $('#editButton');
+            const saveButton = $('#saveButton');
+            const inputs = form.find('input:not([type="hidden"]), select');
+
+            editButton.click(function () {
+                inputs.prop('readonly', false).prop('disabled', false);
+                editButton.hide();
+                saveButton.show();
+            });
+
+            // Set initial gender value
+            var initialGender = '@User.FindFirstValue(ClaimTypes.Gender)';
+            if (initialGender) {
+                $('#gender').val(initialGender);
+            }
+        });
+    </script>
+}

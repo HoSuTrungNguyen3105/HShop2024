@@ -77,14 +77,14 @@
 										else if (User.IsInRole("Employee"))
 										{
 											<a asp-controller="QuanLy" asp-action="Index" class="dropdown-item text-dark">Dashboard</a>
-											<a asp-controller="KhachHang" asp-action="Profile" class="dropdown-item">Profile</a>
-											<a asp-controller="KhachHang" asp-action="DangXuat" class="dropdown-item">Logout</a>
+											<a asp-controller="QuanLy" asp-action="Profile" class="dropdown-item">Profile</a>
+											<a asp-controller="QuanLy" asp-action="DangXuat" class="dropdown-item">Logout</a>
 										}
 										else if (User.IsInRole("Admin"))
 										{
 											<a asp-controller="QuanLy" asp-action="Index" class="dropdown-item text-dark">Dashboard</a>
-											<a asp-controller="KhachHang" asp-action="Profile" class="dropdown-item">Profile</a>
-											<a asp-controller="KhachHang" asp-action="DangXuat" class="dropdown-item">Logout</a>
+											<a asp-controller="QuanLy" asp-action="Profile" class="dropdown-item">Profile</a>
+											<a asp-controller="QuanLy" asp-action="DangXuat" class="dropdown-item">Logout</a>
 										}
 									}
 									else

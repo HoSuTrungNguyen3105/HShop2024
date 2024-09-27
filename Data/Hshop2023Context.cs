@@ -280,7 +280,6 @@ public partial class Hshop2023Context : DbContext
             entity.Property(e => e.RandomKey)
                 .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.SoLanSai).HasDefaultValue(0);
             entity.Property(e => e.Xu).HasDefaultValue(0);
         });
 
@@ -341,7 +340,6 @@ public partial class Hshop2023Context : DbContext
             entity.Property(e => e.HoTen).HasMaxLength(50);
             entity.Property(e => e.LastLoginTime).HasColumnType("datetime");
             entity.Property(e => e.MatKhau).HasMaxLength(50);
-            entity.Property(e => e.SoLanSai).HasDefaultValue(0);
         });
 
         modelBuilder.Entity<PhanCong>(entity =>

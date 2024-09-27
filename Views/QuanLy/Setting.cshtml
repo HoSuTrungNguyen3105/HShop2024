@@ -2,6 +2,7 @@
     ViewData["Title"] = "Cài đặt";
     Layout = "_Layout2";
 }
+@using System.Security.Claims
 <script>
     function checkPasswordStrength(password) {
         const passwordHelp = document.getElementById('passwordHelp');
@@ -13,8 +14,6 @@
         }
     }
 </script>
-@using System.Security.Claims
-
 <h2>Cài đặt</h2>
 
 <div class="container mt-4">

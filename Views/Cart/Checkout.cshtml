@@ -1,4 +1,4 @@
-﻿﻿﻿
+﻿﻿﻿﻿
  @model IEnumerable<HShop2024.ViewModels.CartItem>
 @{
 	ViewData["Title"] = "Checkout";
@@ -114,13 +114,14 @@
 									<td class="py-5"></td>
 									<td class="py-5">
 										<div class="py-3 border-bottom border-top">
-											<p class="mb-0 text-dark">$@Model.Sum(p => p.ThanhTien).ToString("#,##0.00")</p>
+											<p class="mb-0 text-dark">$@Model.Sum(p => p.TongTien).ToString("#,##0.00")</p>
 										</div>
 									</td>
 								</tr>
 							</tbody>
 						</table>
 					</div>
+					 <tr>
 					<div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
 						<div class="col-12">
 							<div class="form-check text-start my-3">
@@ -131,7 +132,7 @@
 						</div>
 					</div>
 					<div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-						<div class="col-12">
+						<div class="c	ol-12">
 							<div class="form-check text-start my-3">
 								<input type="checkbox" class="form-check-input bg-primary border-0" id="Payments-1" name="Payments" value="Payments">
 								<label class="form-check-label" for="Payments-1">Check Payments</label>
@@ -153,7 +154,7 @@
 								<label class="form-check-label" for="Paypal-1">Paypal</label>
 							</div>
 						</div>
-					</div>				
+					</div>					
 				</div>
 			</div>
 		</form>
@@ -161,7 +162,7 @@
 </div>
 <!-- Checkout Page End -->
 @section Scripts {
-	<script src="https://www.paypal.com/sdk/js?client-id=@ViewBag.PaypalClientdId"></script>
+	<script src="https://www.paypal.com/sdk/js?client-id=@ViewBag.PaypalClientId"></script>
 	<script>
 		$(document).ready(function () {
 			$("#GiongKhachHang").change(function () {
@@ -201,6 +202,7 @@
 						return response.json().then(error => { throw error; });
 					}
 
+					//Đổi địa chỉ tới action thông báo thành công
 					window.location.href = "/Cart/PaymentSuccess";
 				}).catch(error => alert(error.message));
 			}

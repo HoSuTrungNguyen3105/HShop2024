@@ -10,7 +10,10 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Collections.Generic;
 using HShop2024.Helpers;
+using MailKit;
+using System.Net.Mail;
 using static HShop2024.ViewModels.ReportVM;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HShop2024.Controllers
 {
@@ -80,20 +83,35 @@ namespace HShop2024.Controllers
             var nhanViens = await _context.NhanViens.ToListAsync();
             return View(nhanViens);
         }
-
-        public async Task<IActionResult> NhanVienDetail(string id)
+        public async Task<IActionResult> Profile()
         {
-            var nhanVien = await _context.NhanViens.FindAsync(id);
+            var userName = User.Identity.Name;
+            var customerIdClaim = HttpContext.User.Claims.SingleOrDefault(p => p.Type == MySetting.CLAIM_CUSTOMERID);
+
+            if (customerIdClaim != null)
+            {
+                var customerId = customerIdClaim.Value;              
+            }
+
+            return View();
+        }
+
+        public async Task<IActionResult> NhanVienDetail(string id,string maNv)
+        {
+            // Lấy thông tin chi tiết của nhân viên từ id
+            var nhanVien = await _context.NhanViens
+                .Include(nv => nv.PhanCongs) // Bao gồm cả phân công
+                .FirstOrDefaultAsync(nv => nv.MaNv == id);
+
             if (nhanVien == null)
             {
-                return NotFound();
+                return NotFound(); // Trả về trang 404 nếu không tìm thấy nhân viên
             }
 
             var logins = await _context.LoginHistories
                 .Where(l => l.MaNv == id) // Giả sử bạn có bảng LoginHistory lưu lại các lần đăng nhập
                 .OrderByDescending(l => l.LoginTime) // Sắp xếp theo thời gian đăng nhập
                 .ToListAsync();
-
             ViewBag.LoginHistory = logins; // Gửi danh sách các lần đăng nhập đến view
 
             return View(nhanVien);
@@ -259,7 +277,7 @@ namespace HShop2024.Controllers
                     }
                     else
                     {
-                        return RedirectToAction("Profile", "KhachHang");
+                        return RedirectToAction("Profile", "QuanLy");
                     }
                 }
                 else
@@ -311,7 +329,7 @@ namespace HShop2024.Controllers
 
                 if (nhanVien != null)
                 {
-                    // Pass employee data to the view if needed
+
                     ViewBag.EmployeeData = nhanVien;
                 }
             }
@@ -344,6 +362,21 @@ namespace HShop2024.Controllers
             };
 
             return View(model);
+        }
+        public IActionResult PhanCong(string maNv)
+        {
+            var phanCongList = _context.PhanCongs
+                .Include(p => p.MaPbNavigation)  // Load thông tin Phòng Ban liên quan
+                .Where(p => p.MaNv == maNv && p.HieuLuc == true)  // Lọc theo nhân viên và phân công còn hiệu lực
+                .ToList();
+
+            return View(phanCongList);  // Trả về view cùng với danh sách phân công
+        }
+        [Authorize]
+        public async Task<IActionResult> DangXuat()
+        {
+            await HttpContext.SignOutAsync();
+            return Redirect("/");
         }
     }
 }

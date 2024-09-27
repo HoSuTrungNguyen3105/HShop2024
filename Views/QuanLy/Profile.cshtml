@@ -1,0 +1,52 @@
+﻿@{
+    ViewData["Title"] = "Profile";
+}
+@using System.Security.Claims
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<h1 class="text-center mt-5 display-4 font-weight-bold">Profile</h1>
+<div class="container mt-4 p-5 border shadow-lg rounded-lg" style="max-width: 600px; background-color: #f9f9f9; border: 1px solid #ddd;">
+    @if (User.Identity.IsAuthenticated)
+    {
+        var userName = User.Identity.Name;
+        var isCustomer = User.IsInRole("Customer");
+        var isEmployee = User.IsInRole("Employee");
+        var isAdmin = User.IsInRole("Admin");
+        if (isAdmin)
+        {
+            <h2 class="mb-4 text-info">👤👋 Chào Quản lý !!!</h2>
+        }
+        else if (isEmployee)
+        {
+            <h2 class="mb-4 text-success">👨‍💼 Chào nhân viên @userName!</h2>
+        }
+    }
+    else
+    {
+        <h2 class="mb-4 text-warning">👋 Chào bạn!</h2>
+        <p>Bạn hiện chưa đăng nhập</p>
+    }
+
+    <!-- Display User Information -->
+    <div class="mt-4">
+        <h4>Thông tin cá nhân</h4>
+        <form>
+            <div class="form-group">
+                <label for="username">Tên tài khoản</label>
+                <input type="text" class="form-control" id="username" name="Username" value="@User.FindFirstValue(ClaimTypes.Name)" readonly />
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" name="Email" value="@User.FindFirstValue(ClaimTypes.Email)" readonly />
+            </div>
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <a asp-action="DangXuat" class="btn btn-danger btn-lg px-4">Đăng xuất</a>
+            </div>
+        </form>
+    </div>
+</div>

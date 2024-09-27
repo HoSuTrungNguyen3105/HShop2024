@@ -17,8 +17,6 @@ public partial class NhanVien
 
     public DateTime? LastLoginTime { get; set; }
 
-    public int? SoLanSai { get; set; }
-
     public virtual ICollection<ChuDe> ChuDes { get; set; } = new List<ChuDe>();
 
     public virtual ICollection<HoaDon> HoaDons { get; set; } = new List<HoaDon>();

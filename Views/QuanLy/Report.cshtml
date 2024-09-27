@@ -2,7 +2,12 @@
 @{
     ViewData["Title"] = "Báo cáo";
     Layout = "_Layout2";
+    // Thiết lập vùng văn hóa để hiển thị ký hiệu đô la
+    var cultureInfo = new System.Globalization.CultureInfo("en-US");
+    System.Threading.Thread.CurrentThread.CurrentCulture = cultureInfo;
+    System.Threading.Thread.CurrentThread.CurrentUICulture = cultureInfo;
 }
+
 <style>
     .btn-custom {
         background-color: #007bff;
@@ -23,13 +28,13 @@
             margin-right: 0.5rem;
         }
 </style>
+
 <div class="container mt-4">
     <h1>@ViewData["Title"]</h1>
-    <!-- Nút quay lại trang admin/index -->
     <a href="@Url.Action("Index", "QuanLy")" class="btn btn-custom mb-4">
         <i class="fas fa-arrow-left"></i> Quay lại
     </a>
-    <!-- Báo cáo sản phẩm bán chạy -->
+
     <div class="card mt-4">
         <div class="card-header">
             <h4>Báo cáo sản phẩm bán chạy tuần này </h4>
@@ -49,7 +54,7 @@
                         <tr>
                             <td>@item.ProductName</td>
                             <td>@item.SalesCount</td>
-                            <td>@item.TotalRevenue.ToString("C")</td>
+                            <td>@item.TotalRevenue.ToString("C", cultureInfo)</td>
                         </tr>
                     }
                 </tbody>
