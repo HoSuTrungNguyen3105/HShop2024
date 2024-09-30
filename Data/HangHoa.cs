@@ -35,8 +35,6 @@ public partial class HangHoa
 
     public int? SoLuong { get; set; }
 
-    public virtual ICollection<BanBe> BanBes { get; set; } = new List<BanBe>();
-
     public virtual ICollection<ChiTietHd> ChiTietHds { get; set; } = new List<ChiTietHd>();
 
     public virtual ICollection<HoiDap> HoiDaps { get; set; } = new List<HoiDap>();

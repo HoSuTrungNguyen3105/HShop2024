@@ -75,65 +75,70 @@ namespace ECommerceMVC.Controllers
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> UpdateProfile(AccountSettingsVM model)
         {
+            // Chỉ thực hiện tiếp nếu ModelState hợp lệ
             if (!ModelState.IsValid)
             {
                 return View("Profile", model);
             }
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await db.KhachHangs.FindAsync(userId);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Lấy ID người dùng từ claims
+            var khachHang = await db.KhachHangs.FindAsync(userId); // Tìm khách hàng trong database theo userId
 
-            if (user == null)
+            if (khachHang != null)
             {
-                return NotFound();
+                // Cập nhật thông tin người dùng từ model
+                khachHang.HoTen = model.Username;
+                khachHang.Email = model.Email;
+                khachHang.DienThoai = model.Phone;
+                khachHang.DiaChi = model.Address;
+                khachHang.NgaySinh = model.Birthdate;
+                khachHang.GioiTinh = model.Gender;
+
+                // Lưu thay đổi vào database
+                db.KhachHangs.Update(khachHang);
+                await db.SaveChangesAsync();
+
+                // Lấy lại identity hiện tại
+                var identity = (ClaimsIdentity)User.Identity;
+
+                // Cập nhật các claims liên quan bằng cách xóa claim cũ trước khi thêm claim mới
+                UpdateClaim(identity, ClaimTypes.Name, model.Username);
+                UpdateClaim(identity, ClaimTypes.Email, model.Email);
+                UpdateClaim(identity, ClaimTypes.MobilePhone, model.Phone);
+                UpdateClaim(identity, ClaimTypes.StreetAddress, model.Address);
+                UpdateClaim(identity, ClaimTypes.DateOfBirth, model.Birthdate.ToString("yyyy-MM-dd"));
+
+                // Giới tính có thể là chuỗi
+                UpdateClaim(identity, ClaimTypes.Gender, model.Gender ? "Nam" : "Nữ");
+
+                // Đăng xuất phiên hiện tại và đăng nhập lại với claims mới
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme); // Đăng xuất phiên hiện tại
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity)); // Đăng nhập lại với claims mới
+                await db.SaveChangesAsync();
+                // Gửi thông báo thành công
+                TempData["SuccessMessage"] = "Thông tin cá nhân đã được cập nhật thành công!";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Không tìm thấy khách hàng!";
+                return RedirectToAction("Profile");
             }
 
-            // Cập nhật thông tin người dùng
-            user.HoTen = model.Username;
-            user.Email = model.Email;
-            user.DienThoai = model.Phone;
-            user.DiaChi = model.Address;
-            user.NgaySinh = model.Birthdate;
-            user.GioiTinh = model.Gender;
-
-            // Lưu thay đổi vào database
-            await db.SaveChangesAsync();
-
-            // Cập nhật claims
-            var identity = (ClaimsIdentity)User.Identity;
-            UpdateClaim(identity, ClaimTypes.Name, model.Username);
-            UpdateClaim(identity, ClaimTypes.Email, model.Email);
-            UpdateClaim(identity, ClaimTypes.MobilePhone, model.Phone);
-            UpdateClaim(identity, ClaimTypes.StreetAddress, model.Address);
-            UpdateClaim(identity, ClaimTypes.DateOfBirth, model.Birthdate.ToString("yyyy-MM-dd"));
-            UpdateClaim(identity, ClaimTypes.Gender, model.Gender ? "Nam" : "Nữ");
-            foreach (var claim in identity.Claims)
-{
-    Console.WriteLine($"Claim Type: {claim.Type}, Value: {claim.Value}");
-}
-
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
-
-            TempData["SuccessMessage"] = "Thông tin cá nhân đã được cập nhật thành công.";
+            // Chuyển hướng về trang Profile
             return RedirectToAction("Profile");
         }
 
+        // Phương thức hỗ trợ cập nhật claim
         private void UpdateClaim(ClaimsIdentity identity, string claimType, string newValue)
         {
-            // Tìm claim hiện tại và xóa nó
             var existingClaim = identity.FindFirst(claimType);
             if (existingClaim != null)
             {
-                identity.RemoveClaim(existingClaim);
+                identity.RemoveClaim(existingClaim); // Xóa claim cũ
             }
-
-            // Thêm claim mới với giá trị cập nhật
-            identity.AddClaim(new Claim(claimType, newValue));
-
-            // Cập nhật lại ClaimsPrincipal (tùy thuộc vào việc bạn dùng cái gì để quản lý user hiện tại)
-            var userPrincipal = new ClaimsPrincipal(identity);
-            HttpContext.User = userPrincipal;
+            identity.AddClaim(new Claim(claimType, newValue)); // Thêm claim mới
         }
+
 
         #endregion
         #region Login
@@ -221,44 +226,23 @@ namespace ECommerceMVC.Controllers
             return RedirectToAction("Index");
         }
 
-
         public async Task<IActionResult> Profile()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var customerIdClaim = User.FindFirstValue(MySetting.CLAIM_CUSTOMERID);
+            var userName = User.Identity.Name;
+            var customerIdClaim = HttpContext.User.Claims.SingleOrDefault(p => p.Type == MySetting.CLAIM_CUSTOMERID);
 
-            if (string.IsNullOrEmpty(customerIdClaim))
+            if (customerIdClaim != null)
             {
-                return NotFound();
-            }
+                var customerId = customerIdClaim.Value;
+                var khachHang = await db.KhachHangs.SingleOrDefaultAsync(kh => kh.MaKh == customerId);
 
-            var khachHang = await db.KhachHangs
-                .Where(kh => kh.MaKh == customerIdClaim)
-                .Select(kh => new AccountSettingsVM
+                if (khachHang != null)
                 {
-                    Phone = kh.DienThoai,
-                    Address = kh.DiaChi,
-                    Birthdate = kh.NgaySinh,
-                    Gender = kh.GioiTinh,
-                    Xu = kh.Xu.ToString()
-                })
-                .SingleOrDefaultAsync();
-
-            if (khachHang == null)
-            {
-                return NotFound();
+                    ViewBag.Xu = HttpContext.Session.GetInt32(MySetting.SESSION_XU_KEY) ?? khachHang.Xu ?? 0;
+                }
             }
-
-            // Lấy số xu từ session hoặc từ database
-            var xuFromSession = HttpContext.Session.GetInt32(MySetting.SESSION_XU_KEY);
-            khachHang.Xu = xuFromSession?.ToString() ?? khachHang.Xu;
-
-            // Set ViewBag.Xu để sử dụng trong view nếu cần
-            ViewBag.Xu = int.Parse(khachHang.Xu);
-
-            return View(khachHang);
+            return View();
         }
-
 
         [Authorize]
         public async Task<IActionResult> DangXuat()
@@ -266,8 +250,6 @@ namespace ECommerceMVC.Controllers
             await HttpContext.SignOutAsync();
             return Redirect("/");
         }
-
-
 
         [HttpGet]
         public IActionResult ForgotPassword()
@@ -309,7 +291,7 @@ namespace ECommerceMVC.Controllers
             TempData["SuccessMessage"] = "Đã gửi email để đặt lại mật khẩu.";
             return RedirectToAction("ForgotPassword");
         }
-       
+
 
         [HttpGet]
         public IActionResult ResetPassword(string token)

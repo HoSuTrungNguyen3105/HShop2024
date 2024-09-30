@@ -188,7 +188,6 @@ namespace HShop2024.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var hangHoa = await _context.HangHoas
-    .Include(h => h.BanBes)
     .Include(h => h.ChiTietHds)
     .FirstOrDefaultAsync(h => h.MaHh == id);
 
@@ -197,7 +196,6 @@ namespace HShop2024.Controllers
                 return NotFound();
             }
 
-            _context.BanBes.RemoveRange(hangHoa.BanBes);
             _context.ChiTietHds.RemoveRange(hangHoa.ChiTietHds);
 
             _context.HangHoas.Remove(hangHoa);

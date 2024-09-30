@@ -15,13 +15,7 @@ public partial class Hshop2023Context : DbContext
     {
     }
 
-    public virtual DbSet<BanBe> BanBes { get; set; }
-
     public virtual DbSet<ChiTietHd> ChiTietHds { get; set; }
-
-    public virtual DbSet<ChuDe> ChuDes { get; set; }
-
-    public virtual DbSet<GopY> Gopies { get; set; }
 
     public virtual DbSet<HangHoa> HangHoas { get; set; }
 
@@ -41,17 +35,11 @@ public partial class Hshop2023Context : DbContext
 
     public virtual DbSet<PhanCong> PhanCongs { get; set; }
 
-    public virtual DbSet<PhanQuyen> PhanQuyens { get; set; }
-
     public virtual DbSet<PhongBan> PhongBans { get; set; }
 
     public virtual DbSet<SavedVoucher> SavedVouchers { get; set; }
 
     public virtual DbSet<TrangThai> TrangThais { get; set; }
-
-    public virtual DbSet<TrangWeb> TrangWebs { get; set; }
-
-    public virtual DbSet<VChiTietHoaDon> VChiTietHoaDons { get; set; }
 
     public virtual DbSet<Voucher> Vouchers { get; set; }
 
@@ -63,32 +51,6 @@ public partial class Hshop2023Context : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<BanBe>(entity =>
-        {
-            entity.HasKey(e => e.MaBb).HasName("PK_Promotions");
-
-            entity.ToTable("BanBe");
-
-            entity.Property(e => e.MaBb).HasColumnName("MaBB");
-            entity.Property(e => e.Email).HasMaxLength(50);
-            entity.Property(e => e.HoTen).HasMaxLength(50);
-            entity.Property(e => e.MaHh).HasColumnName("MaHH");
-            entity.Property(e => e.MaKh)
-                .HasMaxLength(20)
-                .HasColumnName("MaKH");
-            entity.Property(e => e.NgayGui)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
-
-            entity.HasOne(d => d.MaHhNavigation).WithMany(p => p.BanBes)
-                .HasForeignKey(d => d.MaHh)
-                .HasConstraintName("FK_QuangBa_HangHoa");
-
-            entity.HasOne(d => d.MaKhNavigation).WithMany(p => p.BanBes)
-                .HasForeignKey(d => d.MaKh)
-                .HasConstraintName("FK_BanBe_KhachHang");
-        });
-
         modelBuilder.Entity<ChiTietHd>(entity =>
         {
             entity.HasKey(e => e.MaCt).HasName("PK_OrderDetails");
@@ -104,50 +66,6 @@ public partial class Hshop2023Context : DbContext
                 .HasForeignKey(d => d.MaHh)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_OrderDetails_Products");
-        });
-
-        modelBuilder.Entity<ChuDe>(entity =>
-        {
-            entity.HasKey(e => e.MaCd);
-
-            entity.ToTable("ChuDe");
-
-            entity.Property(e => e.MaCd).HasColumnName("MaCD");
-            entity.Property(e => e.MaNv)
-                .HasMaxLength(50)
-                .HasColumnName("MaNV");
-            entity.Property(e => e.TenCd)
-                .HasMaxLength(50)
-                .HasColumnName("TenCD");
-
-            entity.HasOne(d => d.MaNvNavigation).WithMany(p => p.ChuDes)
-                .HasForeignKey(d => d.MaNv)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("FK_ChuDe_NhanVien");
-        });
-
-        modelBuilder.Entity<GopY>(entity =>
-        {
-            entity.HasKey(e => e.MaGy);
-
-            entity.ToTable("GopY");
-
-            entity.Property(e => e.MaGy)
-                .HasMaxLength(50)
-                .HasColumnName("MaGY");
-            entity.Property(e => e.DienThoai).HasMaxLength(50);
-            entity.Property(e => e.Email).HasMaxLength(50);
-            entity.Property(e => e.HoTen).HasMaxLength(50);
-            entity.Property(e => e.MaCd).HasColumnName("MaCD");
-            entity.Property(e => e.NgayGy)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnName("NgayGY");
-            entity.Property(e => e.NgayTl).HasColumnName("NgayTL");
-            entity.Property(e => e.TraLoi).HasMaxLength(50);
-
-            entity.HasOne(d => d.MaCdNavigation).WithMany(p => p.Gopies)
-                .HasForeignKey(d => d.MaCd)
-                .HasConstraintName("FK_GopY_ChuDe");
         });
 
         modelBuilder.Entity<HangHoa>(entity =>
@@ -371,27 +289,6 @@ public partial class Hshop2023Context : DbContext
                 .HasConstraintName("FK_PhanCong_PhongBan");
         });
 
-        modelBuilder.Entity<PhanQuyen>(entity =>
-        {
-            entity.HasKey(e => e.MaPq);
-
-            entity.ToTable("PhanQuyen");
-
-            entity.Property(e => e.MaPq).HasColumnName("MaPQ");
-            entity.Property(e => e.MaPb)
-                .HasMaxLength(7)
-                .IsUnicode(false)
-                .HasColumnName("MaPB");
-
-            entity.HasOne(d => d.MaPbNavigation).WithMany(p => p.PhanQuyens)
-                .HasForeignKey(d => d.MaPb)
-                .HasConstraintName("FK_PhanQuyen_PhongBan");
-
-            entity.HasOne(d => d.MaTrangNavigation).WithMany(p => p.PhanQuyens)
-                .HasForeignKey(d => d.MaTrang)
-                .HasConstraintName("FK_PhanQuyen_TrangWeb");
-        });
-
         modelBuilder.Entity<PhongBan>(entity =>
         {
             entity.HasKey(e => e.MaPb);
@@ -427,32 +324,6 @@ public partial class Hshop2023Context : DbContext
             entity.Property(e => e.MaTrangThai).ValueGeneratedNever();
             entity.Property(e => e.MoTa).HasMaxLength(500);
             entity.Property(e => e.TenTrangThai).HasMaxLength(50);
-        });
-
-        modelBuilder.Entity<TrangWeb>(entity =>
-        {
-            entity.HasKey(e => e.MaTrang);
-
-            entity.ToTable("TrangWeb");
-
-            entity.Property(e => e.TenTrang).HasMaxLength(50);
-            entity.Property(e => e.Url)
-                .HasMaxLength(250)
-                .HasColumnName("URL");
-        });
-
-        modelBuilder.Entity<VChiTietHoaDon>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToView("vChiTietHoaDon");
-
-            entity.Property(e => e.MaCt).HasColumnName("MaCT");
-            entity.Property(e => e.MaHd).HasColumnName("MaHD");
-            entity.Property(e => e.MaHh).HasColumnName("MaHH");
-            entity.Property(e => e.TenHh)
-                .HasMaxLength(50)
-                .HasColumnName("TenHH");
         });
 
         modelBuilder.Entity<Voucher>(entity =>

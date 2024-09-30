@@ -77,12 +77,38 @@ namespace HShop2024.Controllers
             return View(khachHangs);
         }
 
-        // Quản lý Nhân Viên
-        public async Task<IActionResult> NhanVienIndex()
+        // Admin Dashboard
+        [HttpGet]
+        public async Task<IActionResult> DashboardData()
         {
-            var nhanViens = await _context.NhanViens.ToListAsync();
-            return View(nhanViens);
+            var dashboardData = new DashboardViewModel
+            {
+                TotalCustomers = await _context.KhachHangs.CountAsync(),
+                TotalEmployees = await _context.NhanViens.CountAsync(),
+                TotalRevenue = await _context.HoaDons.CountAsync(),
+                Revenue = await _context.HangHoas.CountAsync(),
+                ProductRevenue = await _context.NhaCungCaps.CountAsync()
+            };
+
+            // Lấy khách hàng có số lượng xu nhiều nhất 
+            var topCustomer = await _context.KhachHangs
+                .OrderByDescending(k => k.Xu) // Sắp xếp theo số lượng xu
+                .Select(k => new DashboardViewModel.CustomerTopSales // Sử dụng lớp CustomerTopSales
+                {
+                    MaKh = k.MaKh,         // Giả sử có thuộc tính MaKh
+                    HoTen = k.HoTen,       // Tên khách hàng
+                    SoXu = k.Xu            // Số lượng xu
+                })
+                .FirstOrDefaultAsync(); // Lấy khách hàng đầu tiên (nhiều nhất)
+
+            // Lưu thông tin khách hàng vào DashboardViewModel
+            dashboardData.TopCustomer = topCustomer;
+
+
+            return View(dashboardData);
         }
+
+
         public async Task<IActionResult> Profile()
         {
             var userName = User.Identity.Name;
@@ -90,13 +116,18 @@ namespace HShop2024.Controllers
 
             if (customerIdClaim != null)
             {
-                var customerId = customerIdClaim.Value;              
+                var customerId = customerIdClaim.Value;
             }
-
             return View();
         }
+        // Quản lý Nhân Viên
+        public async Task<IActionResult> NhanVienIndex()
+        {
+            var nhanViens = await _context.NhanViens.ToListAsync();
+            return View(nhanViens);
+        }
 
-        public async Task<IActionResult> NhanVienDetail(string id,string maNv)
+        public async Task<IActionResult> NhanVienDetail(string id, string maNv)
         {
             // Lấy thông tin chi tiết của nhân viên từ id
             var nhanVien = await _context.NhanViens

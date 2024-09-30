@@ -175,6 +175,14 @@ namespace HShop2024.Controllers
 					return RedirectToAction("Index", "HangHoa");
 				}
 
+                // Lấy trạng thái "Mới đặt hàng" (MaTrangThai = 0) từ cơ sở dữ liệu
+                var trangThai = db.TrangThais.SingleOrDefault(tt => tt.MaTrangThai == 0);
+                if (trangThai == null)
+                {
+                    TempData["ErrorMessage"] = "Trạng thái 'Mới đặt hàng' không tồn tại. Vui lòng kiểm tra.";
+                    return View("Error");
+                }
+
 				var hoadon = new HoaDon
 				{
 					MaKh = customerId,
@@ -184,11 +192,12 @@ namespace HShop2024.Controllers
 					NgayDat = DateTime.Now,
 					CachThanhToan = "COD",
 					CachVanChuyen = "GRAB",
-					MaTrangThai = 0,
+					PhiVanChuyen = 5.00,
+					MaTrangThai = trangThai.MaTrangThai, // Gán trạng thái "Mới đặt hàng"
 					GhiChu = model.GhiChu
 				};
 
-				using (var transaction = await db.Database.BeginTransactionAsync())
+                using (var transaction = await db.Database.BeginTransactionAsync())
 				{
 					try
 					{

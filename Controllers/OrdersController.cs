@@ -18,7 +18,8 @@ namespace HShop2024.Controllers
         {
             // Lấy tất cả đơn hàng và sắp xếp theo ngày đặt hàng giảm dần
             var orders = await _context.HoaDons
-                .OrderByDescending(o => o.NgayDat) // Sắp xếp theo ngày đặt hàng giảm dần
+                .Include(o => o.MaTrangThaiNavigation) // Liên kết với bảng TrangThai
+                .OrderByDescending(o => o.NgayDat)
                 .ToListAsync();
 
             // Tạo danh sách ViewModel cho các đơn hàng
@@ -29,7 +30,11 @@ namespace HShop2024.Controllers
                 NgayDat = order.NgayDat,
                 TotalAmount = _context.ChiTietHds
                     .Where(c => c.MaHd == order.MaHd)
-                    .Sum(c => (decimal)c.DonGia * c.SoLuong) // Cast to decimal for correct sum
+                    .Sum(c => (decimal)c.DonGia * c.SoLuong),
+
+                // Lấy mã trạng thái và tên trạng thái từ bảng TrangThai
+                MaTrangThai = order.MaTrangThai,
+                TenTrangThai = order.MaTrangThaiNavigation.TenTrangThai
             }).ToList();
 
             // Tính tổng doanh thu
@@ -39,6 +44,28 @@ namespace HShop2024.Controllers
             // Trả về dữ liệu cho View
             return View(orderViewModel);
         }
+        [HttpPost]
+        public IActionResult UpdateStatus(string[] selectedOrders, int status)
+        {
+            if (selectedOrders != null && selectedOrders.Length > 0)
+            {
+                foreach (var maHd in selectedOrders)
+                {
+                    // Chuyển đổi maHd từ chuỗi sang int
+                    if (int.TryParse(maHd, out int orderId))
+                    {
+                        var order = _context.HoaDons.Find(orderId); // Tìm kiếm đơn hàng theo mã đơn hàng
+                        if (order != null)
+                        {
+                            order.MaTrangThai = status; // Cập nhật trạng thái
+                        }
+                    }
+                }
 
+                _context.SaveChanges(); // Lưu các thay đổi vào database
+            }
+
+            return RedirectToAction("Index"); // Chuyển hướng về trang danh sách đơn hàng
+        }
     }
 }

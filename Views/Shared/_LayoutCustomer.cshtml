@@ -82,7 +82,7 @@
 										}
 										else if (User.IsInRole("Admin"))
 										{
-											<a asp-controller="QuanLy" asp-action="Index" class="dropdown-item text-dark">Dashboard</a>
+											<a asp-controller="QuanLy" asp-action="DashboardData" class="dropdown-item text-dark">Dashboard</a>
 											<a asp-controller="QuanLy" asp-action="Profile" class="dropdown-item">Profile</a>
 											<a asp-controller="QuanLy" asp-action="DangXuat" class="dropdown-item">Logout</a>
 										}
@@ -116,9 +116,17 @@
 								</div>
 								<div class="user-info ms-3">
 									<a asp-controller="KhachHang" asp-action="Profile" title="Xem thông tin người dùng" class="user-icon">
-										<i class="fas fa-user fa-2x">
-											@User.Identity.Name
-										</i>
+										<i class="fas fa-user fa-2x"></i> <!-- chỉ chứa icon -->
+										<span>@User.Identity.Name</span> <!-- tên người dùng -->
+									</a>
+								</div>
+							}
+							else if (User.Identity.IsAuthenticated && (User.IsInRole("Employee") || User.IsInRole("Admin")))
+							{
+								<div class="user-info ms-3">
+									<a asp-controller="KhachHang" asp-action="Profile" title="Xem thông tin nhân viên" class="user-icon">
+										<i class="fas fa-user fa-2x"></i> <!-- chỉ chứa icon -->
+										<span>@User.Identity.Name</span> <!-- tên người dùng -->
 									</a>
 								</div>
 							}

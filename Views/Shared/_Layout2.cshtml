@@ -11,10 +11,39 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="~/css/site.css" rel="stylesheet" />
     <style>
+        .sidebar {
+            width: 300px;
+            background-color: #000000;
+            color: white;
+            height: 100vh;
+            padding: 15px;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            margin-bottom: 10px;
+            display: block;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+            .sidebar a:hover {
+                background-color: #000000;
+            }
+
+        .highlighted {
+            padding: 20px; /* Tăng padding cho phần highlighted */
+            display: block;
+            border-radius: 10px;
+            font-size: 28px; /* Tăng kích thước chữ */
+            margin-bottom: 30px; /* Thêm khoảng cách phía dưới */
+        }
+
         .last-login {
             margin-top: 14px;
             padding: 9px;
-            border: 1px solid #007bff; /* Đường viền màu xanh */
+            border: 1px solid #000000; /* Đường viền màu đen */
             border-radius: 2px; /* Góc bo tròn */
             background-color: #f0f8ff; /* Màu nền nhẹ */
             display: flex; /* Sử dụng flexbox để căn chỉnh nội dung */
@@ -23,8 +52,8 @@
 
         .last-login-text {
             font-weight: bold; /* Làm cho nhãn đậm */
-            color: #007bff; /* Màu chữ nhãn xanh */
-            font-size:14px;
+            color: #000000; /* Màu chữ nhãn xanh */
+            font-size: 14px;
             margin-right: 5px; /* Khoảng cách giữa nhãn và giá trị */
             font-style: italic; /* Thêm kiểu chữ nghiêng */
         }
@@ -35,30 +64,39 @@
     <div class="sidebar">
         <a class="highlighted"><i class="fas fa-store"></i> HSHOP 2023</a>
         <div class="list-group list-group-flush">
-            <a asp-controller="Home" asp-action="Index" class="list-group-item list-group-item-action bg-dark text-light">
-                <i class="fas fa-home"></i> Trang chủ
-            </a>
-            <a asp-controller="QuanLy" asp-action="Index" class="list-group-item list-group-item-action bg-dark text-light">
-                <i class="fas fa-users"></i> Quản lí khách hàng
-            </a>
-            <a asp-controller="HangHoas" asp-action="Index" class="list-group-item list-group-item-action bg-dark text-light">
-                <i class="fas fa-box"></i> Quản lí hàng hóa
-            </a>
-            <a asp-controller="QuanLy" asp-action="NhanVienIndex" class="list-group-item list-group-item-action bg-dark text-light">
-                <i class="fas fa-user-tie"></i> Quản lí nhân viên
-            </a>
-            <a asp-controller="Orders" asp-action="Index" class="list-group-item list-group-item-action bg-dark text-light">
-                <i class="fas fa-receipt"></i> Quản lí đơn hàng
-            </a>
-            <a asp-controller="QuanLy" asp-action="Report" class="list-group-item list-group-item-action bg-dark text-light">
-                <i class="fas fa-chart-line"></i> Báo cáo
-            </a>
-            <a asp-controller="YeuThiches" asp-action="Index" class="list-group-item list-group-item-action bg-dark text-light">
-                <i class="fas fa-heart"></i> Yêu thích
-            </a>
-            <a asp-controller="QuanLy" asp-action="Setting" class="list-group-item list-group-item-action bg-dark text-light">
-                <i class="fas fa-cogs"></i> Cài đặt
-            </a>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a asp-controller="Home" asp-action="Index" class="list-group-item list-group-item-action bg-dark text-light d-flex align-items-center">
+                    <i class="fas fa-home me-2"></i> <span>Trang chủ</span>
+                </a>
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-controller="QuanLy" asp-action="DashboardData" class="list-group-item list-group-item-action bg-dark text-light d-flex align-items-center">
+                        <i class="fas fa-tachometer-alt me-2"></i> <span>Dashboard Data</span>
+                    </a>
+                    <a asp-controller="QuanLy" asp-action="NhanVienIndex" class="list-group-item list-group-item-action bg-dark text-light d-flex align-items-center">
+                        <i class="fas fa-user-tie me-2"></i> <span>Quản lí nhân viên</span>
+                    </a>
+                }
+                <a asp-controller="QuanLy" asp-action="Index" class="list-group-item list-group-item-action bg-dark text-light d-flex align-items-center">
+                    <i class="fas fa-users me-2"></i> <span>Quản lí khách hàng</span>
+                </a>
+                <a asp-controller="HangHoas" asp-action="Index" class="list-group-item list-group-item-action bg-dark text-light d-flex align-items-center">
+                    <i class="fas fa-box me-2"></i> <span>Quản lí hàng hóa</span>
+                </a>
+                <a asp-controller="Orders" asp-action="Index" class="list-group-item list-group-item-action bg-dark text-light d-flex align-items-center">
+                    <i class="fas fa-receipt me-2"></i> <span>Quản lí đơn hàng</span>
+                </a>
+                <a asp-controller="QuanLy" asp-action="Report" class="list-group-item list-group-item-action bg-dark text-light d-flex align-items-center">
+                    <i class="fas fa-chart-line me-2"></i> <span>Báo cáo</span>
+                </a>
+                <a asp-controller="YeuThiches" asp-action="Index" class="list-group-item list-group-item-action bg-dark text-light d-flex align-items-center">
+                    <i class="fas fa-heart me-2"></i> <span>Yêu thích</span>
+                </a>
+                <a asp-controller="QuanLy" asp-action="Setting" class="list-group-item list-group-item-action bg-dark text-light d-flex align-items-center">
+                    <i class="fas fa-cogs me-2"></i> <span>Cài đặt</span>
+                </a>
+            }
         </div>
         <div class="last-login">
             <span class="last-login-text">Đăng nhập lần cuối:@User.FindFirst("LastLoginTime")?.Value</span>

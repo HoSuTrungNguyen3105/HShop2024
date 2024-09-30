@@ -1,0 +1,111 @@
+﻿@model HShop2024.ViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "_Layout2";
+}
+
+<div class="container mt-5">
+    <div class="jumbotron text-center py-4 bg-primary text-white shadow">
+        <h1 class="display-4">Dashboard</h1>
+        <p class="lead">Overview of the system's key statistics</p>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="card shadow h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-primary">Tổng số lượng khách hàng </h5>
+                    <p class="card-text display-4 text-dark">@Model.TotalCustomers</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-warning">Khách hàng có số xu nhiều nhất</h5>
+                    @if (Model.TopCustomer != null)
+                    {
+                        <div>
+                            <h3>Khách hàng có số lượng xu nhiều nhất:</h3>
+                            <p>Mã Khách Hàng: @Model.TopCustomer.MaKh</p>
+                            <p>Tên Khách Hàng: @Model.TopCustomer.HoTen</p>
+                            <p>Số lượng Xu: @Model.TopCustomer.SoXu</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <p>Không có thông tin khách hàng.</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-success">Tổng số lượng Hóa đơn</h5>
+                    <p class="card-text display-4 text-dark">@Model.TotalRevenue</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-warning">Tổng số lượng Nhân viên</h5>
+                    <p class="card-text display-4 text-dark">@Model.TotalEmployees</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-warning">Tổng số lượng Hàng hóa</h5>
+                    <p class="card-text display-4 text-dark">@Model.Revenue</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-warning">Tổng số lượng Nhà cung cấp</h5>
+                    <p class="card-text display-4 text-dark">@Model.ProductRevenue</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    .card {
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+    }
+
+    .jumbotron {
+        border-radius: 15px;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+
+    .display-4 {
+        font-size: 2.5rem;
+        font-weight: bold;
+    }
+
+    .h-100 {
+        height: 100%;
+    }
+
+    .row > .col-md-4 {
+        margin-bottom: 20px;
+    }
+</style>
