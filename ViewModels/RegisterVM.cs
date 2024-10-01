@@ -17,7 +17,12 @@ namespace HShop2024.ViewModels
 		[DataType(DataType.Password)]
 		public string? MatKhau { get; set; }
 
-		[Display(Name = "Họ tên")]
+        [Required(ErrorMessage = "Vui lòng nhập lại mật khẩu.")]
+        [DataType(DataType.Password)]
+        [Compare("MatKhau", ErrorMessage = "Mật khẩu không khớp.")]
+        public string XacNhanMatKhau { get; set; }
+
+        [Display(Name = "Họ tên")]
 		[Required(ErrorMessage = "*")]
 		[MaxLength(50, ErrorMessage = "Tối đa 50 kí tự")]
 		public string? HoTen { get; set; }

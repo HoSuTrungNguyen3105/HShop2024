@@ -1,15 +1,14 @@
 ﻿@model IEnumerable<HShop2024.Data.HangHoa>
 
 @{
-    ViewData["Title"] = "Danh Sách Sản Phẩm";
+    ViewData["Title"] = "Danh Sách Sản Phẩm Yêu thích";
     Layout = "_Layout2";
 }
-
-<h1>@ViewData["Title"]</h1>
-<!-- Liên kết đến trang Create -->
-<div class="mb-3">
-    <a asp-action="Create" asp-controller="YeuThiches" class="btn btn-primary">Thêm sản phẩm Yêu Thích</a>
-</div>
+<div class="container mt-5">
+    <h1>@ViewData["Title"]</h1>
+    <div class="mb-3">
+        <a asp-action="Create" asp-controller="YeuThiches" class="btn btn-primary">Thêm sản phẩm Yêu Thích</a>
+    </div>
 <!-- Form để chọn tùy chọn -->
 <form method="get" action="@Url.Action("Index", "YeuThiches")" class="mb-3">
     <div class="col-xl-3">
@@ -49,8 +48,9 @@
         }
     </tbody>
 </table>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Ensure jQuery is included -->
-<script>
+</div>
+@* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Ensure jQuery is included --> *@
+ <script>
     $(document).ready(function () {
         // Khôi phục giá trị đã chọn từ localStorage khi trang tải lại
         loadSortingPreference();

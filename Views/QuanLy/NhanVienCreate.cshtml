@@ -4,35 +4,35 @@
     ViewData["Title"] = "Thêm Nhân viên mới";
     Layout = "_Layout2";
 }
+<div class="container">
+    <h2 class="mb-4">Thêm nhân viên mới</h2>
+    <form asp-action="NhanVienCreate" method="post">
+        @Html.AntiForgeryToken()
 
-<h2 class="mb-4">Thêm nhân viên mới</h2>
-<form asp-action="NhanVienCreate" method="post">
-    @Html.AntiForgeryToken()
-
-    <div class="form-group">
-        <label asp-for="MaNv" class="control-label"></label>
-        <input asp-for="MaNv" class="form-control" placeholder="Nhập mã" />
-        <span asp-validation-for="MaNv" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="HoTen" class="control-label"></label>
-        <input asp-for="HoTen" class="form-control" placeholder="Nhập họ tên" />
-        <span asp-validation-for="HoTen" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="Email" class="control-label"></label>
-        <input asp-for="Email" class="form-control" placeholder="Nhập email" />
-        <span asp-validation-for="Email" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="MatKhau" class="control-label"></label>
-        <input asp-for="MatKhau" class="form-control" placeholder="Nhập mật khẩu" />
-        <span asp-validation-for="MatKhau" class="text-danger"></span>
-    </div>
-    <button type="submit" class="btn btn-primary">Thêm nhân viên</button>
-    <a href="@Url.Action("NhanVienIndex", "QuanLy")" class="btn btn-secondary">Danh sách Nhân viên</a>
-</form>
-
+        <div class="form-group">
+            <label asp-for="MaNv" class="control-label"></label>
+            <input asp-for="MaNv" class="form-control" placeholder="Nhập mã" />
+            <span asp-validation-for="MaNv" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="HoTen" class="control-label"></label>
+            <input asp-for="HoTen" class="form-control" placeholder="Nhập họ tên" />
+            <span asp-validation-for="HoTen" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Email" class="control-label"></label>
+            <input asp-for="Email" class="form-control" placeholder="Nhập email" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="MatKhau" class="control-label"></label>
+            <input asp-for="MatKhau" class="form-control" placeholder="Nhập mật khẩu" />
+            <span asp-validation-for="MatKhau" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Thêm nhân viên</button>
+        <a href="@Url.Action("NhanVienIndex", "QuanLy")" class="btn btn-secondary">Danh sách Nhân viên</a>
+    </form>
+</div>
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

@@ -26,6 +26,12 @@
                 </div>
 
                 <div class="form-group">
+                    <label asp-for="XacNhanMatKhau" class="form-label">Nhập lại mật khẩu</label>
+                    <input asp-for="XacNhanMatKhau" type="password" class="form-control" />
+                    <span asp-validation-for="XacNhanMatKhau" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
                     <label asp-for="HoTen" class="form-label">Họ tên</label>
                     <input asp-for="HoTen" class="form-control" />
                     <span asp-validation-for="HoTen" class="text-danger"></span>

@@ -1,5 +1,4 @@
-﻿@model HShop2024.ViewModels.AccountSettingsVM
-@{
+﻿﻿@{
     ViewData["Title"] = "Profile";
 }
 @using System.Security.Claims
@@ -15,21 +14,22 @@
     @if (User.Identity.IsAuthenticated)
     {
         var userName = User.Identity.Name;
-        var isCustomer = User.IsInRole("Customer");
-        if (isCustomer)
+        var isEmployee = User.IsInRole("Employee");
+
+        if (isEmployee)
         {
-            <h2 class="mb-4 text-info">👤👋 Chào bạn !!!</h2>
+            <h2 class="mb-3 text-primary">Chào nhân viên @userName</h2>
         }
-        else if (userName == null)
+        else
         {
-            <h2 class="mb-4 text-success">Chào !!!</h2>
+            <h2 class="mb-3 text-primary">Chào khách hàng @userName</h2>
         }
     }
     else
     {
-        <h2 class="mb-4 text-warning">👋 Chào bạn!</h2>
-        <p>Bạn hiện chưa đăng nhập</p>
+        <h2 class="mb-3 text-primary">Chào bạn!</h2>
     }
+
 
     <!-- Display User Information -->
     <div class="mt-4">
@@ -73,15 +73,16 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="xu">Số xu</label>
-                                    <input type="text" class="form-control" id="xu" name="Xu" value="@User.FindFirst("Xu")?.Value" readonly />
+                                    <input type="text" class="form-control" id="xu" name="Xu" value="@User.FindFirstValue("Xu")" readonly />
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="gender">Giới tính</label>
-                                    <input type="text" class="form-control" id="gender_disable" value="@(User.FindFirst(ClaimTypes.Gender)?.Value ?? "Chưa có thông tin")" readonly />
-                                    <select class="form-control" id="gender" name="Gender" style="display: none;" disabled>
-                                        <option value="">Chọn giới tính</option>
+                                    <input type="text" class="form-control" id="gender_disable"
+                                           value="@(User.FindFirstValue(ClaimTypes.Gender) ?? "Chưa có thông tin")"
+                                           readonly />
+                                    <select class="form-control" id="gender" name="Gender" style="display: none;">
                                         <option value="Nam">Nam</option>
                                         <option value="Nữ">Nữ</option>
                                         <option value="Khác">Khác</option>
@@ -103,35 +104,79 @@
 
 @section Scripts {
     <script>
+        $('#profileForm').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: '/KhachHang/UpdateProfile',
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (result) {
+                    // Cập nhật thông tin trong giao diện, ví dụ: hiển thị thông báo
+                    // và cập nhật lại các trường thông tin nếu cần
+                    alert('Có lỗi xảy ra khi cập nhật thông tin!');
+                    location.reload();
+                },
+                error: function (error) {
+                    alert('Lỗi');
+                }
+            });
+        });
+
+        document.getElementById("editButton").addEventListener("click", function () {
+            // Ẩn input và hiện select
+            const genderInput = document.getElementById("gender_disable");
+            const genderSelect = document.getElementById("gender");
+
+            // Lấy giá trị hiện tại từ input
+            const currentGender = genderInput.value;
+
+            // Đặt giá trị cho select
+            genderSelect.value = currentGender;
+
+            // Ẩn input và hiện select
+            genderInput.style.display = "none"; // Ẩn input
+            genderSelect.style.display = "block"; // Hiện select
+            genderSelect.disabled = false; // Bật select
+            document.getElementById("saveButton").style.display = "block"; // Hiện nút Lưu
+        });
+
+        // $(document).ready(function () {
+        //     const editButton = $('#editButton');
+        //     const genderInput = $('#gender_disable');
+        //     const genderSelect = $('#gender');
+
+        //     // Ẩn select khi tải trang
+        //     genderSelect.hide();
+
+        //     editButton.click(function () {
+        //         // Ẩn input và hiển thị select
+        //         genderInput.hide();
+        //         genderSelect.prop('disabled', false).show();
+
+        //         // Khi người dùng chọn giới tính, có thể cập nhật giá trị của input
+        //         genderSelect.change(function () {
+        //             genderInput.val($(this).val());
+        //         });
+        //     });
+        // });
+
         $(document).ready(function () {
             const form = $('#profileForm');
             const editButton = $('#editButton');
             const saveButton = $('#saveButton');
             const inputs = form.find('input:not([type="hidden"]), select');
 
-            // Khi bấm "Sửa thông tin"
             editButton.click(function () {
-                inputs.prop('readonly', false).prop('disabled', false); // Cho phép chỉnh sửa
-                editButton.hide(); // Ẩn nút Sửa
-                saveButton.show(); // Hiển thị nút Lưu
+                inputs.prop('readonly', false).prop('disabled', false);
+                editButton.hide();
+                saveButton.show();
             });
 
-            // Ajax form submit
-            form.submit(function (e) {
-                e.preventDefault();
-                $.ajax({
-                    url: form.attr('action'),
-                    type: form.attr('method'),
-                    data: form.serialize(),
-                    success: function (result) {
-                        alert('Có lỗi xảy ra khi cập nhật thông tin!');
-                        location.reload();
-                    },
-                    error: function (error) {
-                        alert('Bị lỗi !');
-                    }
-                });
-            });
+            // Set initial gender value
+            var initialGender = '@User.FindFirstValue(ClaimTypes.Gender)';
+            if (initialGender) {
+                $('#gender').val(initialGender);
+            }
         });
     </script>
 }

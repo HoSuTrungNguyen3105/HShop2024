@@ -297,10 +297,10 @@ namespace HShop2024.Controllers
 
                     await HttpContext.SignInAsync(claimsPrincipal);
 
-
                     // Cập nhật LastLoginTime
                     nhanVien.LastLoginTime = DateTime.Now;
-                    _context.Update(nhanVien);
+                    _context.NhanViens.Update(nhanVien); // Cập nhật lại thông tin nhân viên
+                    await _context.SaveChangesAsync();    // Lưu thay đổi vào database
 
                     if (Url.IsLocalUrl(ReturnUrl))
                     {

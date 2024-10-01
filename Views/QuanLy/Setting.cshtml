@@ -2,7 +2,6 @@
     ViewData["Title"] = "Cài đặt";
     Layout = "_Layout2";
 }
-@using System.Security.Claims
 <script>
     function checkPasswordStrength(password) {
         const passwordHelp = document.getElementById('passwordHelp');
@@ -14,13 +13,12 @@
         }
     }
 </script>
-<h2>Cài đặt</h2>
-
-<div class="container mt-4">
+<div class="container mt-5">
     <div class="row">
         <!-- Sidebar for settings categories -->
         <div class="col-md-3">
             <ul class="list-group">
+                <h1>@ViewData["Title"]</h1>
                 <!-- Thêm Icon cho các mục cài đặt -->
                 <li class="list-group-item active">
                     <i class="fas fa-user"></i> Tài khoản
@@ -52,10 +50,6 @@
                 <div class="form-group">
                     <label for="username">Tên tài khoản</label>
                     <input type="text" class="form-control" id="username" value="@User.Identity.Name" disabled />
-                </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" class="form-control" id="email" value="@User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value" />
                 </div>
                 <div class="form-group">
                     <label for="phone">Số điện thoại</label>

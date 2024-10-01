@@ -137,6 +137,7 @@ namespace ECommerceMVC.Controllers
                 identity.RemoveClaim(existingClaim); // Xóa claim cũ
             }
             identity.AddClaim(new Claim(claimType, newValue)); // Thêm claim mới
+
         }
 
 
@@ -186,11 +187,11 @@ namespace ECommerceMVC.Controllers
                             new Claim("Xu", khachHang.Xu.ToString()),
                             new Claim(MySetting.CLAIM_CUSTOMERID, khachHang.MaKh),
                             new Claim(ClaimTypes.Role, "Customer"),
-                            new Claim(ClaimTypes.MobilePhone, khachHang.DienThoai ?? ""),
+                            new Claim(ClaimTypes.MobilePhone, khachHang.DienThoai ?? "Chưa có thông tin"),
                             new Claim(ClaimTypes.Gender, khachHang.GioiTinh ? "Nam" : "Nữ"),
                             new Claim(ClaimTypes.DateOfBirth, khachHang.NgaySinh.ToString("yyyy-MM-dd")),
                             new Claim("Hinh", khachHang.Hinh ?? ""),
-                            new Claim(ClaimTypes.StreetAddress, khachHang.DiaChi ?? "")  // Sử dụng ClaimTypes.StreetAddress
+                            new Claim(ClaimTypes.StreetAddress, khachHang.DiaChi ??  "Chưa có thông tin"),
                          };
 
                         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);

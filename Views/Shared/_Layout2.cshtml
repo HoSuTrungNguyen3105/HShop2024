@@ -9,99 +9,83 @@
     <title>@ViewData["Title"] - Admin Dashboard</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link href="~/css/site.css" rel="stylesheet" />
-    <style>
-        .sidebar {
-            width: 300px;
-            background-color: #000000;
-            color: white;
-            height: 100vh;
-            padding: 15px;
-        }
-
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            margin-bottom: 10px;
-            display: block;
-            padding: 5px;
-            border-radius: 5px;
-        }
-
-            .sidebar a:hover {
-                background-color: #000000;
-            }
-
-        .highlighted {
-            padding: 20px; /* Tăng padding cho phần highlighted */
-            display: block;
-            border-radius: 10px;
-            font-size: 28px; /* Tăng kích thước chữ */
-            margin-bottom: 30px; /* Thêm khoảng cách phía dưới */
-        }
-
-        .last-login {
-            margin-top: 14px;
-            padding: 9px;
-            border: 1px solid #000000; /* Đường viền màu đen */
-            border-radius: 2px; /* Góc bo tròn */
-            background-color: #f0f8ff; /* Màu nền nhẹ */
-            display: flex; /* Sử dụng flexbox để căn chỉnh nội dung */
-            align-items: center; /* Căn giữa dọc */
-        }
-
-        .last-login-text {
-            font-weight: bold; /* Làm cho nhãn đậm */
-            color: #000000; /* Màu chữ nhãn xanh */
-            font-size: 14px;
-            margin-right: 5px; /* Khoảng cách giữa nhãn và giá trị */
-            font-style: italic; /* Thêm kiểu chữ nghiêng */
-        }
-    </style>
+    <link href="~/css/style_dashboard.css" rel="stylesheet" />
 </head>
 <body>
     <!-- Sidebar -->
-    <div class="sidebar">
-        <a class="highlighted"><i class="fas fa-store"></i> HSHOP 2023</a>
-        <div class="list-group list-group-flush">
-            @if (User.Identity.IsAuthenticated)
-            {
-                <a asp-controller="Home" asp-action="Index" class="list-group-item list-group-item-action bg-dark text-light d-flex align-items-center">
-                    <i class="fas fa-home me-2"></i> <span>Trang chủ</span>
+    <div id="sidebar">
+        <a class="highlighted"><i class="fas fa-store"></i> TECHNESTT</a>
+        <ul class="side-menu">
+            <li>
+                <span class="last-login-text">Đăng nhập lần cuối: @User.FindFirst("LastLoginTime")?.Value</span>
+            </li>
+            <li>
+                <a href="javascript:void(0);" class="logout" onclick="confirmLogout(event);">
+                    <span class="text">Đăng xuất</span>
                 </a>
+            </li>
+        </ul>
+        <div class="list-group list-group-flush">
+            <ul class="side-menu top">
+                <li class="active">
+                    <a asp-controller="QuanLy" asp-action="DashboardData">
+                        <i class='bx bxs-bar-chart'></i>
+                        <span class="text">Dashboard Data</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Home" asp-action="Index">
+                        <i class='bx bxs-home'></i>
+                        <span class="text">Trang chủ</span>
+                    </a>
+                </li>
                 @if (User.IsInRole("Admin"))
                 {
-                    <a asp-controller="QuanLy" asp-action="DashboardData" class="list-group-item list-group-item-action bg-dark text-light d-flex align-items-center">
-                        <i class="fas fa-tachometer-alt me-2"></i> <span>Dashboard Data</span>
-                    </a>
-                    <a asp-controller="QuanLy" asp-action="NhanVienIndex" class="list-group-item list-group-item-action bg-dark text-light d-flex align-items-center">
-                        <i class="fas fa-user-tie me-2"></i> <span>Quản lí nhân viên</span>
-                    </a>
+                    <li>
+                        <a asp-controller="QuanLy" asp-action="NhanVienIndex">
+                            <i class='bx bxs-user-circle'></i>
+                            <span class="text">Quản lí nhân viên</span>
+                        </a>
+                    </li>
                 }
-                <a asp-controller="QuanLy" asp-action="Index" class="list-group-item list-group-item-action bg-dark text-light d-flex align-items-center">
-                    <i class="fas fa-users me-2"></i> <span>Quản lí khách hàng</span>
-                </a>
-                <a asp-controller="HangHoas" asp-action="Index" class="list-group-item list-group-item-action bg-dark text-light d-flex align-items-center">
-                    <i class="fas fa-box me-2"></i> <span>Quản lí hàng hóa</span>
-                </a>
-                <a asp-controller="Orders" asp-action="Index" class="list-group-item list-group-item-action bg-dark text-light d-flex align-items-center">
-                    <i class="fas fa-receipt me-2"></i> <span>Quản lí đơn hàng</span>
-                </a>
-                <a asp-controller="QuanLy" asp-action="Report" class="list-group-item list-group-item-action bg-dark text-light d-flex align-items-center">
-                    <i class="fas fa-chart-line me-2"></i> <span>Báo cáo</span>
-                </a>
-                <a asp-controller="YeuThiches" asp-action="Index" class="list-group-item list-group-item-action bg-dark text-light d-flex align-items-center">
-                    <i class="fas fa-heart me-2"></i> <span>Yêu thích</span>
-                </a>
-                <a asp-controller="QuanLy" asp-action="Setting" class="list-group-item list-group-item-action bg-dark text-light d-flex align-items-center">
-                    <i class="fas fa-cogs me-2"></i> <span>Cài đặt</span>
-                </a>
-            }
+                <li>
+                    <a asp-controller="QuanLy" asp-action="Index">
+                        <i class='bx bxs-group'></i>
+                        <span class="text">Quản lí khách hàng</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="HangHoas" asp-action="Index">
+                        <i class='bx bxs-box'></i>
+                        <span class="text">Quản lí hàng hóa</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Orders" asp-action="Index">
+                        <i class='bx bxs-receipt'></i>
+                        <span class="text">Quản lí đơn hàng</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="QuanLy" asp-action="Report">
+                        <i class='bx bxs-chart'></i>
+                        <span class="text">Báo cáo</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="YeuThiches" asp-action="Index">
+                        <i class='bx bxs-heart'></i>
+                        <span class="text">Yêu thích</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="QuanLy" asp-action="Setting">
+                        <i class='bx bxs-cog'></i>
+                        <span class="text">Cài đặt</span>
+                    </a>
+                </li>
+            </ul>
         </div>
-        <div class="last-login">
-            <span class="last-login-text">Đăng nhập lần cuối:@User.FindFirst("LastLoginTime")?.Value</span>
-        </div>
-
     </div>
     <!-- Nội dung chính -->
     <div class="content">
@@ -112,5 +96,75 @@
     @RenderSection("Scripts", required: false)
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const allSideMenu = document.querySelectorAll('#sidebar .side-menu.top li a');
+
+        allSideMenu.forEach(item => {
+            const li = item.parentElement;
+
+            item.addEventListener('click', function () {
+                allSideMenu.forEach(i => {
+                    i.parentElement.classList.remove('active');
+                })
+                li.classList.add('active');
+            });
+        });
+
+        // TOGGLE SIDEBAR
+        const menuBar = document.querySelector('#content nav .bx.bx-menu');
+        const sidebar = document.getElementById('sidebar');
+
+        menuBar.addEventListener('click', function () {
+            sidebar.classList.toggle('hide');
+        });
+
+        const searchButton = document.querySelector('#content nav form .form-input button');
+        const searchButtonIcon = document.querySelector('#content nav form .form-input button .bx');
+        const searchForm = document.querySelector('#content nav form');
+
+        searchButton.addEventListener('click', function (e) {
+            if (window.innerWidth < 576) {
+                e.preventDefault();
+                searchForm.classList.toggle('show');
+                if (searchForm.classList.contains('show')) {
+                    searchButtonIcon.classList.replace('bx-search', 'bx-x');
+                } else {
+                    searchButtonIcon.classList.replace('bx-x', 'bx-search');
+                }
+            }
+        });
+            function confirmLogout(event) {
+                // Ngăn không cho hành động mặc định xảy ra
+                event.preventDefault();
+
+                if (confirm("Bạn có chắc chắn muốn đăng xuất?")) {
+                    // Nếu xác nhận, chuyển hướng tới hành động Đăng xuất
+                window.location.href = '/QuanLy/DangXuat'; // Thay đổi đường dẫn theo controller của bạn
+                }
+            }
+        if (window.innerWidth < 768) {
+            sidebar.classList.add('hide');
+        } else if (window.innerWidth > 576) {
+            searchButtonIcon.classList.replace('bx-x', 'bx-search');
+            searchForm.classList.remove('show');
+        }
+
+        window.addEventListener('resize', function () {
+            if (this.innerWidth > 576) {
+                searchButtonIcon.classList.replace('bx-x', 'bx-search');
+                searchForm.classList.remove('show');
+            }
+        });
+
+        const switchMode = document.getElementById('switch-mode');
+
+        switchMode.addEventListener('change', function () {
+            if (this.checked) {
+                document.body.classList.add('dark');
+            } else {
+                document.body.classList.remove('dark');
+            }
+        });
+    </script>
 </body>
 </html>
