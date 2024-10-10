@@ -27,26 +27,12 @@ namespace HShop2024.Controllers
         }
 
         // Quản lý Khách Hàng
+        [Authorize(Roles = "Admin")]
+
         public IActionResult Index()
         {
             List<KhachHang> khachHangs = _context.KhachHangs.ToList();
             return View(khachHangs);
-        }
-
-        public async Task<IActionResult> Edit(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var khachHang = await _context.KhachHangs.FindAsync(id);
-            if (khachHang == null)
-            {
-                return NotFound();
-            }
-
-            return View(khachHang);
         }
 
         [HttpPost]
@@ -77,8 +63,10 @@ namespace HShop2024.Controllers
             return View(khachHangs);
         }
 
+
         // Admin Dashboard
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DashboardData()
         {
             var dashboardData = new DashboardViewModel
@@ -171,6 +159,7 @@ namespace HShop2024.Controllers
                     }
                     else
                     {
+                        nhanVien.VaiTro = 1;
                         _context.Add(nhanVien);
                         await _context.SaveChangesAsync();
                         return RedirectToAction(nameof(NhanVienIndex));
@@ -295,7 +284,12 @@ namespace HShop2024.Controllers
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-                    await HttpContext.SignInAsync(claimsPrincipal);
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal, new AuthenticationProperties
+                    {
+                        IsPersistent = true, // Duy trì trạng thái đăng nhập
+                        ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30) // Thời gian sống của cookie
+                    });
+
 
                     // Cập nhật LastLoginTime
                     nhanVien.LastLoginTime = DateTime.Now;

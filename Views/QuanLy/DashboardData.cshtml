@@ -5,33 +5,36 @@
     Layout = "_Layout2";
 }
 
-<div class="container mt-5">
-    <div class="jumbotron text-center py-4 bg-primary text-white shadow">
+<div class="container mt-4">
+    <!-- Jumbotron -->
+    <div class="jumbotron text-center py-5 bg-primary text-white shadow-lg rounded">
         <h1 class="display-4">Dashboard</h1>
         <p class="lead">Overview of the system's key statistics</p>
     </div>
 
+    <!-- Statistics Row 1 -->
     <div class="row mt-5">
+        <!-- Tổng số lượng khách hàng -->
         <div class="col-md-4">
-            <div class="card shadow h-100">
+            <div class="card shadow h-100 border-0">
                 <div class="card-body text-center">
-                    <h5 class="card-title text-primary">Tổng số lượng khách hàng </h5>
+                    <h5 class="card-title text-primary">Tổng số lượng khách hàng</h5>
                     <p class="card-text display-4 text-dark">@Model.TotalCustomers</p>
                 </div>
             </div>
         </div>
 
+        <!-- Khách hàng có số xu nhiều nhất -->
         <div class="col-md-4">
-            <div class="card shadow h-100">
+            <div class="card shadow h-100 border-0">
                 <div class="card-body text-center">
                     <h5 class="card-title text-warning">Khách hàng có số xu nhiều nhất</h5>
                     @if (Model.TopCustomer != null)
                     {
-                        <div>
-                            <h3>Khách hàng có số lượng xu nhiều nhất:</h3>
-                            <p>Mã Khách Hàng: @Model.TopCustomer.MaKh</p>
-                            <p>Tên Khách Hàng: @Model.TopCustomer.HoTen</p>
-                            <p>Số lượng Xu: @Model.TopCustomer.SoXu</p>
+                        <div class="mt-4">
+                            <p><strong>Mã:</strong> @Model.TopCustomer.MaKh</p>
+                            <p><strong>Tên:</strong> @Model.TopCustomer.HoTen</p>
+                            <p><strong>Số lượng Xu:</strong> @Model.TopCustomer.SoXu</p>
                         </div>
                     }
                     else
@@ -42,63 +45,76 @@
             </div>
         </div>
 
+        <!-- Tổng số lượng Hóa đơn -->
         <div class="col-md-4">
-            <div class="card shadow h-100">
+            <div class="card shadow h-100 border-0">
                 <div class="card-body text-center">
                     <h5 class="card-title text-success">Tổng số lượng Hóa đơn</h5>
                     <p class="card-text display-4 text-dark">@Model.TotalRevenue</p>
                 </div>
             </div>
         </div>
+    </div>
 
+    <!-- Statistics Row 2 -->
+    <div class="row mt-4">
+        <!-- Tổng số lượng Nhân viên -->
         <div class="col-md-4">
-            <div class="card shadow h-100">
+            <div class="card shadow h-100 border-0">
                 <div class="card-body text-center">
-                    <h5 class="card-title text-warning">Tổng số lượng Nhân viên</h5>
+                    <h5 class="card-title text-info">Tổng số lượng Nhân viên</h5>
                     <p class="card-text display-4 text-dark">@Model.TotalEmployees</p>
                 </div>
             </div>
         </div>
 
+        <!-- Tổng số lượng Hàng hóa -->
         <div class="col-md-4">
-            <div class="card shadow h-100">
+            <div class="card shadow h-100 border-0">
                 <div class="card-body text-center">
-                    <h5 class="card-title text-warning">Tổng số lượng Hàng hóa</h5>
+                    <h5 class="card-title text-primary">Tổng số lượng Hàng hóa</h5>
                     <p class="card-text display-4 text-dark">@Model.Revenue</p>
                 </div>
             </div>
         </div>
+
+        <!-- Tổng số lượng Nhà cung cấp -->
         <div class="col-md-4">
-            <div class="card shadow h-100">
+            <div class="card shadow h-100 border-0">
                 <div class="card-body text-center">
-                    <h5 class="card-title text-warning">Tổng số lượng Nhà cung cấp</h5>
+                    <h5 class="card-title text-danger">Tổng số lượng Nhà cung cấp</h5>
                     <p class="card-text display-4 text-dark">@Model.ProductRevenue</p>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Styles for improving aesthetics -->
 <style>
     .card {
         transition: transform 0.3s ease-in-out;
+        border-radius: 10px;
     }
 
-    .card:hover {
-        transform: scale(1.05);
-    }
+        .card:hover {
+            transform: scale(1.05);
+        }
 
     .jumbotron {
         border-radius: 15px;
     }
 
     .card-title {
-        font-size: 1.25rem;
+        font-size: 1.4rem;
         font-weight: bold;
+        margin-bottom: 1rem;
     }
 
     .display-4 {
         font-size: 2.5rem;
         font-weight: bold;
+        color: #333;
     }
 
     .h-100 {
@@ -106,6 +122,25 @@
     }
 
     .row > .col-md-4 {
-        margin-bottom: 20px;
+        margin-bottom: 30px;
+    }
+
+    /* Shadow effect for hover */
+    .card:hover {
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    /* Jumbotron text */
+    .jumbotron h1 {
+        font-size: 3rem;
+        font-weight: 700;
+    }
+
+    .jumbotron p.lead {
+        font-size: 1.2rem;
     }
 </style>

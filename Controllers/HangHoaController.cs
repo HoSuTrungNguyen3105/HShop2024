@@ -32,6 +32,10 @@ namespace HShop2024.Controllers
                 case "mostviewed":
                     hangHoas = hangHoas.OrderByDescending(h => h.SoLanXem);
                     break;
+                case "fewestviews":
+                    hangHoas = hangHoas.OrderBy(h => h.SoLanXem);
+                    break;
+                    
                 default:
                     hangHoas = hangHoas.OrderBy(h => h.MaLoai);
                     break;

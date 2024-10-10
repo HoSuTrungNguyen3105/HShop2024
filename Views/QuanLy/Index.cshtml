@@ -15,7 +15,6 @@
 </style>
 <div class="container mt-4">
     <h3>Có <b>@Model.Count()</b> khách hàng.</h3>
-
     <form asp-action="Edit" method="post">
         <div class="row">
             @foreach (var kh in Model.Select((value, index) => new { value, index }))

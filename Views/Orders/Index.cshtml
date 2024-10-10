@@ -3,158 +3,187 @@
     ViewData["Title"] = "Báo cáo";
     Layout = "_Layout2";
     var usCulture = new System.Globalization.CultureInfo("en-US"); // Thay đổi sang văn hóa Mỹ
-    var totalRevenue = ViewBag.TotalRevenue is decimal ? (decimal)ViewBag.TotalRevenue : Convert.ToDecimal(ViewBag.TotalRevenue);
+    var totalRevenue = ViewBag.TotalRevenue is decimal ? (decimal)ViewBag.TotalRevenue :
+    Convert.ToDecimal(ViewBag.TotalRevenue);
 }
 
 
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Management</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-        }
+<ht lang="en">
 
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-        }
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Order Management</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <style>
+            body {
+                font-family: 'Arial', sans-serif;
+                background-color: #f8f9fa;
+            }
 
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 20px;
-            color: #343a40;
-        }
+            .container {
+                background-color: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                margin-top: 20px;
+            }
 
-        h2 {
-            font-size: 1.5rem;
-            color: #28a745;
-            margin-bottom: 20px;
-        }
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 20px;
+                color: #343a40;
+            }
 
-        table {
-            margin-top: 20px;
-            margin: 0; /* Bỏ margin của bảng */
-        }
+            h2 {
+                font-size: 1.5rem;
+                color: #28a745;
+                margin-bottom: 20px;
+            }
 
-        thead {
-            background-color: #007bff;
-            color: #fff;
-        }
+            table {
+                margin-top: 20px;
+                margin: 0;
+                /* Bỏ margin của bảng */
+            }
 
-        th {
-            padding: 15px;
-        }
+            thead {
+                background-color: #007bff;
+                color: #fff;
+            }
 
-        td {
-            padding: 15px;
-        }
-        .table-responsive {
-            margin-bottom: 20px; /* Khoảng cách giữa bảng và các thành phần khác */
-        }
+            th {
+                padding: 15px;
+            }
 
-        .btn-group button {
-            margin-right: 5px; /* Tạo khoảng cách nhỏ giữa các nút */
-            padding: 5px 10px; /* Giảm kích thước nút cho gọn hơn */
-            margin-top: 5px; /* Giảm khoảng cách giữa các nút trong nhóm */
-        }
+            td {
+                padding: 15px;
+            }
 
-        .table-bordered {
-            border: 1px solid #dee2e6;
-        }
+            .table-responsive {
+                margin-bottom: 20px;
+                /* Khoảng cách giữa bảng và các thành phần khác */
+            }
 
-            .table-bordered td, .table-bordered th {
+            .btn-group button {
+                margin-right: 5px;
+                /* Tạo khoảng cách nhỏ giữa các nút */
+                padding: 5px 10px;
+                /* Giảm kích thước nút cho gọn hơn */
+                margin-top: 5px;
+                /* Giảm khoảng cách giữa các nút trong nhóm */
+            }
+
+            .table-bordered {
                 border: 1px solid #dee2e6;
             }
 
-            .table th, .table td {
-                padding: 8px; /* Giảm padding trong các ô */
-            }     
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1><i class="fas fa-receipt"></i> TECHNESTT REVENUE</h1>
-        <h1>@ViewData["Title"]</h1>
-        <div class="mb-3">
-            <h2>Tổng tiền: @totalRevenue.ToString("C", usCulture)</h2>
-        </div>
-        <div class="mb-2">
-            <button id="selectButton" class="btn btn-primary">Hủy/Vô hiệu hóa</button>
-        </div>
-        <form id="updateStatusForm" asp-action="UpdateStatus" method="post">
-        <div class="table-responsive mb-3">
-            <div class="btn-group mt-2" role="group">
-                <button type="submit" name="status" value="1" class="btn btn-sm btn-success" title="Đã thanh toán">
-                    <i class="fas fa-check"></i> Đã thanh toán
-                </button>
-                <button type="submit" name="status" value="-1" class="btn btn-sm btn-danger" title="Hủy">
-                    <i class="fas fa-times"></i> Hủy đơn
-                </button>
-                <button type="submit" name="status" value="2" class="btn btn-sm btn-warning" title="Chờ giao hàng">
-                    <i class="fas fa-clock"></i> Chờ giao hàng
-                </button>
-                <button type="submit" name="status" value="3" class="btn btn-sm btn-info" title="Đã giao">
-                    <i class="fas fa-shipping-fast"></i> Đã giao
-                </button>
-            </div>
-            <table class="table table-striped table-hover">
-                    <thead class="thead-dark">
-                        <tr>
-                            <th scope="col"><input type="checkbox" id="selectAll" /></th>
-                            <th scope="col">Mã Đơn Hàng</th>
-                            <th scope="col">Tên Khách Hàng</th>
-                            <th scope="col">Ngày Đặt Hàng</th>
-                            <th scope="col">Tên Trạng Thái</th>
-                            <th scope="col">Tổng Số Tiền</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var order in Model)
-                        {
-                            <tr>
-                                <td>
-                                    <input type="checkbox" name="selectedOrders" value="@order.MaHd" class="order-checkbox" />
-                                </td>
-                                <td>@order.MaHd</td>
-                                <td>@order.HoTen</td>
-                                <td>@order.NgayDat.ToShortDateString()</td>
-                                <td>@order.TenTrangThai</td>
-                                <td>@order.TotalAmount.ToString("C", usCulture)</td>
-                            </tr>
-                        }
-                    </tbody>
-            </table>
-            </div>
-        </form>
-        </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
-<script>
-    document.getElementById('selectButton').addEventListener('click', function () {
-        const checkboxes = document.querySelectorAll('.order-checkbox');
-        checkboxes.forEach(checkbox => {
-            checkbox.style.display = checkbox.style.display === 'none' ? 'inline' : 'none';
-        });
-        document.getElementById('selectAll').style.display = document.getElementById('selectAll').style.display === 'none' ? 'inline' : 'none';
-    });
+            .table-bordered td,
+            .table-bordered th {
+                border: 1px solid #dee2e6;
+            }
 
-    // Tính năng chọn tất cả
-    document.getElementById('selectAll').addEventListener('change', function () {
-        const checkboxes = document.querySelectorAll('.order-checkbox');
-        checkboxes.forEach(checkbox => {
-            checkbox.checked = this.checked;
-        });
-    });
-</script>
+            .table th,
+            .table td {
+                padding: 8px;
+                /* Giảm padding trong các ô */
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1><i class="fas fa-receipt"></i> TECHNESTT REVENUE</h1>
+            <h1>@ViewData["Title"]</h1>
+            <div class="mb-3">
+                <h2>Tổng tiền: @totalRevenue.ToString("C", usCulture)</h2>
+            </div>
+            @if (User.IsInRole("Employee"))
+            {
+                <div class="mb-2">
+                    <button id="selectButton" class="btn btn-primary">Hủy/Vô hiệu hóa</button>
+                </div>
+            }
+            <form id="updateStatusForm" asp-action="UpdateStatus" method="post">
+                <div class="table-responsive mb-3">
+                    @if (User.IsInRole("Employee"))
+                    {
+                        <div class="btn-group mt-2" role="group">
+                            <button type="submit" name="status" value="1" class="btn btn-sm btn-success" title="Đã thanh toán">
+                                <i class="fas fa-check"></i> Đã thanh toán
+                            </button>
+                            <button type="submit" name="status" value="-1" class="btn btn-sm btn-danger" title="Hủy">
+                                <i class="fas fa-times"></i> Hủy đơn
+                            </button>
+                            <button type="submit" name="status" value="2" class="btn btn-sm btn-warning" title="Chờ giao hàng">
+                                <i class="fas fa-clock"></i> Chờ giao hàng
+                            </button>
+                            <button type="submit" name="status" value="3" class="btn btn-sm btn-info" title="Đã giao">
+                                <i class="fas fa-shipping-fast"></i> Đã giao
+                            </button>
+                        </div>
+                    }
+                    <table class="table table-striped table-hover">
+                        <thead class="thead-dark">
+                            <tr>
+                                @if (User.IsInRole("Employee"))
+                                {
+                                    <th scope="col"><input type="checkbox" id="selectAll" /></th>
+                                }
+                                <th scope="col">Mã Đơn Hàng</th>
+                                <th scope="col">Tên Khách Hàng</th>
+                                <th scope="col">Ngày Đặt Hàng</th>
+                                <th scope="col">Tên Trạng Thái</th>
+                                <th scope="col">Tổng Số Tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model)
+                            {
+                                <tr>
+                                    @if (User.IsInRole("Employee"))
+                                    {
+                                        <td>
+                                            <input type="checkbox" name="selectedOrders" value="@order.MaHd" class="order-checkbox" />
+                                        </td>
+                                    }
+                                    <td>@order.MaHd</td>
+                                    <td>@order.HoTen</td>
+                                    <td>@order.NgayDat.ToShortDateString()</td>
+                                    <td>@order.TenTrangThai</td>
+                                    <td>@order.TotalAmount.ToString("C", usCulture)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </form>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+        @if (User.IsInRole("Employee"))
+        {
+            @section Scripts {
+
+            <script>
+                document.getElementById('selectButton').addEventListener('click', function () {
+                    const checkboxes = document.querySelectorAll('.order-checkbox');
+                    checkboxes.forEach(checkbox => {
+                        checkbox.style.display = checkbox.style.display === 'none' ? 'inline' : 'none';
+                    });
+                    document.getElementById('selectAll').style.display = document.getElementById('selectAll').style.display === 'none' ? 'inline' : 'none';
+                });
+
+                // Tính năng chọn tất cả
+                document.getElementById('selectAll').addEventListener('change', function () {
+                    const checkboxes = document.querySelectorAll('.order-checkbox');
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = this.checked;
+                    });
+                });
+            </script>
+            }
+        }
+    </body>
+    </html>

@@ -1,4 +1,5 @@
-﻿@model HShop2024.ViewModels.ChiTietHangHoaVM
+﻿
+@model HShop2024.ViewModels.ChiTietHangHoaVM
 @{
     ViewData["Title"] = "Detail";
 }
@@ -37,7 +38,7 @@
                             <i class="fa fa-star text-secondary"></i>
                             <i class="fa fa-star text-secondary"></i>
                             <i class="fa fa-star text-secondary"></i>
-                            <i class="fa fa-star"></i>
+                            <i class="fa fa-star text-secondary"></i>
                             <i class="fa fa-star"></i>
                         </div>
                         <p class="mb-4">@Model.MoTaNgan</p>
@@ -117,7 +118,7 @@
                         }
                         else
                         {
-                            <div class="alert alert-info">
+                            <div class="alert alert-dark">
                                     <p>Vui lòng <a href="@Url.Action("DangNhap", "KhachHang", new { returnUrl = Url.Action("Detail", "HangHoa", new { id = Model.MaHh }) })">đăng nhập</a> để gửi bình luận.</p>
                                 </div>
                         }

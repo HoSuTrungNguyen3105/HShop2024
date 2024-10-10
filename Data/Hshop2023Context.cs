@@ -198,6 +198,11 @@ public partial class Hshop2023Context : DbContext
             entity.Property(e => e.RandomKey)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.ResetPasswordToken).HasMaxLength(255);
+            entity.Property(e => e.ResetPasswordTokenExpiry).HasColumnType("datetime");
+            entity.Property(e => e.ThoiGianDangKy)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
             entity.Property(e => e.Xu).HasDefaultValue(0);
         });
 

@@ -124,7 +124,7 @@
 							else if (User.Identity.IsAuthenticated && (User.IsInRole("Employee") || User.IsInRole("Admin")))
 							{
 								<div class="user-info ms-3">
-									<a asp-controller="KhachHang" asp-action="Profile" title="Xem thông tin nhân viên" class="user-icon">
+									<a asp-controller="QuanLy" asp-action="Profile" title="Xem thông tin nhân viên" class="user-icon">
 										<i class="fas fa-user fa-2x"></i> <!-- chỉ chứa icon -->
 										<span>@User.Identity.Name</span> <!-- tên người dùng -->
 									</a>

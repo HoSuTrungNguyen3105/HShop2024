@@ -66,7 +66,16 @@
                 <input class="form-check-input" asp-for="IsFantastic" />
                 <label class="form-check-label" asp-for="IsFantastic"></label>
             </div>
-
+            <div class="form-group form-check mb-3">
+                    <div class="form-group">
+                        <label asp-for="MaLoai" class="control-label"></label>
+                        <select asp-for="MaLoai" class="form-control" asp-items="ViewBag.MaLoai"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="MaNcc" class="control-label"></label>
+                        <select asp-for="MaNcc" class="form-control" asp-items="ViewBag.MaNcc"></select>
+                    </div>
+            </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-success rounded-pill shadow-sm px-4 py-2" />
             </div>

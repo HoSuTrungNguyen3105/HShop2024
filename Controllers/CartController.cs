@@ -11,6 +11,7 @@ using System.Transactions;
 using Newtonsoft.Json;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace HShop2024.Controllers
 {
@@ -56,38 +57,40 @@ namespace HShop2024.Controllers
 		}
 
 
-		[HttpPost]
-		public JsonResult AddToCart(int id, int quantity = 1)
-		{
-			var gioHang = Cart;
-			var item = gioHang.SingleOrDefault(p => p.MaHh == id);
-			if (item == null)
-			{
-				var hangHoa = db.HangHoas.SingleOrDefault(p => p.MaHh == id);
-				if (hangHoa == null)
-				{
-					return Json(new { success = false, message = $"Không tìm thấy hàng hóa có mã {id}" });
-				}
-				item = new CartItem
-				{
-					MaHh = hangHoa.MaHh,
-					TenHH = hangHoa.TenHh,
-					DonGia = hangHoa.DonGia ?? 0,
-					Hinh = hangHoa.Hinh ?? string.Empty,
-					SoLuong = quantity
-				};
-				gioHang.Add(item);
-			}
-			else
-			{
-				item.SoLuong += quantity;
-			}
+        [HttpPost]
+        public JsonResult AddToCart(int id, int quantity = 1)
+        {
+            var gioHang = Cart;
+
+            var item = gioHang.SingleOrDefault(p => p.MaHh == id);
+            if (item == null)
+            {
+                var hangHoa = db.HangHoas.SingleOrDefault(p => p.MaHh == id);
+                if (hangHoa == null)
+                {
+                    return Json(new { success = false, message = $"Không tìm thấy hàng hóa có mã {id}" });
+                }
+                item = new CartItem
+                {
+                    MaHh = hangHoa.MaHh,
+                    TenHH = hangHoa.TenHh,
+                    DonGia = hangHoa.DonGia ?? 0,
+                    Hinh = hangHoa.Hinh ?? string.Empty,
+                    SoLuong = quantity
+                };
+                gioHang.Add(item);
+            }
+            else
+            {
+                item.SoLuong += quantity;
+            }
 
 			HttpContext.Session.Set(MySetting.CART_KEY, gioHang);
-			return Json(new { success = true, cartCount = gioHang.Sum(p => p.SoLuong) });
-		}
+            return Json(new { success = true, cartCount = gioHang.Sum(p => p.SoLuong) });
+        }
 
-		public IActionResult RemoveCart(int id)
+
+        public IActionResult RemoveCart(int id)
 		{
 			var gioHang = Cart;
 			var item = gioHang.SingleOrDefault(p => p.MaHh == id);

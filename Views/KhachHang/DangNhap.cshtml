@@ -3,6 +3,12 @@
 @{
     ViewData["Title"] = "Đăng nhập";
 }
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
 <div class="container py-5">
     <h2 class="mb-4 text-center">@ViewData["Title"]</h2>
     <div class="row g-4">

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HShop2024.Data;
+using HShop2024.Helpers;
 
 namespace HShop2024.Controllers
 {
@@ -71,10 +72,20 @@ namespace HShop2024.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaHh,TenHh,TenAlias,MaLoai,MoTaDonVi,DonGia,Hinh,NgaySx,GiamGia,SoLanXem,MoTa,MaNcc,IsOrganic,IsFantastic,SoLuong")] HangHoa hangHoa)
+        public async Task<IActionResult> Create([Bind("MaHh,TenHh,TenAlias,MaLoai,MoTaDonVi,DonGia,Hinh,NgaySx,GiamGia,SoLanXem,MoTa,MaNcc,IsOrganic,IsFantastic,SoLuong")] HangHoa hangHoa , IFormFile Hinh)
         {
             if (ModelState.IsValid)
             {
+                // Tắt theo dõi của Entity Framework cho các đối tượng liên quan
+                _context.Entry(hangHoa).State = EntityState.Added;
+                _context.Entry(hangHoa).Reference(h => h.MaLoaiNavigation).IsModified = false;
+                _context.Entry(hangHoa).Reference(h => h.MaNccNavigation).IsModified = false;
+                if (Hinh != null)
+                {
+                    hangHoa.Hinh = MyUtil.UploadHinh(Hinh, "KhachHang");
+                }
+                hangHoa.MaLoaiNavigation = await _context.Loais.FindAsync(hangHoa.MaLoai);
+                hangHoa.MaNccNavigation = await _context.NhaCungCaps.FindAsync(hangHoa.MaNcc);
                 _context.Add(hangHoa);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

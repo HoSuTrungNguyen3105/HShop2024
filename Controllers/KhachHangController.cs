@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using NuGet.Configuration;
+using NuGet.Protocol;
 using System.Globalization;
 using System.Net;
 using System.Net.Mail;
@@ -47,15 +48,29 @@ namespace ECommerceMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Generate RandomKey
-                khachhang.RandomKey = GenerateRandomKey(32); // 32 characters for the random key, you can change this as needed
+                // Check if MaKh already exists in the database
+                // Kiểm tra xem mã khách hàng đã tồn tại trong database chưa
+                var existingCustomer = await db.KhachHangs
+                                                .AsNoTracking() // Không theo dõi thực thể
+                                                .FirstOrDefaultAsync(kh => kh.MaKh == khachhang.MaKh);
+
+                // Nếu mã khách hàng đã tồn tại
+                if (existingCustomer != null)
+                {
+                    TempData["ErrorMessage"] = "Mã khách hàng đã tồn tại."; // Thêm thông báo lỗi vào TempData
+                    return RedirectToAction("DangKy", "KhachHang");
+                }
+                khachhang.RandomKey = GenerateRandomKey(32); // 32 characters for the random key, you can change this as needed             
                 khachhang.HieuLuc = true;
+                // Thêm thời gian đăng ký
+                khachhang.ThoiGianDangKy = DateTime.Now;
                 if (Hinh != null)
                 {
                     khachhang.Hinh = MyUtil.UploadHinh(Hinh, "KhachHang");
                 }
                 db.Add(khachhang);
                 await db.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Đăng ký thành công";
                 return RedirectToAction("DangNhap", "KhachHang");
             }
             return View(khachhang);
@@ -111,9 +126,8 @@ namespace ECommerceMVC.Controllers
                 // Giới tính có thể là chuỗi
                 UpdateClaim(identity, ClaimTypes.Gender, model.Gender ? "Nam" : "Nữ");
 
-                // Đăng xuất phiên hiện tại và đăng nhập lại với claims mới
-                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme); // Đăng xuất phiên hiện tại
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity)); // Đăng nhập lại với claims mới
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
                 await db.SaveChangesAsync();
                 // Gửi thông báo thành công
                 TempData["SuccessMessage"] = "Thông tin cá nhân đã được cập nhật thành công!";
@@ -192,12 +206,16 @@ namespace ECommerceMVC.Controllers
                             new Claim(ClaimTypes.DateOfBirth, khachHang.NgaySinh.ToString("yyyy-MM-dd")),
                             new Claim("Hinh", khachHang.Hinh ?? ""),
                             new Claim(ClaimTypes.StreetAddress, khachHang.DiaChi ??  "Chưa có thông tin"),
+                            new Claim("HieuLuc", khachHang.HieuLuc ?  "Đang hoạt động" : "Bị khóa"),
                          };
-
                         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 
-                        await HttpContext.SignInAsync(claimsPrincipal);
+                        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal, new AuthenticationProperties
+                        {
+                            IsPersistent = true, // Duy trì trạng thái đăng nhập
+                            ExpiresUtc = DateTimeOffset.UtcNow.AddDays(30) // Thời gian sống của cookie
+                        });
 
                         if (Url.IsLocalUrl(ReturnUrl))
                         {
@@ -215,17 +233,17 @@ namespace ECommerceMVC.Controllers
         }
         #endregion
 
-        [HttpPost]
-        public async Task<IActionResult> ToggleBan(int id)
-        {
-            var khachHang = await db.KhachHangs.FindAsync(id);
-            if (khachHang != null)
-            {
-                khachHang.HieuLuc = !khachHang.HieuLuc; // Đảo ngược trạng thái hiệu lực
-                await db.SaveChangesAsync();
-            }
-            return RedirectToAction("Index");
-        }
+        //[HttpPost]
+        //public async Task<IActionResult> ToggleBan(int id)
+        //{
+        //    var khachHang = await db.KhachHangs.FindAsync(id);
+        //    if (khachHang != null)
+        //    {
+        //        khachHang.HieuLuc = !khachHang.HieuLuc; // Đảo ngược trạng thái hiệu lực
+        //        await db.SaveChangesAsync();
+        //    }
+        //    return RedirectToAction("Index");
+        //}
 
         public async Task<IActionResult> Profile()
         {
@@ -319,7 +337,7 @@ namespace ECommerceMVC.Controllers
                     return RedirectToAction("ForgotPassword");
                 }
 
-                customer.MatKhau = model.NewPassword.ToMd5Hash(customer.RandomKey);
+                customer.MatKhau = model.Password.ToMd5Hash(customer.RandomKey);
                 customer.RandomKey = null; // Xóa mã đặt lại sau khi đổi mật khẩu
                 db.Update(customer);
                 await db.SaveChangesAsync();

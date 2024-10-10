@@ -3,21 +3,7 @@
     ViewData["Title"] = "Chi tiết nhân viên";
     Layout = "_Layout2";
 }
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewData["Title"]</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        .container {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-top: 20px;
-        }
+<style>
 
         h1 {
             font-size: 2rem;
@@ -34,10 +20,8 @@
             color: #fff;
         }
     </style>
-</head>
-<body>
-    <div class="container">
-        <h1>@ViewData["Title"]</h1>
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
         <p><strong>Mã Nhân Viên:</strong> @Model.MaNv</p>
         <p><strong>Họ Tên:</strong> @Model.HoTen</p>
         <p><strong>Email:</strong> @Model.Email</p>
@@ -95,5 +79,3 @@
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>

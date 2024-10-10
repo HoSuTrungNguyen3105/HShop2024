@@ -4,14 +4,16 @@
     ViewData["Title"] = "Xóa nhân viên";
     Layout = "_Layout2";
 }
-<h1>Xóa nhân viên</h1>
-<h3>Bạn có chắc chắn muốn xóa nhân viên "@Model.MaNv"?</h3>
-<div>
-    <form asp-action="NhanVienDelete">
-        <input type="hidden" asp-for="MaNv" />
-        <div class="form-group">
-            <input type="submit" value="Xóa" class="btn btn-danger" />
-            <a asp-action="Index" class="btn btn-secondary">Hủy</a>
-        </div>
-    </form>
+<div class="container-fluid mt-5">
+    <h3>Bạn có chắc chắn muốn xóa nhân viên "@Model.MaNv"?</h3>
+    <div>
+        <form asp-action="NhanVienDelete">
+            <input type="hidden" asp-for="MaNv" />
+            <div class="form-group">
+                <input type="submit" value="Xóa" class="btn btn-danger" />
+                <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+            </div>
+        </form>
+    </div>
 </div>
+

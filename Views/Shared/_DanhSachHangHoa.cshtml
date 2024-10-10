@@ -24,6 +24,7 @@
                                 <option value="isorganic">Organic</option>
                                 <option value="isfantastic">Fantastic</option>
                                 <option value="mostviewed">Lượt mua nhiều nhất</option>
+                                <option value="fewestviews">Lượt mua ít nhất</option>
                             </select>
                         </div>
                     </div>
@@ -32,22 +33,20 @@
                     <div class="col-lg-3">
                         <div class="row g-4">
                             @await Component.InvokeAsync("MenuLoai")
-
-                          <div class="col-lg-12">
-    <div id="voucherSection">
-        <!-- Voucher list will be loaded here -->
-    </div>
-</div>
-<div id="toastNotification" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="toast-header">
-        <strong class="me-auto">Thông báo</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-    <div class="toast-body">
-        <!-- Toast message will be inserted here -->
-    </div>
-</div>
-
+                              <div class="col-lg-12">
+                              <div id="voucherSection">
+                                   <!-- Voucher list will be loaded here -->
+                              </div>
+                            </div>
+                            <div id="toastNotification" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                                <div class="toast-header">
+                                    <strong class="me-auto">Thông báo</strong>
+                                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                                </div>
+                                <div class="toast-body">
+                                    <!-- Toast message will be inserted here -->
+                                </div>
+                            </div>
                             <div class="col-lg-12">
                                 <div class="mb-3">
                                     <h4 class="mb-2">Price</h4>

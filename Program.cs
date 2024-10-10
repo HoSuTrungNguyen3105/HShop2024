@@ -31,7 +31,6 @@ builder.Services.AddSingleton<IEmailSender>(provider =>
 });
 //builder.Services.AddTransient<IEmailSender, SmtpEmailSender>();
 
-
 // Add session service
 builder.Services.AddDistributedMemoryCache(); // Để sử dụng Session trong bộ nhớ
 builder.Services.AddSession(options =>
@@ -46,11 +45,17 @@ builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Logging.AddConsole();
 
 // https://learn.microsoft.com/en-us/aspnet/core/security/authentication/cookie?view=aspnetcore-8.0
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
-{
-	options.LoginPath = "/KhachHang/DangNhap";
-	options.AccessDeniedPath = "/AccessDenied";
-});
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+        .AddCookie(options =>
+        {
+            options.Cookie.HttpOnly = true;
+            options.ExpireTimeSpan = TimeSpan.FromDays(30); // Thời gian cookie sống
+            options.SlidingExpiration = true; // Gia hạn thời gian khi có hoạt động
+            options.LoginPath = "/KhachHang/DangNhap"; // Đường dẫn đến trang đăng nhập
+            options.LoginPath = "/QuanLy/DangNhap"; // Đường dẫn đến trang đăng nhập
+            options.AccessDeniedPath = "/AccessDenied";
+        });
+
 
 // đăng ký PaypalClient dạng Singleton() - chỉ có 1 instance duy nhất trong toàn ứng dụng
 builder.Services.AddSingleton(x => new PaypalClient(

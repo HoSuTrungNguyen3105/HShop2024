@@ -31,6 +31,12 @@ public partial class KhachHang
 
     public int? Xu { get; set; }
 
+    public string? ResetPasswordToken { get; set; }
+
+    public DateTime? ResetPasswordTokenExpiry { get; set; }
+
+    public DateTime ThoiGianDangKy { get; set; }
+
     public virtual ICollection<HoaDon> HoaDons { get; set; } = new List<HoaDon>();
 
     public virtual ICollection<YeuThich> YeuThiches { get; set; } = new List<YeuThich>();

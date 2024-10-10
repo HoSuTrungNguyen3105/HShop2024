@@ -10,7 +10,9 @@
     <form method="get" asp-action="Index" class="d-flex align-items-center mb-4">
         <div class="d-flex align-items-center me-4">
             <!-- Button Thêm mới (căn bên trái) -->
-            <a asp-action="Create" class="btn btn-success d-flex align-items-center rounded-pill shadow-sm px-4 py-2 text-white" style="background-color: #28a745; transition: background-color 0.3s ease;">
+            <a asp-action="Create"
+                class="btn btn-success d-flex align-items-center rounded-pill shadow-sm px-4 py-2 text-white"
+                style="background-color: #28a745; transition: background-color 0.3s ease;">
                 <i class="bi bi-plus-circle-fill me-2"></i> Thêm mới
             </a>
         </div>
@@ -18,7 +20,8 @@
             <button type="submit" class="btn btn-primary rounded-pill shadow-sm">
                 <i class="bi bi-search"></i> Tìm kiếm
             </button>
-            <input type="text" name="searchString" class="form-control me-2 rounded-pill border-0 shadow-sm" placeholder="Tìm kiếm..." value="@ViewData["SearchString"]" />
+            <input type="text" name="searchString" class="form-control me-2 rounded-pill border-0 shadow-sm"
+                placeholder="Tìm kiếm..." value="@ViewData["SearchString"]" />
         </div>
     </form>
     <div class="table-responsive shadow-sm rounded">
@@ -39,30 +42,54 @@
                 @foreach (var item in Model)
                 {
                     <tr>
+                        <!-- Hình ảnh hàng hóa -->
                         <td>
-                            <img src="@Url.Content("~/Hinh/HangHoa/" + item.Hinh)" alt="Hình ảnh @item.TenHh" class="img-fluid img-thumbnail rounded" style="max-width: 100px; height: auto;">
+                            <img src="@Url.Content("~/Hinh/HangHoa/" + item.Hinh)" alt="Hình ảnh @item.TenHh"
+                                 class="img-fluid img-thumbnail rounded shadow-sm" style="max-width: 100px; height: auto;">
                         </td>
+
+                        <!-- Mã hàng hóa -->
                         <td>@item.MaHh</td>
+
+                        <!-- Tên hàng hóa -->
                         <td>@item.TenHh</td>
+
+                        <!-- Mã loại -->
                         <td>@item.MaLoai</td>
+
+                        <!-- Nhà cung cấp -->
                         <td>@item.MaNcc</td>
+
+                        <!-- Giá hàng hóa -->
                         <td>
-                            <i class="fas fa-dollar-sign"></i> @item.DonGia
+                            <i class="fas fa-dollar-sign text-success"></i> @item.DonGia
                         </td>
+
+                        <!-- Ngày sản xuất -->
                         <td>@item.NgaySx.ToString("dd/MM/yyyy")</td>
+
+                        <!-- Hành động -->
                         <td class="text-center">
-                            <a asp-action="Details" asp-route-id="@item.MaHh" class="btn btn-outline-info btn-sm" data-bs-toggle="tooltip" title="Xem chi tiết">
-                                <i class="bi bi-info-circle"></i>
+                            <!-- Nút xem chi tiết -->
+                            <a asp-action="Details" asp-route-id="@item.MaHh" class="btn btn-outline-info btn-sm rounded"
+                               data-bs-toggle="tooltip" data-placement="top" title="Xem chi tiết">
+                                <i class="fas fa-info-circle"></i>
                             </a>
                         </td>
+
                         <td class="text-center">
-                            <a asp-action="Edit" asp-route-id="@item.MaHh" class="btn btn-outline-warning btn-sm" data-bs-toggle="tooltip" title="Sửa thông tin">
-                                <i class="bi bi-pencil"></i>
+                            <!-- Nút sửa thông tin -->
+                            <a asp-action="Edit" asp-route-id="@item.MaHh" class="btn btn-outline-warning btn-sm rounded"
+                               data-bs-toggle="tooltip" data-placement="top" title="Sửa thông tin">
+                                <i class="fas fa-edit"></i>
                             </a>
                         </td>
+
                         <td class="text-center">
-                            <a asp-action="Delete" asp-route-id="@item.MaHh" class="btn btn-outline-danger btn-sm" data-bs-toggle="tooltip" title="Xóa hàng hóa">
-                                <i class="bi bi-trash"></i>
+                            <!-- Nút xóa hàng hóa -->
+                            <a asp-action="Delete" asp-route-id="@item.MaHh" class="btn btn-outline-danger btn-sm rounded"
+                               data-bs-toggle="tooltip" data-placement="top" title="Xóa hàng hóa">
+                                <i class="fas fa-trash"></i>
                             </a>
                         </td>
                     </tr>
