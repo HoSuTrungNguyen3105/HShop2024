@@ -6,39 +6,36 @@
 }
 @if (!string.IsNullOrEmpty(errorMessage))
 {
-    <div class="alert alert-danger d-flex align-items-center" style="border-radius: 5px; padding: 15px;">
-        <i class="bi bi-exclamation-circle-fill me-2" style="font-size: 1.5rem;"></i> <!-- Thay đổi icon ở đây -->
-        <span>@errorMessage</span>
+    <div class="alert alert-danger d-flex align-items-center shadow-sm rounded p-3" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-3" style="font-size: 1.5rem;"></i> <!-- Icon được thay đổi -->
+        <span class="fs-5 fw-semibold">@errorMessage</span>
     </div>
-}
+}+
 <div class="container mt-5">
     <h2 class="mb-4 text-center">@ViewData["Title"]</h2>
-    <div asp-validation-summary="All" class="text-danger"></div>
     <form asp-action="DangKy" method="post" enctype="multipart/form-data">
         <div class="row">
+            <!-- Cột trái -->
             <div class="col-md-6">
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label asp-for="MaKh" class="form-label">Mã khách hàng</label>
                     <input asp-for="MaKh" class="form-control" />
-                    <span asp-validation-for="MaKh" class="text-danger"></span> <!-- Hiển thị lỗi cho Mã khách hàng -->
+                    <span asp-validation-for="MaKh" class="text-danger"></span>
                 </div>
 
-                <!-- Tổng hợp tất cả các lỗi -->
-                <div asp-validation-summary="All" class="text-danger"></div>
-
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label asp-for="MatKhau" class="form-label">Mật khẩu</label>
                     <input asp-for="MatKhau" type="password" class="form-control" />
                     <span asp-validation-for="MatKhau" class="text-danger"></span>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label asp-for="XacNhanMatKhau" class="form-label">Nhập lại mật khẩu</label>
                     <input asp-for="XacNhanMatKhau" type="password" class="form-control" />
                     <span asp-validation-for="XacNhanMatKhau" class="text-danger"></span>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label asp-for="HoTen" class="form-label">Họ tên</label>
                     <input asp-for="HoTen" class="form-control" />
                     <span asp-validation-for="HoTen" class="text-danger"></span>
@@ -49,33 +46,34 @@
                     <label class="form-check-label" for="GioiTinh">Nam?</label>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label asp-for="NgaySinh" class="form-label">Ngày sinh (dd/MM/yyyy)</label>
                     <input asp-for="NgaySinh" class="form-control" placeholder="dd/MM/yyyy" />
                     <span asp-validation-for="NgaySinh" class="text-danger"></span>
                 </div>
             </div>
 
+            <!-- Cột phải -->
             <div class="col-md-6">
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label asp-for="DiaChi" class="form-label">Địa chỉ</label>
                     <input asp-for="DiaChi" class="form-control" />
                     <span asp-validation-for="DiaChi" class="text-danger"></span>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label asp-for="DienThoai" class="form-label">Điện thoại</label>
                     <input asp-for="DienThoai" class="form-control" />
                     <span asp-validation-for="DienThoai" class="text-danger"></span>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label asp-for="Email" class="form-label">Email</label>
                     <input asp-for="Email" class="form-control" />
                     <span asp-validation-for="Email" class="text-danger"></span>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group mb-3">
                     <label asp-for="Hinh" class="form-label">Ảnh đại diện</label>
                     <input asp-for="Hinh" type="file" class="form-control" />
                     <span asp-validation-for="Hinh" class="text-danger"></span>
@@ -83,8 +81,9 @@
             </div>
         </div>
 
-        <div class="row g-4 text-center align-items-center justify-content-center pt-4">
-            <button type="submit" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary">Đăng ký</button>
+        <!-- Nút Đăng ký -->
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary py-2 px-4">Đăng ký</button>
         </div>
     </form>
 </div>

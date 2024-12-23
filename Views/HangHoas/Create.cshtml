@@ -1,94 +1,109 @@
-﻿@model HShop2024.Data.HangHoa
+﻿﻿
+@model HShop2024.ViewModels.HangHoaVM
 
 @{
     ViewData["Title"] = "Create";
     Layout = "_Layout2";
 }
-
-<h1>Create</h1>
-@if (ViewData.ModelState.Values.Any(v => v.Errors.Count > 0))
+<!-- Hiển thị thông báo lỗi nếu có -->
+@if (TempData["ErrorMessage"] != null)
 {
-    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-    {
-        <p class="text-danger">@error.ErrorMessage</p>
-    }
-}
-<hr />
-<div class="container mt-4">
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="TenHh" class="control-label"></label>
-                <input asp-for="TenHh" class="form-control" />
-                <span asp-validation-for="TenHh" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TenAlias" class="control-label"></label>
-                <input asp-for="TenAlias" class="form-control" />
-                <span asp-validation-for="TenAlias" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MaLoai" class="control-label"></label>
-                <select asp-for="MaLoai" class ="form-control" asp-items="ViewBag.MaLoai"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="MoTaDonVi" class="control-label"></label>
-                <input asp-for="MoTaDonVi" class="form-control" />
-                <span asp-validation-for="MoTaDonVi" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Hinh" class="control-label"></label>
-                <input asp-for="Hinh" class="form-control" type="file" />
-                <span asp-validation-for="Hinh" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GiamGia" class="control-label"></label>
-                <input asp-for="GiamGia" class="form-control" />
-                <span asp-validation-for="GiamGia" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MoTa" class="control-label"></label>
-                <input asp-for="MoTa" class="form-control" />
-                <span asp-validation-for="MoTa" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MaNcc" class="control-label"></label>
-                <select asp-for="MaNcc" class ="form-control" asp-items="ViewBag.MaNcc"></select>
-            </div>
-            <div class="form-group form-check mb-3">
-                <input class="form-check-input" asp-for="IsOrganic" />
-                <label class="form-check-label" asp-for="IsOrganic"></label>
-            </div>
-
-            <div class="form-group form-check mb-3">
-                <input class="form-check-input" asp-for="IsFantastic" />
-                <label class="form-check-label" asp-for="IsFantastic"></label>
-            </div>
-            <div class="form-group form-check mb-3">
-                    <div class="form-group">
-                        <label asp-for="MaLoai" class="control-label"></label>
-                        <select asp-for="MaLoai" class="form-control" asp-items="ViewBag.MaLoai"></select>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="MaNcc" class="control-label"></label>
-                        <select asp-for="MaNcc" class="form-control" asp-items="ViewBag.MaNcc"></select>
-                    </div>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-success rounded-pill shadow-sm px-4 py-2" />
-            </div>
-        </form>
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
     </div>
-</div>
-</div>
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
 }
 
+<form asp-action="Create" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="TenHh" class="control-label">Tên Hàng Hóa</label>
+        <input asp-for="TenHh" class="form-control" />
+        <span asp-validation-for="TenHh" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="TenAlias" class="control-label">Tên Alias</label>
+        <input asp-for="TenAlias" class="form-control" />
+        <span asp-validation-for="TenAlias" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="MaLoai" class="control-label">Loại Hàng</label>
+        <select asp-for="MaLoai" class="form-control" asp-items="Model.MaLoaiOptions"></select>
+        <span asp-validation-for="MaLoai" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="MaNcc" class="control-label">MaNCC</label>
+        <select asp-for="MaNcc" class="form-control" asp-items="Model.ManNccOptions"></select>
+        <span asp-validation-for="MaNcc" class="text-danger"></span>
+    </div>
+    
+    <div class="form-group">
+        <label asp-for="MoTaDonVi" class="control-label">Mô Tả Đơn Vị</label>
+        <input asp-for="MoTaDonVi" class="form-control" />
+        <span asp-validation-for="MoTaDonVi" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DonGia" class="control-label">Đơn Giá</label>
+        <input asp-for="DonGia" class="form-control" />
+        <span asp-validation-for="DonGia" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="NgaySx" class="control-label">Ngày Sản Xuất</label>
+        <input asp-for="NgaySx" type="date" class="form-control" />
+        <span asp-validation-for="NgaySx" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="GiamGia" class="control-label">Giảm Giá</label>
+        <input asp-for="GiamGia" class="form-control" />
+        <span asp-validation-for="GiamGia" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Hinh" class="control-label">Hình Ảnh</label>
+        <input asp-for="Hinh" type="file" class="form-control" />
+        <span asp-validation-for="Hinh" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="IsOrganic" class="control-label">Hàng Hữu Cơ</label>
+        <input asp-for="IsOrganic" type="checkbox" />
+        <span asp-validation-for="IsOrganic" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="IsFantastic" class="control-label">Hàng Tuyệt Vời</label>
+        <input asp-for="IsFantastic" type="checkbox" />
+        <span asp-validation-for="IsFantastic" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="SoLuong" class="control-label">Số Lượng</label>
+        <input asp-for="SoLuong" class="form-control" />
+        <span asp-validation-for="SoLuong" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="MoTa" class="control-label">Mô Tả</label>
+        <textarea asp-for="MoTa" class="form-control"></textarea>
+        <span asp-validation-for="MoTa" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="SoLanXem" class="control-label">Số Lần Xem</label>
+        <input asp-for="SoLanXem" class="form-control" />
+        <span asp-validation-for="SoLanXem" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Lưu" class="btn btn-primary" />
+        <a asp-action="Index" class="btn btn-check">Quay Lại</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

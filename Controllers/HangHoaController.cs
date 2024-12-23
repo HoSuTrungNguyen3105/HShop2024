@@ -61,7 +61,7 @@ namespace HShop2024.Controllers
 
             // Trả về view với dữ liệu
             return View(result);
-        }
+        }      
 
         public IActionResult Search(string? query)
         {
@@ -93,7 +93,7 @@ namespace HShop2024.Controllers
             if (product == null)
             {
                 TempData["Message"] = $"Không thấy sản phẩm có mã {id}";
-                return Redirect("/404");
+                return Redirect("/Error");
             }
 
             var comments = db.HoiDaps

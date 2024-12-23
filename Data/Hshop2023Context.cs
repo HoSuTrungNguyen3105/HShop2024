@@ -37,8 +37,6 @@ public partial class Hshop2023Context : DbContext
 
     public virtual DbSet<PhongBan> PhongBans { get; set; }
 
-    public virtual DbSet<SavedVoucher> SavedVouchers { get; set; }
-
     public virtual DbSet<TrangThai> TrangThais { get; set; }
 
     public virtual DbSet<Voucher> Vouchers { get; set; }
@@ -307,17 +305,6 @@ public partial class Hshop2023Context : DbContext
             entity.Property(e => e.TenPb)
                 .HasMaxLength(50)
                 .HasColumnName("TenPB");
-        });
-
-        modelBuilder.Entity<SavedVoucher>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PK__SavedVou__3214EC07B60139CD");
-
-            entity.Property(e => e.CustomerId).HasMaxLength(50);
-            entity.Property(e => e.MaVoucher).HasMaxLength(50);
-            entity.Property(e => e.NgayLuu)
-                .HasDefaultValueSql("(getdate())")
-                .HasColumnType("datetime");
         });
 
         modelBuilder.Entity<TrangThai>(entity =>

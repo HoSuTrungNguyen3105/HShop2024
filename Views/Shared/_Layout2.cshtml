@@ -1,4 +1,4 @@
-﻿﻿@{
+﻿@{ 
     Layout = null;
 }
 <!DOCTYPE html>
@@ -7,39 +7,114 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"] - Admin Dashboard</title>
+
+    <!-- Bootstrap 4.5.2 and Font Awesome -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- Custom CSS -->
     <link href="~/css/site.css" rel="stylesheet" />
+
+    <style>
+        body {
+            background-color: #f4f4f4;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            background-color: #343a40;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            padding-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .sidebar a {
+            text-decoration: none;
+            font-size: 1.1em;
+        }
+
+        .sidebar .highlighted {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #f8f9fa;
+            padding: 10px;
+        }
+
+        .sidebar .list-group-item {
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .sidebar .list-group-item:hover {
+            background-color: #495057;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            color: #fff;
+        }
+
+        /* Content */
+        .content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .last-login-text {
+            font-size: 0.9em;
+            color: #adb5bd;
+        }
+
+        /* Logout button styling */
+        #logoutForm a {
+            color: #dc3545;
+            padding: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            display: block;
+            text-align: center;
+        }
+
+        #logoutForm a:hover {
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 5px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        /* Icons with space */
+        .me-2 {
+            margin-right: 10px;
+        }
+    </style>
 </head>
 <body>
     <!-- Sidebar -->
-    <div class="sidebar bg-dark">     
-        <a class="highlighted"><i class="fas fa-store"></i>TECHNESTT</a>
+    <div class="navbar-default sidebar" role="navigation">
+        <div class="sidebar-nav navbar-collapse">
+            <ul class="nav" id="side-menu">
+                <a class="highlighted"><i class="fas fa-universal-access"></i> TECHNESTT</a>
+
         <!-- Last Login Section -->
         <div class="last-login-container mb-4 px-3">
-            <p class="last-login-text text-white">Đăng nhập vào lúc: @User.FindFirst("LastLoginTime")?.Value</p>
+            <p class="last-login-text">Đăng nhập vào lúc: @User.FindFirst("LastLoginTime")?.Value</p>
         </div>
 
         <!-- List Group Items -->
-        <div class="list-group list-group-flush">
-            <!-- Dashboard -->
-            <a asp-controller="Home" asp-action="Index" class="list-group-item list-group-item-action bg-dark text-light d-flex justify-content-start align-items-center">
-                <i class="fas fa-tachometer-alt me-2"></i> <span>Dashboard</span>
-            </a>
-
+        <div class="list-group list-group-flush">           
             @if (User.IsInRole("Admin"))
             {
-                <!-- Dashboard Data -->
-            <a asp-controller="QuanLy" asp-action="DashboardData" class="list-group-item list-group-item-action bg-dark text-light d-flex justify-content-start align-items-center">
-                 <i class='bx bxs-bar-chart me-2'></i> <span>Dashboard Data</span>
-            </a>
-
+                <a asp-controller="QuanLy" asp-action="DashboardData" class="list-group-item list-group-item-action bg-dark text-light d-flex justify-content-start align-items-center icon-hover">
+                    <i class="fas fa-chart-pie me-2"></i> <span>Dashboard Data</span>
+                </a>
                 <!-- Quản lí nhân viên -->
-            <a asp-controller="QuanLy" asp-action="NhanVienIndex" class="list-group-item list-group-item-action bg-dark text-light d-flex justify-content-start align-items-center">
-                <i class="fas fa-user-tie me-2"></i> <span>Quản lí nhân viên</span>
-            </a>
+                <a asp-controller="QuanLy" asp-action="NhanVienIndex" class="list-group-item list-group-item-action bg-dark text-light d-flex justify-content-start align-items-center">
+                    <i class="fas fa-user-tie me-2"></i> <span>Quản lí nhân viên</span>
+                </a>
             }
-
             <!-- Quản lí khách hàng -->
             <a asp-controller="QuanLy" asp-action="Index" class="list-group-item list-group-item-action bg-dark text-light d-flex align-items-center">
                 <i class="fas fa-users me-2"></i> <span>Quản lí khách hàng</span>
@@ -69,37 +144,46 @@
             <a asp-controller="QuanLy" asp-action="Setting" class="list-group-item list-group-item-action bg-dark text-light d-flex align-items-center">
                 <i class="fas fa-cogs me-2"></i> <span>Cài đặt</span>
             </a>
+                    <!-- Trang Chủ -->
+            <a asp-controller="Home" asp-action="Index" class="list-group-item list-group-item-action bg-dark text-light d-flex justify-content-start align-items-center icon-hover">
+                <i class="fas fa-th-large me-2"></i> <span>Trang chủ</span>
+            </a>
         </div>
+
+        <!-- Logout -->
         <form id="logoutForm" asp-controller="QuanLy" asp-action="DangXuat" method="post">
             <a href="javascript:void(0);" onclick="confirmLogout();">
-                <span class="text">Đăng xuất</span>
+                <i class="fas fa-door-open"></i> <span>Đăng xuất</span>
             </a>
         </form>
     </div>
-
+    </div>
+    
     <!-- Main Content -->
     <div class="content">
         @RenderBody()
 
-        <!-- Include Scripts -->
+        <!-- Toastr Notifications -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     </div>
 
     @RenderSection("Scripts", required: false)
+    <!-- Thay thế liên kết Font Awesome bằng phiên bản mới nhất -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Thêm Animate.css để có hiệu ứng động -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
     <script>
         function confirmLogout() {
-            // Hiển thị thông báo xác nhận
             var confirmAction = confirm("Bạn có chắc chắn muốn đăng xuất?");
-
-            // Nếu người dùng chọn OK, submit form để đăng xuất
             if (confirmAction) {
                 document.getElementById('logoutForm').submit();
-            } else {
-                // Nếu chọn Cancel, không làm gì cả
-                return false;
             }
         }
     </script>

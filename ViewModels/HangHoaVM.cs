@@ -10,6 +10,7 @@ namespace HShop2024.ViewModels
         public string TenHh { get; set; } = null!;
         public string? TenAlias { get; set; }
         public int MaLoai { get; set; }
+        public string MaNcc { get; set; } = null!;
         public string? MoTaDonVi { get; set; }
         public double? DonGia { get; set; }
         public string? Hinh { get; set; }
@@ -23,6 +24,7 @@ namespace HShop2024.ViewModels
         public string TenLoai { get; set; }
         public int SoLanXem { get; set; }
         public List<SelectListItem> MaLoaiOptions { get; set; } = new List<SelectListItem>(); // Dropdown options for categories
+        public List<SelectListItem> ManNccOptions { get; set; } = new List<SelectListItem>(); // Dropdown options for categories
 
     }
 

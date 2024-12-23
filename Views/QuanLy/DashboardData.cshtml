@@ -7,9 +7,35 @@
 
 <div class="container mt-4">
     <!-- Jumbotron -->
-    <div class="jumbotron text-center py-5 bg-primary text-white shadow-lg rounded">
+    <div class="jumbotron text-center py-5 bg-secondary text-white shadow-sm rounded">
         <h1 class="display-4">Dashboard</h1>
         <p class="lead">Overview of the system's key statistics</p>
+    </div>
+
+    <div class="row mt-lg-5">
+        <!-- Biểu đồ khách hàng mới đăng ký trong tháng này -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-lg border-0 rounded">
+                <div class="card-header text-center bg-primary text-white">
+                    <h5 class="mb-0">Khách hàng mới đăng ký</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="customerChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Biểu đồ sản phẩm bán chạy nhất -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-lg border-0 rounded">
+                <div class="card-header text-center bg-success text-white">
+                    <h5 class="mb-0">Sản phẩm bán chạy</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="productChart"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Statistics Row 1 -->
@@ -24,6 +50,53 @@
             </div>
         </div>
 
+        <!-- Tổng số lượng Hóa đơn -->
+        <div class="col-md-4">
+            <div class="card shadow h-100 border-0">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-success">Tổng số lượng Hóa đơn</h5>
+                    <p class="card-text display-4 text-dark">@Model.TotalRevenue</p>
+                </div>
+            </div>
+        </div>
+
+           <!-- Tổng số lượng Hàng hóa -->
+        <div class="col-md-4">
+            <div class="card shadow h-100 border-0">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-primary">Tổng số lượng Hàng hóa</h5>
+                    <p class="card-text display-4 text-dark">@Model.Revenue</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hàng hóa bán chạy nhất -->
+        <div class="col-md-8">
+            <div class="card shadow h-100 border-0">
+                <div class="card-body">
+                    <h5 class="card-title text-success text-center">Hàng hóa bán chạy nhất</h5>
+                    @if (Model.TopSellingProducts != null && Model.TopSellingProducts.Any())
+                    {
+                        <ul class="list-group mt-4">
+                            @foreach (var product in Model.TopSellingProducts)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <span>
+                                        <strong>@product.TenHh</strong> <br />
+                                        <small class="text-muted">Mã hàng hóa: @product.MaHh</small>
+                                    </span>
+                                    <span class="badge bg-primary rounded-pill">@product.SoLuotMua lượt mua</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <p class="text-center mt-4">Không có dữ liệu hàng hóa bán chạy.</p>
+                    }
+                </div>
+            </div>
+        </div>
         <!-- Khách hàng có số xu nhiều nhất -->
         <div class="col-md-4">
             <div class="card shadow h-100 border-0">
@@ -44,16 +117,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Tổng số lượng Hóa đơn -->
-        <div class="col-md-4">
-            <div class="card shadow h-100 border-0">
-                <div class="card-body text-center">
-                    <h5 class="card-title text-success">Tổng số lượng Hóa đơn</h5>
-                    <p class="card-text display-4 text-dark">@Model.TotalRevenue</p>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Statistics Row 2 -->
@@ -64,16 +127,6 @@
                 <div class="card-body text-center">
                     <h5 class="card-title text-info">Tổng số lượng Nhân viên</h5>
                     <p class="card-text display-4 text-dark">@Model.TotalEmployees</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tổng số lượng Hàng hóa -->
-        <div class="col-md-4">
-            <div class="card shadow h-100 border-0">
-                <div class="card-body text-center">
-                    <h5 class="card-title text-primary">Tổng số lượng Hàng hóa</h5>
-                    <p class="card-text display-4 text-dark">@Model.Revenue</p>
                 </div>
             </div>
         </div>
@@ -133,14 +186,55 @@
     .card-body {
         padding: 2rem;
     }
-
-    /* Jumbotron text */
-    .jumbotron h1 {
-        font-size: 3rem;
-        font-weight: 700;
-    }
-
-    .jumbotron p.lead {
-        font-size: 1.2rem;
-    }
 </style>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Biểu đồ số lượng khách hàng mới đăng ký -->
+    <canvas id="customerChart" width="400" height="200"></canvas>
+    <script>
+        var customerCtx = document.getElementById('customerChart').getContext('2d');
+        var customerChart = new Chart(customerCtx, {
+            type: 'line', // Bạn có thể chọn 'bar' nếu muốn biểu đồ cột
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.CustomerRegistrationDates)), // Mảng ngày tháng đăng ký
+                datasets: [{
+                    label: 'Số lượng khách hàng mới đăng ký',
+                    data: @Html.Raw(Json.Serialize(Model.CustomerRegistrations)), // Mảng số lượng khách hàng tương ứng với ngày tháng
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+    <!-- Biểu đồ sản phẩm bán chạy -->
+    <canvas id="topProductsChart" width="400" height="200"></canvas>
+    <script>
+        var ctx = document.getElementById('productChart').getContext('2d');
+        var ctxChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: @Html.Raw(Json.Serialize(Model.TopSellingProducts.Select(p => p.TenHh))),
+                datasets: [{
+                    label: 'Số lượt mua',
+                    data: @Html.Raw(Json.Serialize(Model.TopSellingProducts.Select(p => p.SoLuotMua))),
+                    backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
+    }

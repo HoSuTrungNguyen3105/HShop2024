@@ -3,7 +3,18 @@
 @{
     ViewData["Title"] = "Thêm Nhân viên mới";
     Layout = "_Layout2";
+    var errorMessage = TempData["ErrorMessage"] as string;
 }
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger d-flex align-items-center"
+         style="border-radius: 10px; padding: 20px; background: linear-gradient(135deg, #ff6a6a, #ff3d3d); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+        <i class="bi bi-exclamation-triangle-fill me-3"
+           style="font-size: 2rem; color: #fff;"></i> <!-- Thay đổi icon và màu sắc -->
+        <span style="font-weight: bold; color: #fff; font-size: 1.2rem;">@errorMessage</span>
+    </div>
+}
+
 <div class="container-fluid mt-5">
     <h2 class="mb-4">@ViewData["Title"]</h2>
     <form asp-action="NhanVienCreate" method="post">

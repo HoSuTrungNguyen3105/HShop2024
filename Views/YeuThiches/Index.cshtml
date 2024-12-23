@@ -4,84 +4,167 @@
     ViewData["Title"] = "Danh Sách Sản Phẩm Yêu thích";
     Layout = "_Layout2";
 }
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Toast HTML -->
+<div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" style="position: absolute; top: 20px; right: 20px; z-index: 1050; display: none;">
+    <div class="toast-header">
+        <strong class="me-auto">Thông báo</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+        Bạn đã chọn: <span id="toastMessage"></span>
+    </div>
+</div>
+
+<style>
+    /* CSS cho phong cách đẹp hơn */
+    .sorting-container {
+        background-color: #f8f9fa; /* Màu nền nhẹ */
+        padding: 20px;
+        border-radius: 10px; /* Bo tròn các góc */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+        transition: transform 0.3s; /* Hiệu ứng chuyển động khi hover */
+    }
+
+        .sorting-container:hover {
+            transform: translateY(-5px); /* Nâng lên khi hover */
+        }
+
+    .sorting-label {
+        font-weight: bold; /* Làm đậm nhãn */
+        color: #343a40; /* Màu chữ tối */
+    }
+
+    .form-select-sm {
+        border-radius: 5px; /* Bo tròn cho dropdown */
+        transition: border-color 0.2s; /* Hiệu ứng khi chuyển màu viền */
+    }
+
+        .form-select-sm:focus {
+            border-color: #007bff; /* Màu viền khi focus */
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Hiệu ứng bóng khi focus */
+        }
+
+    #selectedSort {
+        margin-top: 10px;
+        font-weight: bold; /* Làm đậm cho thông báo */
+        color: #007bff; /* Màu chữ cho thông báo */
+    }
+
+    .add-button {
+        margin-top: 20px; /* Khoảng cách cho nút thêm */
+        transition: background-color 0.3s, transform 0.2s; /* Hiệu ứng chuyển màu và chuyển động */
+    }
+
+        .add-button:hover {
+            background-color: #0056b3; /* Màu nền khi hover */
+            transform: translateY(-2px); /* Nâng lên khi hover */
+        }
+</style>
+
 <div class="container mt-5">
     <h1>@ViewData["Title"]</h1>
-    <div class="mb-3">
-        <a asp-action="Create" asp-controller="YeuThiches" class="btn btn-primary">Thêm sản phẩm Yêu Thích</a>
-    </div>
-<!-- Form để chọn tùy chọn -->
-<form method="get" action="@Url.Action("Index", "YeuThiches")" class="mb-3">
-    <div class="col-xl-3">
-        <div class="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
-            <label for="sorting">Default Sorting:</label>
-            <select id="sorting" name="sortOrder" class="border-0 form-select-sm bg-light me-3" onchange="applySorting()">
-                <option value="">Nothing</option>
-                <option value="isorganic">Organic</option>
-                <option value="isfantastic">Fantastic</option>
-                <option value="mostviewed">Lượt mua nhiều nhất</option>
-            </select>
+    <!-- Form để chọn tùy chọn -->
+    <form method="get" action="@Url.Action("Index", "YeuThiches")" class="mb-3">
+        <div class="col-xl-3">
+            <div class="sorting-container mb-4">
+                <label for="sorting" class="sorting-label">Tìm kiếm loại:</label>
+                <select id="sorting" name="sortOrder" class="border-1 form-select-sm bg-light me-3 border-dark" onchange="applySorting()">
+                    <option value="">Nothing</option>
+                    <option value="isorganic">Organic</option>
+                    <option value="isfantastic">Fantastic</option>
+                    <option value="mostviewed">Lượt mua nhiều nhất</option>
+                </select>
+            </div>
+            <div id="selectedSort"></div>
         </div>
+    </form>
+    <div class="mb-3">
+        <a asp-action="Create" asp-controller="YeuThiches" class="btn btn-dark add-button">Thêm sản phẩm Yêu Thích</a>
     </div>
-</form>
 
-<!-- Hiển thị danh sách sản phẩm -->
-<table class="table">
-    <thead>
-        <tr>
-            <th>MaHh</th>
-            <th>Tên Hàng Hóa</th>
-            <th>Số Lượt Mua</th>
-            <th>Organic</th>
-            <th>Fantastic</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
+    <!-- Hiển thị danh sách sản phẩm -->
+    <table class="table">
+        <thead>
             <tr>
-                <td>@item.MaHh</td>
-                <td>@item.TenHh</td>
-                <td>@item.SoLanXem</td>
-                <td>@(item.IsOrganic ? "Có" : "Không")</td>
-                <td>@(item.IsFantastic ? "Có" : "Không")</td>
+                <th>MaHh</th>
+                <th>Tên Hàng Hóa</th>
+                <th>Số Lượt Mua</th>
+                <th>Organic</th>
+                <th>Fantastic</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.MaHh</td>
+                    <td>@item.TenHh</td>
+                    <td>@item.SoLanXem</td>
+                    <td>@(item.IsOrganic ? "Có" : "Không")</td>
+                    <td>@(item.IsFantastic ? "Có" : "Không")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
-@* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Ensure jQuery is included --> *@
- <script>
-    $(document).ready(function () {
-        // Khôi phục giá trị đã chọn từ localStorage khi trang tải lại
-        loadSortingPreference();
 
-        // Sự kiện onchange để lưu giá trị khi người dùng thay đổi
+<script>
+    $(document).ready(function () {
+        loadSortingPreference();
+        checkToastStatus(); // Kiểm tra trạng thái toast khi trang tải lại
+
         $('#sorting').on('change', function () {
-            saveSortingPreference();
             applySorting();
         });
     });
 
-
-    function applySorting() {
-        var selectedSortOrder = document.getElementById('sorting').value;
-        // Điều hướng đến action Index của HangHoaController với tham số sortOrder
-        window.location.href = '/Yeuthiches/Index?sortOrder=' + selectedSortOrder;
-    }
-
     function saveSortingPreference() {
         var sortingSelect = document.getElementById('sorting');
-        // Lưu giá trị đã chọn vào localStorage
         localStorage.setItem('sortingPreference', sortingSelect.value);
     }
 
     function loadSortingPreference() {
         var savedValue = localStorage.getItem('sortingPreference');
         if (savedValue) {
-            // Khôi phục giá trị đã chọn từ localStorage
             var sortingSelect = document.getElementById('sorting');
             sortingSelect.value = savedValue;
+            updateDisplay(savedValue);
+        }
+    }
+
+    function applySorting() {
+        var select = document.getElementById("sorting");
+        var selectedSortOrder = select.value;
+        saveSortingPreference();
+        updateDisplay(selectedSortOrder);
+        window.location.href = '/Yeuthiches/Index?sortOrder=' + selectedSortOrder;
+    }
+
+    function updateDisplay(selectedSortOrder) {
+        var displayArea = document.getElementById("selectedSort");
+
+        // Lấy giá trị đã lưu từ localStorage
+        var savedValue = localStorage.getItem('sortingPreference');
+        if (savedValue) {
+            var select = document.getElementById("sorting");
+            var selectedText = select.options[select.selectedIndex].text;
+
+            // Nếu có giá trị đã lưu, hiển thị thông báo
+            displayArea.innerHTML = selectedText;
+        } else {
+            displayArea.innerHTML = ""; // Xóa thông báo nếu không có giá trị đã lưu
+        }
+    }
+
+    function loadSortingPreference() {
+        var savedValue = localStorage.getItem('sortingPreference');
+        if (savedValue) {
+            var sortingSelect = document.getElementById('sorting');
+            sortingSelect.value = savedValue;
+            updateDisplay(savedValue); // Gọi hàm updateDisplay để hiển thị thông báo
         }
     }
 </script>
-

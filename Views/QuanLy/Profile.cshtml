@@ -8,8 +8,6 @@
         @TempData["SuccessMessage"]
     </div>
 }
-
-<h1 class="text-center mt-5 display-4 font-weight-bold">Profile</h1>
 <div class="container mt-4 p-5 border shadow-lg rounded-lg" style="max-width: 600px; background-color: #f9f9f9; border: 1px solid #ddd;">
     @if (User.Identity.IsAuthenticated)
     {
@@ -19,16 +17,16 @@
         var isAdmin = User.IsInRole("Admin");
         if (isAdmin)
         {
-            <h2 class="mb-4 text-info">👤👋 Chào Quản lý !!!</h2>
+            <h2 class="mb-4 text-black"><i class="fas fa-user-shield"></i> Chào Quản lý !!!</h2>
         }
         else if (isEmployee)
         {
-            <h2 class="mb-4 text-success">👨‍💼 Chào nhân viên @userName!</h2>
+            <h2 class="mb-4 text-dark"><i class="fas fa-poop"></i> Chào nhân viên @userName!</h2>
         }
     }
     else
     {
-        <h2 class="mb-4 text-warning">👋 Chào bạn!</h2>
+        <h2 class="mb-4 text-warning"><i class="fas fa-hand-peace"></i> Chào bạn!</h2>
         <p>Bạn hiện chưa đăng nhập</p>
     }
 
@@ -45,7 +43,7 @@
                 <input type="email" class="form-control" id="email" name="Email" value="@User.FindFirstValue(ClaimTypes.Email)" readonly />
             </div>
             <div class="d-flex justify-content-between align-items-center mt-4">
-                <a asp-action="DangXuat" class="btn btn-danger btn-lg px-4">Đăng xuất</a>
+                <a asp-action="DangXuat"><i class="fas fa-sign-out-alt"></i>Đăng xuất</a>
             </div>
         </form>
     </div>

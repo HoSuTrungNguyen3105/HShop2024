@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HShop2024.Data;
 using HShop2024.Helpers;
+using HShop2024.ViewModels;
 
 namespace HShop2024.Controllers
 {
@@ -59,44 +60,109 @@ namespace HShop2024.Controllers
             return View(hangHoa);
         }
 
-        // GET: HangHoas/Create
-        public IActionResult Create()
-        {
-            ViewData["MaLoai"] = new SelectList(_context.Loais, "MaLoai", "MaLoai");
-            ViewData["MaNcc"] = new SelectList(_context.NhaCungCaps, "MaNcc", "MaNcc");
-            return View();
-        }
-
-        // POST: HangHoas/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MaHh,TenHh,TenAlias,MaLoai,MoTaDonVi,DonGia,Hinh,NgaySx,GiamGia,SoLanXem,MoTa,MaNcc,IsOrganic,IsFantastic,SoLuong")] HangHoa hangHoa , IFormFile Hinh)
-        {
-            if (ModelState.IsValid)
+		// GET: HangHoas/Create
+		public IActionResult Create()
+		{
+            // Tạo một instance của HangHoaVM và gán các giá trị cho dropdown
+            var hangHoaVM = new HangHoaVM
             {
-                // Tắt theo dõi của Entity Framework cho các đối tượng liên quan
-                _context.Entry(hangHoa).State = EntityState.Added;
-                _context.Entry(hangHoa).Reference(h => h.MaLoaiNavigation).IsModified = false;
-                _context.Entry(hangHoa).Reference(h => h.MaNccNavigation).IsModified = false;
-                if (Hinh != null)
-                {
-                    hangHoa.Hinh = MyUtil.UploadHinh(Hinh, "KhachHang");
-                }
-                hangHoa.MaLoaiNavigation = await _context.Loais.FindAsync(hangHoa.MaLoai);
-                hangHoa.MaNccNavigation = await _context.NhaCungCaps.FindAsync(hangHoa.MaNcc);
-                _context.Add(hangHoa);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["MaLoai"] = new SelectList(_context.Loais, "MaLoai", "MaLoai", hangHoa.MaLoai);
-            ViewData["MaNcc"] = new SelectList(_context.NhaCungCaps, "MaNcc", "MaNcc", hangHoa.MaNcc);
-            return View(hangHoa);
-        }
+                MaLoaiOptions = _context.Loais
+                    .Select(l => new SelectListItem
+                    {
+                        Value = l.MaLoai.ToString(),
+                        Text = l.TenLoai
+                    }).ToList(),
+                    ManNccOptions = _context.NhaCungCaps
+                    .Select(l => new SelectListItem
+                    {
+                        Value = l.MaNcc.ToString(),
+                        Text = l.TenCongTy
+                    }).ToList()
+            };
 
-        // GET: HangHoas/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+			return View(hangHoaVM); // Truyền HangHoaVM vào View
+		}
+
+		// POST: HangHoas/Create
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> Create(HangHoaVM hangHoaVM, IFormFile Hinh)
+		{
+			if (!ModelState.IsValid)
+			{
+				// Trả lại dữ liệu dropdown khi có lỗi để người dùng không phải chọn lại
+
+				hangHoaVM.MaLoaiOptions = _context.Loais
+					.Select(l => new SelectListItem
+					{
+						Value = l.MaLoai.ToString(),
+						Text = l.TenLoai
+					}).ToList();
+                hangHoaVM.ManNccOptions = _context.NhaCungCaps
+                    .Select(l => new SelectListItem
+                    {
+                        Value = l.MaNcc.ToString(),
+                        Text = l.TenCongTy
+                    }).ToList();
+
+                return View(hangHoaVM);
+			}
+
+			// Chuyển dữ liệu từ HangHoaVM sang HangHoa
+			var hangHoa = new HangHoa
+			{
+				MaHh = hangHoaVM.MaHh,
+				TenHh = hangHoaVM.TenHh,
+				TenAlias = hangHoaVM.TenAlias,
+                MaNcc = hangHoaVM.MaNcc,
+				MaLoai = hangHoaVM.MaLoai,
+				MoTaDonVi = hangHoaVM.MoTaDonVi,
+				DonGia = hangHoaVM.DonGia,
+				NgaySx = hangHoaVM.NgaySx,
+				GiamGia = hangHoaVM.GiamGia,
+				IsOrganic = hangHoaVM.IsOrganic,
+				IsFantastic = hangHoaVM.IsFantastic,
+				SoLuong = hangHoaVM.SoLuong,
+				MoTa = hangHoaVM.MoTa,
+				SoLanXem = hangHoaVM.SoLanXem
+			};
+
+			// Xử lý file hình ảnh
+			if (Hinh != null)
+			{
+				hangHoa.Hinh = MyUtil.UploadHinh(Hinh, "HangHoa");
+			}
+
+			// Lưu xuống database
+			try
+			{
+				_context.Add(hangHoa);
+				await _context.SaveChangesAsync();
+				return RedirectToAction(nameof(Index));
+			}
+			catch (Exception ex)
+			{
+                ModelState.AddModelError("", "Lỗi khi lưu dữ liệu: " + ex.Message);
+                hangHoaVM.MaLoaiOptions = _context.Loais
+					.Select(l => new SelectListItem
+					{
+						Value = l.MaLoai.ToString(),
+						Text = l.TenLoai
+					}).ToList();
+                hangHoaVM.ManNccOptions = _context.NhaCungCaps
+                     .Select(l => new SelectListItem
+                     {
+                         Value = l.MaNcc.ToString(),
+                         Text = l.TenCongTy
+                     }).ToList();
+
+                return View(hangHoaVM);
+			}
+		}
+
+
+		// GET: HangHoas/Edit/5
+		public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {

@@ -9,21 +9,62 @@
         @TempData["SuccessMessage"]
     </div>
 }
+<style>
+        .field {
+            position: relative;
+            margin-bottom: 2rem; /* Hoặc điều chỉnh giá trị này để có khoảng cách phù hợp */
+        }
+
+        .field input {
+            color: seagreen;
+            background: none;
+            padding: 0.625rem;
+            border: 2px solid #030104;
+        }
+
+        .field label {
+            position: absolute;
+            top: 0;
+            left: 0;
+            translate: 0.625rem 0.625rem;
+            color: greenyellow;
+            background-color: slategrey;
+            padding-inline: 0.25rem;
+            pointer-events: none;
+            border: 2px solid transparent;
+            transition: translate 250ms,background-color 250ms,border-color 250ms;
+        }
+
+        .field:focus-within label,
+        .field:not(:has(:placeholder-shown)) label {
+            translate: 0.625rem -1rem;
+            border-color: greenyellow;
+        }
+
+        .field::placeholder {
+            color: transparent
+        }
+
+        .field input::placeholder {
+            text-align: right;
+            color: #888; /* Màu placeholder có thể tùy chỉnh */
+        }
+</style>
 <div class="container py-5">
     <h2 class="mb-4 text-center">@ViewData["Title"]</h2>
-    <div class="row g-4">
+    <div class="row g-4 justify-content-center">
         <!-- Form Đăng Nhập Khách Hàng -->
         <div class="col-md-6">
-            <div class="p-4 border rounded shadow-sm bg-light">
+            <div class="p-4 border rounded shadow-sm bg-white">
                 <h3 class="mb-4 text-center">Khách Hàng</h3>
                 <form asp-action="DangNhap" method="post">
                     <div class="text-danger mb-3" asp-validation-summary="All"></div>
-                    <div class="mb-3">
+                    <div class="field">
                         <label asp-for="MaKh" class="form-label"></label>
                         <input asp-for="MaKh" class="form-control" placeholder="Hint account:hello" />
                         <span asp-validation-for="MaKh" class="text-danger"></span>
                     </div>
-                    <div class="mb-3">
+                    <div class="field">
                         <label asp-for="MatKhau" class="form-label"></label>
                         <input asp-for="MatKhau" type="password" class="form-control" placeholder="Password:1" />
                         <span asp-validation-for="MatKhau" class="text-danger"></span>
@@ -32,16 +73,18 @@
                         <a asp-controller="KhachHang" asp-action="ForgotPassword">Quên mật khẩu?</a>
                         <a asp-controller="KhachHang" asp-action="DangKy">Chưa có tài khoản ? Tạo mới</a>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block">Đăng Nhập</button>
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary">Đăng Nhập</button>
+                    </div>                    
                     <input type="hidden" name="ReturnUrl" value="@ViewBag.ReturnUrl" />
                 </form>
             </div>
         </div>
-        <!-- Button Chuyển Hướng Đến Đăng Nhập Nhân Viên -->
+        <!-- Button Chuyển Đến Đăng Nhập Nhân Viên -->
         <div class="col-md-6 d-flex align-items-center justify-content-center">
-            <div class="text-center">
-                <h3 class="mb-4">Nhân Viên</h3>
-                <a class="btn btn-secondary btn-lg" asp-controller="QuanLy" asp-action="DangNhap">Đăng Nhập Nhân Viên</a>
+            <div class="text-center p-4 bg-light border rounded shadow-lg">
+                <h3 class="mb-4 text-secondary">Nhân Viên</h3>
+                <a class="btn btn-secondary btn-lg px-5 py-2" asp-controller="QuanLy" asp-action="DangNhap">Đăng Nhập Nhân Viên</a>
             </div>
         </div>
     </div>

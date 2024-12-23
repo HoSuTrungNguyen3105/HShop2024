@@ -13,19 +13,31 @@ namespace HShop2024.Controllers
         {
             _context = context;
         }
-        
-        [HttpPost]
-        public async Task<IActionResult> PostComment([Bind("CauHoi,TraLoi")] HoiDap hoiDap) { 
-            if (ModelState.IsValid)
-            {
-                hoiDap.NgayDua = DateOnly.FromDateTime(DateTime.Now); // Set the current date
-                hoiDap.MaNv = User.Identity.Name; // Assuming the username is used as the MaNv
 
-                _context.Add(hoiDap);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Detail", "HangHoa", new { id = hoiDap.MaHd });
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PostComment(int name, string review)
+        {
+            if (string.IsNullOrWhiteSpace(review))
+            {
+                TempData["ErrorMessage"] = "Bình luận không được để trống.";
+                return RedirectToAction("Detail", "HangHoa", new { id = name });
             }
-            return View(hoiDap);
+
+            var comment = new HoiDap
+            {
+                MaHh = name,
+                CauHoi = review,
+                NgayDua = DateOnly.FromDateTime(DateTime.Now),
+            };
+
+
+            _context.HoiDaps.Add(comment);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Bình luận của bạn đã được đăng.";
+            return RedirectToAction("Detail", "HangHoa", new { id = name });
         }
+
     }
 }

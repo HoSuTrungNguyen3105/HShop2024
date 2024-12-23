@@ -14,13 +14,17 @@ namespace HShop2024.ViewModels
         {
             public string MaKh { get; set; }
             public string HoTen { get; set; }
-            public int? SoXu { get; set; } // Số lượng xu
-            public override string ToString()
-            {
-                return $"{HoTen} - Xu: {SoXu}";
-            }
+            public int? SoXu { get; set; } // Số lượng xu          
         }
-        public List<ProductSales> BestSellingProducts { get; set; }
+        public List<TopSellingProduct> TopSellingProducts { get; set; }
+        public class TopSellingProduct
+        {
+            public int MaHh { get; set; }
+            public string TenHh { get; set; }
+            public int SoLuotMua { get; set; }
+        }
+        // Dữ liệu biểu đồ cho khách hàng mới đăng ký
+        public List<string> CustomerRegistrationDates { get; set; }
+        public List<int> CustomerRegistrations { get; set; } // Số lượng khách hàng đăng ký theo ngày
     }
-
 }

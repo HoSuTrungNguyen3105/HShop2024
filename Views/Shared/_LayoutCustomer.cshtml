@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿﻿
+<!DOCTYPE html>
 <html>
 <head>
 	<meta name="viewport" content="width=device-width" />
@@ -78,20 +79,19 @@
 										{
 											<a asp-controller="QuanLy" asp-action="Index" class="dropdown-item text-dark">Dashboard</a>
 											<a asp-controller="QuanLy" asp-action="Profile" class="dropdown-item">Profile</a>
-											<a asp-controller="QuanLy" asp-action="DangXuat" class="dropdown-item">Logout</a>
+											<a asp-controller="QuanLy" asp-action="DangXuat" class="dropdown-item text-danger">Logout</a>
 										}
 										else if (User.IsInRole("Admin"))
 										{
 											<a asp-controller="QuanLy" asp-action="DashboardData" class="dropdown-item text-dark">Dashboard</a>
 											<a asp-controller="QuanLy" asp-action="Profile" class="dropdown-item">Profile</a>
-											<a asp-controller="QuanLy" asp-action="DangXuat" class="dropdown-item">Logout</a>
+											<a asp-controller="QuanLy" asp-action="DangXuat" class="dropdown-item text-danger">Logout</a>
 										}
 									}
 									else
 									{
 										<a asp-controller="KhachHang" asp-action="Profile" class="dropdown-item">Profile</a>
 										<a asp-controller="KhachHang" asp-action="DangKy" class="dropdown-item">Register</a>
-										<a asp-controller="KhachHang" asp-action="DangNhap" class="dropdown-item">Log in</a>
 										<a asp-controller="KhachHang" asp-action="ForgotPassword" class="dropdown-item">Forgot password</a>
 									}
 
@@ -110,30 +110,29 @@
 
 							@if (User.Identity.IsAuthenticated && User.IsInRole("Customer"))
 							{
-								<div class="xu-container border border-primary rounded p-2 d-flex align-items-center" style="background-color: #f8f9fa; font-size: 0.875rem;">
-									<i class="bi bi-coin" style="font-size: 1.2rem; color: #6c757d;"></i>
+								<div class="xu-container border border-primary rounded p-1 d-flex align-items-center" style="background-color: #f8f9fa; font-size: 0.850rem;">
+									<i class="bi bi-coin" style="font-size: 1rem; color: #6c757d;"></i>
 									<span class="fw-bold">Xu: <span class="text-dark">@User.Claims.FirstOrDefault(c => c.Type == "Xu")?.Value</span></span>
 								</div>
 								<div class="user-info ms-3">
-									<a asp-controller="KhachHang" asp-action="Profile" title="Xem thông tin người dùng" class="user-icon">
-										<i class="fas fa-user fa-2x"></i> <!-- chỉ chứa icon -->
-										<span>@User.Identity.Name</span> <!-- tên người dùng -->
+									<a asp-controller="KhachHang" asp-action="Profile" title="Xem thông tin người dùng">
+										<i class="fa fa-user-circle fa-2x"></i>
 									</a>
 								</div>
 							}
 							else if (User.Identity.IsAuthenticated && (User.IsInRole("Employee") || User.IsInRole("Admin")))
 							{
 								<div class="user-info ms-3">
-									<a asp-controller="QuanLy" asp-action="Profile" title="Xem thông tin nhân viên" class="user-icon">
-										<i class="fas fa-user fa-2x"></i> <!-- chỉ chứa icon -->
-										<span>@User.Identity.Name</span> <!-- tên người dùng -->
+									<a asp-controller="QuanLy" asp-action="Profile" title="Xem thông tin nhân viên">
+										<i class="fa fa-user-secret fa-2x"></i>
+										<span>@User.Identity.Name</span> 
 									</a>
 								</div>
 							}
 							else
 							{
-								<a asp-controller="KhachHang" asp-action="DangNhap" title="Đăng nhập" class="user-icon">
-									<i class="fas fa-user fa-2x"></i>
+								<a asp-controller="KhachHang" asp-action="DangNhap" title="Đăng nhập">
+									<i class="fas fa-sign-in-alt fa-2x"></i>
 								</a>
 							}
 						</div>

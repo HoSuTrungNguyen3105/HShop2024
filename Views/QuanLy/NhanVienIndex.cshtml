@@ -1,9 +1,21 @@
-﻿@model IEnumerable<HShop2024.Data.NhanVien>
+﻿﻿
+@model IEnumerable<HShop2024.Data.NhanVien>
 @{
     ViewData["Title"] = "Danh sách nhân viên";
     Layout = "_Layout2";
 }
-
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-dark">
+        @TempData["SuccessMessage"]
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-dark">
+        @TempData["ErrorMessage"]
+    </div>
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,6 +46,17 @@
             font-size: 13px;
             margin-right: 6px;
             transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+        }
+
+        .btn-action {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
         }
 
         .btn-primary:hover, .btn-warning:hover, .btn-danger:hover, .btn-info:hover {
@@ -88,22 +111,32 @@
                             <td>
                                 @(nv.VaiTro == 1 ? "Nhân viên" : nv.VaiTro == 2 ? "Quản lí Admin" : "Không xác định")
                             </td>
-                            <td class="text-center">
+                            <td>
                                 <div class="btn-group" role="group">
-                                    <a href="@Url.Action("NhanVienEdit", "QuanLy", new { id = nv.MaNv })"
-                                       class="btn btn-outline-warning btn-sm rounded" title="Chỉnh sửa" data-toggle="tooltip" data-placement="top">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a href="@Url.Action("NhanVienDelete", "QuanLy", new { id = nv.MaNv })"
-                                       class="btn btn-outline-danger btn-sm rounded" title="Xóa" data-toggle="tooltip" data-placement="top">
-                                        <i class="fas fa-trash"></i>
-                                    </a>
+                                    @if (User.IsInRole("Admin"))
+                                    {
+                                        <a href="@Url.Action("ChangeRole", "QuanLy", new { id = nv.MaNv })"
+                                           class="btn btn-dark btn-action btn-sm rounded" title="Thay đổi vai trò" data-toggle="tooltip" data-placement="top">
+                                            <i class="fas fa-user-shield me-1" style="font-size: 0.9rem;"></i>
+                                        </a>
+                                        <a href="@Url.Action("TuocQuyen", "QuanLy", new { id = nv.MaNv })"
+                                           class="btn btn-dark btn-action btn-sm rounded" title="Tước quyền admin" data-toggle="tooltip" data-placement="top">
+                                            <i class="fas fa-user-minus me-1" style="font-size: 0.9rem;"></i>
+                                        </a>
+                                    }
+                                        <a href="@Url.Action("NhanVienEdit", "QuanLy", new { id = nv.MaNv })"
+                                            class="btn btn-outline-dark btn-sm rounded" title="Chỉnh sửa" data-toggle="tooltip" data-placement="top">
+                                            <i class="fas fa-edit" style="font-size: 0.9rem;"></i>
+                                        </a>
+                                        <a href="@Url.Action("NhanVienDelete", "QuanLy", new { id = nv.MaNv })"
+                                            class="btn btn-outline-danger btn-sm rounded" title="Xóa" data-toggle="tooltip" data-placement="top">
+                                            <i class="fas fa-trash" style="font-size: 0.9rem;"></i>
+                                        </a>
                                 </div>
                             </td>
-
                             <td class="text-center">
                                 <a href="@Url.Action("NhanVienDetail", "QuanLy", new { id = nv.MaNv })"
-                                   class="btn btn-outline-info btn-sm rounded" title="Chi tiết" data-toggle="tooltip" data-placement="top">
+                                   class="btn btn-outline-secondary btn-sm rounded" title="Chi tiết" data-toggle="tooltip" data-placement="top">
                                     <i class="fas fa-info-circle"></i>
                                 </a>
                             </td>

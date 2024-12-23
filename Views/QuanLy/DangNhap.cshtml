@@ -16,15 +16,18 @@
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="p-4 border rounded shadow-sm bg-light">
-                <form asp-action="DangNhap">
+                <form asp-action="DangNhap" method="post">
+                    <!-- Mã nhân viên -->
                     <div class="mb-3">
                         <label asp-for="MaNv" class="form-label"></label>
-                        <input asp-for="MaNv" class="form-control" />
+                        <input asp-for="MaNv" class="form-control" placeholder="Hint account:hstn" />
                         <span asp-validation-for="MaNv" class="text-danger"></span>
                     </div>
+
+                    <!-- Mật khẩu -->
                     <div class="mb-3">
                         <label asp-for="MatKhau" class="form-label"></label>
-                        <input asp-for="MatKhau" type="password" class="form-control" />
+                        <input asp-for="MatKhau" type="password" class="form-control" placeholder="Password:5" />
                         <span asp-validation-for="MatKhau" class="text-danger"></span>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>

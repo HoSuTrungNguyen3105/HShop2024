@@ -28,10 +28,9 @@ namespace HShop2024.Controllers
 
         // Quản lý Khách Hàng
         [Authorize(Roles = "Admin")]
-
         public IActionResult Index()
         {
-            List<KhachHang> khachHangs = _context.KhachHangs.ToList();
+            List<KhachHang> khachHangs = _context.KhachHangs.ToList();          
             return View(khachHangs);
         }
 
@@ -77,6 +76,33 @@ namespace HShop2024.Controllers
                 Revenue = await _context.HangHoas.CountAsync(),
                 ProductRevenue = await _context.NhaCungCaps.CountAsync()
             };
+            
+
+            // Lấy dữ liệu khách hàng mới đăng ký trong tháng
+            var currentMonth = DateTime.Now.Month;
+            dashboardData.CustomerRegistrationDates = await _context.KhachHangs
+                .Where(k => k.ThoiGianDangKy.Month == currentMonth)
+                .GroupBy(k => k.ThoiGianDangKy.Date)
+                .Select(g => g.Key.ToString("dd/MM/yyyy"))
+                .ToListAsync();
+
+            dashboardData.CustomerRegistrations = await _context.KhachHangs
+                .Where(k => k.ThoiGianDangKy.Month == currentMonth)
+                .GroupBy(k => k.ThoiGianDangKy.Date)
+                .Select(g => g.Count())
+                .ToListAsync();
+
+            // Lấy danh sách sản phẩm bán chạy nhất
+            dashboardData.TopSellingProducts = await _context.HangHoas
+                .OrderByDescending(h => h.SoLanXem)
+                .Take(3)
+                .Select(h => new DashboardViewModel.TopSellingProduct
+                {
+                    MaHh = h.MaHh,
+                    TenHh = h.TenHh,
+                    SoLuotMua = h.SoLanXem
+                })
+                .ToListAsync();
 
             // Lấy khách hàng có số lượng xu nhiều nhất 
             var topCustomer = await _context.KhachHangs
@@ -91,7 +117,20 @@ namespace HShop2024.Controllers
 
             // Lưu thông tin khách hàng vào DashboardViewModel
             dashboardData.TopCustomer = topCustomer;
+            // Lấy danh sách hàng hóa bán chạy nhất dựa trên soluotxem
+            var topSellingProducts = await _context.HangHoas
+                .OrderByDescending(h => h.SoLanXem) // Sắp xếp theo số lượt xem giảm dần
+                .Take(3) // Giới hạn lấy 5 sản phẩm bán chạy nhất
+                .Select(h => new DashboardViewModel.TopSellingProduct
+                {
+                    MaHh = h.MaHh,
+                    TenHh = h.TenHh,
+                    SoLuotMua = h.SoLanXem
+                })
+                .ToListAsync();
 
+            // Lưu danh sách hàng hóa bán chạy nhất vào DashboardViewModel
+            dashboardData.TopSellingProducts = topSellingProducts;
 
             return View(dashboardData);
         }
@@ -111,9 +150,15 @@ namespace HShop2024.Controllers
         // Quản lý Nhân Viên
         public async Task<IActionResult> NhanVienIndex()
         {
-            var nhanViens = await _context.NhanViens.ToListAsync();
+            string currentUserName = User.Identity.Name;
+
+            var nhanViens = await _context.NhanViens
+                                          .Where(nv => nv.HoTen != currentUserName)
+                                          .ToListAsync();
+
             return View(nhanViens);
         }
+
 
         public async Task<IActionResult> NhanVienDetail(string id, string maNv)
         {
@@ -313,6 +358,59 @@ namespace HShop2024.Controllers
             }
             return View();
         }
+        [HttpGet, HttpPost]
+        public async Task<IActionResult> ChangeRole(string id)
+        {
+            var nhanVien = await _context.NhanViens.FindAsync(id);
+            if (nhanVien == null)
+            {
+                TempData["ErrorMessage"] = $"Nhân viên với ID {id} không tồn tại!";
+                return RedirectToAction("NhanVienIndex", "QuanLy"); // Chuyển hướng về trang danh sách
+            }
+            if (User.IsInRole("Admin"))
+            {
+                // Kiểm tra nếu nhân viên đã là admin, không thể cấp quyền tiếp
+                if (nhanVien.VaiTro == 2)
+                {
+                    TempData["ErrorMessage"] = "Tài khoản này đã là admin!";
+                }
+                else
+                {
+                    // Thay đổi vai trò của nhân viên thành Admin (giá trị vai trò là 2 cho Admin)
+                    nhanVien.VaiTro = 2;
+                    _context.Update(nhanVien);
+                    await _context.SaveChangesAsync();
+
+                    // Thông báo cho người dùng thành công
+                    TempData["SuccessMessage"] = $"Đã thay đổi quyền của tài khoản {id} thành admin thành công!";
+                }
+            }
+
+            return RedirectToAction("NhanVienIndex", "QuanLy"); // Chuyển hướng về trang danh sách
+        }
+
+
+
+        [HttpGet, HttpPost]
+        [Authorize(Roles = "Admin")] // Chỉ cho phép admin thực hiện
+        public async Task<IActionResult> TuocQuyen(string id)
+        {
+            // Tìm nhân viên theo id
+            var nhanVien = await _context.NhanViens.FindAsync(id);
+            if (nhanVien == null)
+            {
+                return NotFound(); // Nếu không tìm thấy nhân viên
+            }
+
+            // Cập nhật vai trò thành Nhân viên
+            nhanVien.VaiTro = 1; // Giả sử 1 là mã cho nhân viên
+            _context.Update(nhanVien);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "Đã thay đổi quyền thành công thành Nhân viên!";
+            return RedirectToAction("NhanVienIndex", "QuanLy"); // Chuyển hướng về trang danh sách
+        }
+
 
         private bool NhanVienExists(string id)
         {
@@ -375,7 +473,7 @@ namespace HShop2024.Controllers
                     TotalRevenue = hh.ChiTietHds.Sum(ct => (ct.SoLuong) * (hh.DonGia ?? 0))
                 })
                 .OrderByDescending(ps => ps.SalesCount)
-                .Take(12)
+                .Take(6)
                 .ToList();
 
             var model = new

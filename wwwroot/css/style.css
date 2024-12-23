@@ -26,6 +26,80 @@
 }
 /*** Spinner End ***/
 
+.filter-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.filter-section {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 300px;
+}
+
+    .filter-section h2 {
+        margin-top: 0;
+        color: #333;
+        text-align: center;
+    }
+
+.filter-option {
+    margin-bottom: 1rem;
+}
+
+    .filter-option input[type="radio"] {
+        display: none;
+    }
+
+    .filter-option label {
+        display: block;
+        padding: 10px 15px;
+        background-color: #e9ecef;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .filter-option input[type="radio"]:checked + label {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .filter-option label:hover {
+        background-color: #dee2e6;
+    }
+
+    .filter-option input[type="radio"]:checked + label:hover {
+        background-color: #0056b3;
+    }
+
+.emotion-vui {
+    background-color: rebeccapurple;
+}
+
+.emotion-buon {
+    background-color: dimgrey;
+}
+
+.emotion-gian {
+    background-color: darkred;
+}
+
+.emotion-honloan {
+    background-color: yellowgreen;
+}
+
+#statusMessage {
+    display: none;
+    margin-top: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.7);
+}
 
 /*** Button Start ***/
 .btn {

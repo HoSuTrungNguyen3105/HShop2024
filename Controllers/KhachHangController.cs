@@ -30,6 +30,8 @@ namespace ECommerceMVC.Controllers
         private readonly IEmailSender _emailSender;
         private readonly Hshop2023Context db;
         private readonly IMapper _mapper;
+        private readonly ILogger<KhachHangController> _logger;
+
         public KhachHangController(Hshop2023Context context, IMapper mapper, IEmailSender emailSender)
         {
             db = context;
@@ -48,33 +50,47 @@ namespace ECommerceMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Check if MaKh already exists in the database
-                // Kiểm tra xem mã khách hàng đã tồn tại trong database chưa
+                // Kiểm tra xem mã khách hàng và email đã tồn tại trong database
                 var existingCustomer = await db.KhachHangs
-                                                .AsNoTracking() // Không theo dõi thực thể
-                                                .FirstOrDefaultAsync(kh => kh.MaKh == khachhang.MaKh);
+                    .AsNoTracking() // Không theo dõi thực thể
+                    .FirstOrDefaultAsync(kh => kh.MaKh == khachhang.MaKh || kh.Email == khachhang.Email);
 
-                // Nếu mã khách hàng đã tồn tại
+                // Nếu mã khách hàng hoặc email đã tồn tại
                 if (existingCustomer != null)
                 {
-                    TempData["ErrorMessage"] = "Mã khách hàng đã tồn tại."; // Thêm thông báo lỗi vào TempData
+                    if (existingCustomer.MaKh == khachhang.MaKh)
+                    {
+                        TempData["ErrorMessage"] = "Mã khách hàng đã tồn tại.";
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Email đã tồn tại.";
+                    }
                     return RedirectToAction("DangKy", "KhachHang");
                 }
-                khachhang.RandomKey = GenerateRandomKey(32); // 32 characters for the random key, you can change this as needed             
+
+                // Thiết lập các thuộc tính cho khách hàng mới
+                khachhang.RandomKey = GenerateRandomKey(32); // 32 characters for the random key
                 khachhang.HieuLuc = true;
-                // Thêm thời gian đăng ký
                 khachhang.ThoiGianDangKy = DateTime.Now;
+
+                // Upload hình ảnh nếu có
                 if (Hinh != null)
                 {
                     khachhang.Hinh = MyUtil.UploadHinh(Hinh, "KhachHang");
                 }
+
+                // Thêm khách hàng vào database
                 db.Add(khachhang);
                 await db.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Đăng ký thành công";
+
+                TempData["SuccessMessage"] = "Đăng ký thành công 😄.";
                 return RedirectToAction("DangNhap", "KhachHang");
             }
+
             return View(khachhang);
         }
+
 
         // Method to generate random key
         private string GenerateRandomKey(int length)
@@ -90,68 +106,62 @@ namespace ECommerceMVC.Controllers
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> UpdateProfile(AccountSettingsVM model)
         {
-            // Chỉ thực hiện tiếp nếu ModelState hợp lệ
             if (!ModelState.IsValid)
             {
                 return View("Profile", model);
             }
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Lấy ID người dùng từ claims
-            var khachHang = await db.KhachHangs.FindAsync(userId); // Tìm khách hàng trong database theo userId
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await db.KhachHangs.FindAsync(userId);
 
-            if (khachHang != null)
+            if (user == null)
             {
-                // Cập nhật thông tin người dùng từ model
-                khachHang.HoTen = model.Username;
-                khachHang.Email = model.Email;
-                khachHang.DienThoai = model.Phone;
-                khachHang.DiaChi = model.Address;
-                khachHang.NgaySinh = model.Birthdate;
-                khachHang.GioiTinh = model.Gender;
-
-                // Lưu thay đổi vào database
-                db.KhachHangs.Update(khachHang);
-                await db.SaveChangesAsync();
-
-                // Lấy lại identity hiện tại
-                var identity = (ClaimsIdentity)User.Identity;
-
-                // Cập nhật các claims liên quan bằng cách xóa claim cũ trước khi thêm claim mới
-                UpdateClaim(identity, ClaimTypes.Name, model.Username);
-                UpdateClaim(identity, ClaimTypes.Email, model.Email);
-                UpdateClaim(identity, ClaimTypes.MobilePhone, model.Phone);
-                UpdateClaim(identity, ClaimTypes.StreetAddress, model.Address);
-                UpdateClaim(identity, ClaimTypes.DateOfBirth, model.Birthdate.ToString("yyyy-MM-dd"));
-
-                // Giới tính có thể là chuỗi
-                UpdateClaim(identity, ClaimTypes.Gender, model.Gender ? "Nam" : "Nữ");
-
-                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
-                await db.SaveChangesAsync();
-                // Gửi thông báo thành công
-                TempData["SuccessMessage"] = "Thông tin cá nhân đã được cập nhật thành công!";
-            }
-            else
-            {
-                TempData["ErrorMessage"] = "Không tìm thấy khách hàng!";
-                return RedirectToAction("Profile");
+                return NotFound();
             }
 
-            // Chuyển hướng về trang Profile
+            // Cập nhật thông tin người dùng
+            user.HoTen = model.Username;
+            user.Email = model.Email;
+            user.DienThoai = model.Phone;
+            user.DiaChi = model.Address;
+            user.NgaySinh = model.Birthdate;
+            user.GioiTinh = model.Gender;
+
+            // Lưu thay đổi vào database
+            await db.SaveChangesAsync();
+
+            // Cập nhật claims
+            var identity = (ClaimsIdentity)User.Identity;
+            UpdateClaim(identity, ClaimTypes.Name, model.Username);
+            UpdateClaim(identity, ClaimTypes.Email, model.Email);
+            UpdateClaim(identity, ClaimTypes.MobilePhone, model.Phone);
+            UpdateClaim(identity, ClaimTypes.StreetAddress, model.Address);
+            UpdateClaim(identity, ClaimTypes.DateOfBirth, model.Birthdate.ToString("yyyy-MM-dd"));
+            UpdateClaim(identity, ClaimTypes.Gender, model.Gender ? "Nam" : "Nữ");
+            foreach (var claim in identity.Claims)
+            {
+                Console.WriteLine($"Claim Type: {claim.Type}, Value: {claim.Value}");
+            }
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
             return RedirectToAction("Profile");
         }
 
-        // Phương thức hỗ trợ cập nhật claim
         private void UpdateClaim(ClaimsIdentity identity, string claimType, string newValue)
         {
+            // Tìm claim hiện tại và xóa nó
             var existingClaim = identity.FindFirst(claimType);
             if (existingClaim != null)
             {
-                identity.RemoveClaim(existingClaim); // Xóa claim cũ
+                identity.RemoveClaim(existingClaim);
             }
-            identity.AddClaim(new Claim(claimType, newValue)); // Thêm claim mới
 
+            // Thêm claim mới với giá trị cập nhật
+            identity.AddClaim(new Claim(claimType, newValue));
+
+            // Cập nhật lại ClaimsPrincipal (tùy thuộc vào việc bạn dùng cái gì để quản lý user hiện tại)
+            var userPrincipal = new ClaimsPrincipal(identity);
+            HttpContext.User = userPrincipal;
         }
 
 
@@ -191,7 +201,7 @@ namespace ECommerceMVC.Controllers
                 {
                     if (khachHang.MatKhau == model.MatKhau.ToMd5Hash(khachHang.RandomKey))
                     {
-                        ModelState.AddModelError("ok", "Đăng nhập thành công");
+                        ModelState.AddModelError("ok", "");
                     }
                     else
                     {
@@ -223,6 +233,7 @@ namespace ECommerceMVC.Controllers
                         }
                         else
                         {
+                            TempData["SuccessMessage"] = "Đăng nhập thành công !";
                             return Redirect("Profile");
                         }
                     }

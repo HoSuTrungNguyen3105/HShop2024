@@ -23,7 +23,7 @@
 
     @foreach (var voucher in Model)
     {
-        <div class="alert alert-info mt-4">
+        <div class="alert alert-dark mt-4">
             <div class="coupon-container">
                 <!-- ID phải khớp với ô input -->
                 <input type="text" id="couponCode-@voucher.Id" value="@voucher.Code" readonly class="form-control coupon-input" />
