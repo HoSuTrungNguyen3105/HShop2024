@@ -9,7 +9,7 @@ namespace HShop2024.Helpers
 		public AutoMapperProfile()
 		{
 			CreateMap<RegisterVM, KhachHang>();
-			//.ForMember(kh => kh.HoTen, option => option.MapFrom(RegisterVM => RegisterVM.HoTen))
+			//.ForMember(kh => kh.UserName, option => option.MapFrom(RegisterVM => RegisterVM.UserName))
 			//.ReverseMap();
 		}
 	}

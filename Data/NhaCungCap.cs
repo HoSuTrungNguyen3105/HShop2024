@@ -15,7 +15,7 @@ public partial class NhaCungCap
 
     public string Email { get; set; } = null!;
 
-    public string? DienThoai { get; set; }
+    public string? PhoneNumber { get; set; }
 
     public string? DiaChi { get; set; }
 

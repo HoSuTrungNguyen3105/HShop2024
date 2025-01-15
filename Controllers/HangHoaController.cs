@@ -66,12 +66,10 @@ namespace HShop2024.Controllers
         public IActionResult Search(string? query)
         {
             var hangHoas = db.HangHoas.AsQueryable();
-
             if (query != null)
             {
                 hangHoas = hangHoas.Where(p => p.TenHh.Contains(query));
             }
-
             var result = hangHoas.Select(p => new HangHoaVM
             {
                 MaHh = p.MaHh,
@@ -83,7 +81,6 @@ namespace HShop2024.Controllers
             });
             return View(result);
         }
-
         public IActionResult Detail(int id)
         {
             var product = db.HangHoas

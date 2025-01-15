@@ -7,7 +7,7 @@ namespace HShop2024.ViewModels
 	{
 		[Display(Name = "Tên đăng nhập")]
         [Required(ErrorMessage = "Chưa nhập tên đăng nhập")]
-        public string MaKh { get; set; } 
+        public string Email { get; set; } 
 
 		[Display(Name = "Mật khẩu")]
         [Required(ErrorMessage = "Chưa nhập mật khẩu")]

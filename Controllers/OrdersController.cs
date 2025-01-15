@@ -26,7 +26,7 @@ namespace HShop2024.Controllers
             var orderViewModel = orders.Select(order => new OrderVM
             {
                 MaHd = order.MaHd,
-                HoTen = order.HoTen,
+                UserName = order.UserName,
                 NgayDat = order.NgayDat,
                 TotalAmount = _context.ChiTietHds
                     .Where(c => c.MaHd == order.MaHd)

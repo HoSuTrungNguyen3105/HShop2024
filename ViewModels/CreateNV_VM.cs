@@ -19,7 +19,7 @@ namespace HShop2024.ViewModels
         [Display(Name = "Họ tên")]
         [Required(ErrorMessage = "*")]
         [MaxLength(50, ErrorMessage = "Tối đa 50 kí tự")]
-        public string? HoTen { get; set; }
+        public string? UserName { get; set; }
         [EmailAddress(ErrorMessage = "Chưa đúng định dạng email")]
         public string? Email { get; set; }
     }

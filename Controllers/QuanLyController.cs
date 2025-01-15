@@ -110,7 +110,7 @@ namespace HShop2024.Controllers
                 .Select(k => new DashboardViewModel.CustomerTopSales // Sử dụng lớp CustomerTopSales
                 {
                     MaKh = k.MaKh,         // Giả sử có thuộc tính MaKh
-                    HoTen = k.HoTen,       // Tên khách hàng
+                    UserName = k.UserName,       // Tên khách hàng
                     SoXu = k.Xu            // Số lượng xu
                 })
                 .FirstOrDefaultAsync(); // Lấy khách hàng đầu tiên (nhiều nhất)
@@ -153,7 +153,7 @@ namespace HShop2024.Controllers
             string currentUserName = User.Identity.Name;
 
             var nhanViens = await _context.NhanViens
-                                          .Where(nv => nv.HoTen != currentUserName)
+                                          .Where(nv => nv.UserName != currentUserName)
                                           .ToListAsync();
 
             return View(nhanViens);
@@ -189,7 +189,7 @@ namespace HShop2024.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> NhanVienCreate([Bind("MaNv,HoTen,Email,MatKhau")] NhanVien nhanVien)
+        public async Task<IActionResult> NhanVienCreate([Bind("MaNv,UserName,Email,MatKhau")] NhanVien nhanVien)
         {
             if (ModelState.IsValid)
             {
@@ -235,7 +235,7 @@ namespace HShop2024.Controllers
         // POST: NhanVien/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> NhanVienEdit(string id, [Bind("MaNv,HoTen,Email,MatKhau")] NhanVien nhanVien)
+        public async Task<IActionResult> NhanVienEdit(string id, [Bind("MaNv,UserName,Email,MatKhau")] NhanVien nhanVien)
         {
             if (id != nhanVien.MaNv)
             {
@@ -320,7 +320,7 @@ namespace HShop2024.Controllers
                     var claims = new List<Claim>
                 {
                 new Claim(ClaimTypes.Email, nhanVien.Email),
-                new Claim(ClaimTypes.Name, nhanVien.HoTen),
+                new Claim(ClaimTypes.Name, nhanVien.UserName),
                 new Claim(MySetting.CLAIM_EMPLOYEEID, nhanVien.MaNv),
                 new Claim(ClaimTypes.Role, nhanVien.VaiTro == 2 ? "Admin" : "Employee"),
                 new Claim("LastLoginTime", DateTime.Now.ToString("dd/MM/yyyy HH:mm:ss"))  // Lưu thời gian đăng nhập

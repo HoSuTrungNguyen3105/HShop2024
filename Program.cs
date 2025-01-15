@@ -39,6 +39,23 @@ builder.Services.AddSession(options =>
 	options.Cookie.HttpOnly = true; // Bảo mật cookie
 	options.Cookie.IsEssential = true; // Cần thiết để session hoạt động đúng
 });
+//Khai bao Identity
+builder.Services.AddIdentity<KhachHang, IdentityRole>()
+    .AddEntityFrameworkStores<Hshop2023Context>().AddDefaultTokenProviders();
+builder.Services.AddRazorPages();
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    // Password settings.
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredLength = 4;
+
+    // User settings.
+    options.User.RequireUniqueEmail = false;
+});
 // https://docs.automapper.org/en/stable/Dependency-injection.html
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 

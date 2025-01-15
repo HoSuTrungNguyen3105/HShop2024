@@ -143,7 +143,7 @@ namespace HShop2024.Controllers
 					diachi = i.DiaChi,
 					phivc = i.NgayCan,
 					ngaygiao = i.NgayGiao,
-					dienthoai = i.DienThoai
+					PhoneNumber = i.PhoneNumber
 				})
 				.FirstOrDefaultAsync();
 
@@ -189,9 +189,8 @@ namespace HShop2024.Controllers
 				var hoadon = new HoaDon
 				{
 					MaKh = customerId,
-					HoTen = model.HoTen ?? khachHang?.HoTen,
-					DiaChi = model.DiaChi ?? khachHang?.DiaChi,
-					DienThoai = model.DienThoai ?? khachHang?.DienThoai,
+					UserName = model.UserName ?? khachHang?.UserName,
+					PhoneNumber = model.PhoneNumber ?? khachHang?.PhoneNumber,
 					NgayDat = DateTime.Now,
 					CachThanhToan = "COD",
 					CachVanChuyen = "GRAB",
@@ -252,7 +251,6 @@ namespace HShop2024.Controllers
 
 						if (khachHang != null)
 						{
-							khachHang.Xu = (khachHang.Xu ?? 0) + 100; // Cộng thêm 100 xu
 							db.Update(khachHang);
 							await db.SaveChangesAsync(); // Lưu thay đổi vào cơ sở dữ liệu
 
@@ -263,11 +261,9 @@ namespace HShop2024.Controllers
 							{
 								identity.RemoveClaim(oldXuClaim);
 							}
-							identity.AddClaim(new Claim("Xu", khachHang.Xu.ToString()));
 
 							await HttpContext.SignInAsync(new ClaimsPrincipal(identity)); // Cập nhật claims
 
-							HttpContext.Session.SetInt32(MySetting.SESSION_XU_KEY, khachHang.Xu ?? 0);
 						}
 
 						await transaction.CommitAsync(); // Commit transaction nếu mọi thứ OK
@@ -300,7 +296,10 @@ namespace HShop2024.Controllers
 
 			return Json(new { success = false, message = "Mã voucher không hợp lệ hoặc đã hết hạn." });
 		}
+		//private async Task<IActionResult> VoucherAccess(string voucherCode) {
+		//	var voucher = db.Vouchers.ToListAsync();
 
+		//}
 		private List<CartItem> GetCartItems()
 		{
 			// Example logic to get cart items from session or database

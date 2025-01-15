@@ -13,7 +13,7 @@ namespace HShop2024.ViewModels
         public class CustomerTopSales
         {
             public string MaKh { get; set; }
-            public string HoTen { get; set; }
+            public string UserName { get; set; }
             public int? SoXu { get; set; } // Số lượng xu          
         }
         public List<TopSellingProduct> TopSellingProducts { get; set; }

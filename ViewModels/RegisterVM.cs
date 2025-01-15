@@ -25,8 +25,8 @@ namespace HShop2024.ViewModels
         [Display(Name = "Họ tên")]
 		[Required(ErrorMessage = "*")]
 		[MaxLength(50, ErrorMessage = "Tối đa 50 kí tự")]
-		public string? HoTen { get; set; }
-        public string RandomKey { get; set; } // Chìa khóa ngẫu nhiên để băm mật khẩu
+		public string? UserName { get; set; }
+        public string? RandomKey { get; set; } // Chìa khóa ngẫu nhiên để băm mật khẩu
 
         public bool GioiTinh { get; set; } = true;
 
@@ -41,14 +41,14 @@ namespace HShop2024.ViewModels
 		[Display(Name = "Điện thoại")]
 		[MaxLength(24, ErrorMessage = "Tối đa 24 kí tự")]
 		//[RegularExpression(@"0[0000]\d{8}", ErrorMessage = "Chưa đúng định dạng di động Việt Nam")]
-		public string? DienThoai { get; set; }
+		public string? PhoneNumber { get; set; }
 
 
 		[EmailAddress(ErrorMessage = "Chưa đúng định dạng email")]
 		public string? Email { get; set; }
 
         public string? Hinh { get; set; }
-        public bool HieuLuc { get; set; }
+        public bool? HieuLuc { get; set; }
 
     }
 }

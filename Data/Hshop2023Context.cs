@@ -112,9 +112,9 @@ public partial class Hshop2023Context : DbContext
                 .HasMaxLength(50)
                 .HasDefaultValue("Airline");
             entity.Property(e => e.DiaChi).HasMaxLength(60);
-            entity.Property(e => e.DienThoai).HasMaxLength(24);
+            entity.Property(e => e.PhoneNumber).HasMaxLength(24);
             entity.Property(e => e.GhiChu).HasMaxLength(50);
-            entity.Property(e => e.HoTen).HasMaxLength(50);
+            entity.Property(e => e.UserName).HasMaxLength(50);
             entity.Property(e => e.MaKh)
                 .HasMaxLength(20)
                 .HasColumnName("MaKH");
@@ -183,13 +183,13 @@ public partial class Hshop2023Context : DbContext
                 .HasMaxLength(20)
                 .HasColumnName("MaKH");
             entity.Property(e => e.DiaChi).HasMaxLength(60);
-            entity.Property(e => e.DienThoai).HasMaxLength(24);
+            entity.Property(e => e.PhoneNumber).HasMaxLength(24);
             entity.Property(e => e.Email).HasMaxLength(50);
             entity.Property(e => e.Hinh)
                 .HasMaxLength(255)
                 .HasDefaultValue("Photo.gif");
-            entity.Property(e => e.HoTen).HasMaxLength(50);
-            entity.Property(e => e.MatKhau).HasMaxLength(50);
+            entity.Property(e => e.UserName).HasMaxLength(50);
+            entity.Property(e => e.PasswordHash).HasMaxLength(50);
             entity.Property(e => e.NgaySinh)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
@@ -241,7 +241,7 @@ public partial class Hshop2023Context : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("MaNCC");
             entity.Property(e => e.DiaChi).HasMaxLength(50);
-            entity.Property(e => e.DienThoai).HasMaxLength(50);
+            entity.Property(e => e.PhoneNumber).HasMaxLength(50);
             entity.Property(e => e.Email).HasMaxLength(50);
             entity.Property(e => e.Logo).HasMaxLength(50);
             entity.Property(e => e.NguoiLienLac).HasMaxLength(50);
@@ -258,7 +258,7 @@ public partial class Hshop2023Context : DbContext
                 .HasMaxLength(50)
                 .HasColumnName("MaNV");
             entity.Property(e => e.Email).HasMaxLength(50);
-            entity.Property(e => e.HoTen).HasMaxLength(50);
+            entity.Property(e => e.UserName).HasMaxLength(50);
             entity.Property(e => e.LastLoginTime).HasColumnType("datetime");
             entity.Property(e => e.MatKhau).HasMaxLength(50);
         });

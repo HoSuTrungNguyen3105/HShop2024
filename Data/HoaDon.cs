@@ -15,7 +15,7 @@ public partial class HoaDon
 
     public DateTime? NgayGiao { get; set; }
 
-    public string? HoTen { get; set; }
+    public string? UserName { get; set; }
 
     public string DiaChi { get; set; } = null!;
 
@@ -31,7 +31,7 @@ public partial class HoaDon
 
     public string? GhiChu { get; set; }
 
-    public string? DienThoai { get; set; }
+    public string? PhoneNumber { get; set; }
 
     public decimal? TongTien { get; set; }
 
